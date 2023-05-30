@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>booking</h2>
+{% endblock %}
+{% block content %}
+<form action="book" method="post">
+    <label for="vehicle">vehicle</label>
+    <p>{{plate}}</p>
+    <label for="driver">Driver</label>
+    <p>{{driver}}</p>
+    <label for="seats">No of seats</label>
+    <input type="number" name="no_of_seats">
+    <label for="destination">destination</label>
+    <input type="text">
+    <label for="pickup">Picku up point</label>
+    <input type="text">
+
+    <button type="submit">Book</button>
+
+</form>
+{% endblock %}

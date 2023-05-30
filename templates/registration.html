@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Registration</h2>
+{% endblock %}
+{% block content %}
+<form action="registration" method="post" onsubmit="return validateForm()">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="username">user_name</label>
+    <input type="text" name="username">
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password">
+    {% if error %}
+    <span>{{error}}</span>
+    {% endif %}
+    <label for="confirm_password">Confirm Password</label>
+    <input type="password" name="confirm_password" id="confirm_password">
+    <button type="submit">Register</button>
+
+    <a href="driver.html">Register as Driver</a>
+</form>
+
+<script>
+    function validateForm() {
+        var password = document.getElementById("password").value;
+        var confirm_password = document.getElementById("confirm_password").value;
+
+        if (password !== confirm_password) {
+            alert("Password and Confirm Password must match.");
+            return false;
+        }
+        return true;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>payment</h2>
+{% endblock %}
+{% block content %}
+<form action="payment/bill" method="post">
+    <label for="charge">Amount due</label>
+    <p>{{amount}}</p>
+    <label for="payment_method">Pay with</label>
+    <input type="text">
+    
+    <button type="submit">Proceed to payment</button>
+
+</form>
+{% endblock %}

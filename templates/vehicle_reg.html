@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Vehicle Registration</h2>
+{% endblock %}
+{% block content %}
+<form action="registration" method="post">
+    <label for="email">Email</label>
+    <input type="email" name="" id="">
+    <label for="license">License or Id No</label>
+    <input type="text">
+    <label for="No_plate">Number Plate</label>
+    <input type="text">
+    <label for="password">Password</label>
+    <input type="password" name="" id="">
+    <label for="confirm_password">Confirm Password</label>
+    <input type="password" name="" id="">
+    <button type="submit">Submit</button>
+
+</form>
+{% endblock %}

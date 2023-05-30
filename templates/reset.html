@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Reset password</h2>
+{% endblock %}
+{% block content %}
+<form action="registration/reset" method="post">
+    <label for="password">Enter new password</label>
+    <input type="password" name="" id="">
+    <label for="confirm_password">Confirm Password</label>
+    <input type="password" name="" id="">
+    
+    <button type="submit">Reset</button>
+</form>
+{% endblock %}

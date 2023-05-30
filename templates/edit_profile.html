@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Profile/h2>
+{% endblock %}
+{% block content %}
+<form action="profile/edit" method="post">
+    <label for="username">Change Username</label>
+    <input type="text">
+    <label for="current_location">Current Location</label>
+    <a href="{{current_location}}"></a>
+    <label for="destination">Destination</label>
+    <a href="maps.html">pick destination</a>
+    <label for="current_vehicle">Current Vehicle</label>
+    {{current_vehicle}}
+    <label for="credits">Credits</label>
+    {{credits}}
+    
+    <button type="button">Submit profile</button>
+
+</form>
+{% endblock %}

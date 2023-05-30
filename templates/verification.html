@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Enter confirmation code</h2>
+{% endblock %}
+{% block content %}
+<form action="verification" method="post">
+    <label for="verification_code">Enter verification code</label>
+    <input type="text">
+    <button type="submit">submit</button>
+{% endblock %}

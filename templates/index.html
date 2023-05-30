@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}
+Smart Travel
+{% endblock %}
+{% block content %}
+<a href="{{url_for('register.vehicle')}}">Register Vehicle</a>
+<a href="{{url_for('register.register')}}">Register</a>
+<a href="{{url_for('register.driver')}}">Register as Driver</a>
+{% endblock %}
