@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Vehicle Registration</h2>
+{% endblock %}
+{% block content %}
+<form action="/registration/vehicle" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="license">License or Id No</label>
+    <input type="text" name="license" id="license" >
+    <label for="No_plate">Number Plate</label>
+    <input type="text" name="plate" id="plate">
+    <label for="type">Make</label>
+    <input type="text" name="make" id="make">
+    <label for="capacity">Capacity</label>
+    <input type="text" name="capacity" id="capacity">
+    <label for="color">Color</label>
+    <input type="text" name="color" id="color">
+    <button type="submit">Submit</button>
+    
+
+</form>
+{% endblock %}

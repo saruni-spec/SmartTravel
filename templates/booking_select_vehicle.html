@@ -3,17 +3,18 @@
 <h2>booking</h2>
 {% endblock %}
 {% block content %}
-<form action="book" method="post">
+<form action="/booking/select_vehicle" method="post">
     <label for="vehicle">vehicle</label>
     <p>{{plate}}</p>
     <label for="driver">Driver</label>
     <p>{{driver}}</p>
-    <label for="seats">No of seats</label>
-    <input type="number" name="no_of_seats">
+    <label for="seats">How many seats do you need?</label>
+    <input type="number" name="no_of_seats" value="5">
+
     <label for="destination">destination</label>
-    <input type="text">
+    {{destination}}
     <label for="pickup">Picku up point</label>
-    <input type="text">
+    {{pickup_point}}
 
     <button type="submit">Book</button>
 

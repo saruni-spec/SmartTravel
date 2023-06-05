@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Registration</h2>
+{% endblock %}
+{% block content %}
+<form action="/reg_stages" method="post" >
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    
+    <button type="submit">Register</button>
+
+    {% if error %}
+    <span>{{error}}</span>
+    {% endif %}
+</form>
+
+{% endblock %}

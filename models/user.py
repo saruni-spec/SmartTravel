@@ -10,8 +10,8 @@ class User(db.Model):
     password=db.Column(db.String(100),nullable=False)
     phone=db.Column(db.String(100),nullable=True)
     address=db.Column(db.String(100),nullable=True)
-    is_driver=db.Column(db.Boolean,nullable=False)
-    is_owner=db.Column(db.Boolean,nullable=False)
+    is_driver=db.Column(db.Boolean,nullable=True)
+    is_owner=db.Column(db.Boolean,nullable=True)
 
     def __init__(self,username):
         self.user_name=username
@@ -24,7 +24,12 @@ class User(db.Model):
     
     def is_active(self):
         return True
-
+    
+    def check_if_driver(self):
+        return self.is_driver
+    
+    def check_if_owner(self):
+        return self.is_owner
 
     def save(self,password):
         self.password=bcrypt.generate_password_hash(password)
@@ -59,6 +64,14 @@ class User(db.Model):
 
     def add_address(self,address):
         self.address=address
+        db.session.commit()
+
+    def make_driver(self):
+        self.is_driver=True
+        db.session.commit()
+
+    def make_owner(self):
+        self.is_owner=True
         db.session.commit()
 
     def delete(self):

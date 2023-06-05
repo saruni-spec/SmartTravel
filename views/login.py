@@ -1,10 +1,10 @@
-from flask import render_template,Blueprint,current_app,redirect
+from flask import render_template,Blueprint,current_app,redirect,session,make_response
 from flask import request
 from models.user import User
-from flask import url_for
 from flask_login import login_user
 from flask_wtf.csrf import validate_csrf
 from wtforms.validators import ValidationError
+from datetime import timedelta
 
 bp=Blueprint('login',__name__)
 
@@ -26,7 +26,15 @@ def login():
             
             if user and user.verify_password(password):
                 login_user(user)
-                return redirect(url_for('map.mapview2'))
+                session['user_id']=user.get_id()
+                session['email']=user.email
+                session['phone']=user.phone
+                session['address']=user.address
+                next_url = session.get('next_url', '/profile')
+                print(next_url,'next url')
+                response = make_response(redirect(next_url))
+                response.set_cookie('username', username, max_age=timedelta(days=1))
+                return response
             elif  user and not user.verify_password(password):
                 error='Invaid Password'
                 return render_template('login.html',error)

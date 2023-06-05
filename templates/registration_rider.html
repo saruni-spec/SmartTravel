@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Registration</h2>
+{% endblock %}
+{% block content %}
+<form action="/registration/rider" method="post" onsubmit="return validateForm()">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="username">user_name</label>
+    <input type="text" name="username">
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password">
+    
+    <label for="confirm_password">Confirm Password</label>
+    <input type="password" name="confirm_password" id="confirm_password">
+    <button type="submit">Register</button>
+    {% if error %}
+    <span>{{error}}</span>
+    {% endif %}
+    <a href="{{url_for('registration.register_driver')}}">Register as Driver</a>
+</form>
+<script src="{{url_for('static',filename='js/confirm_password.js')}}"></script>
+
+
+
+{% endblock %}

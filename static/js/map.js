@@ -1,18 +1,36 @@
-// Function to initialize the map
+// Initialize the map
 function initMap() {
-    // Create a new map instance
-    var map = new google.maps.Map(document.getElementById('map'), {
-      center: {lat: -1.2833, lng: 36.8167}, // Set initial map center position
-      zoom: 12 // Set initial zoom level
-    });
+  // Create a new map centered at a default location
+  console.log('map')
+  const map = new google.maps.Map(document.getElementById("map"), {
+    zoom: 12,
+    center: { lat: 1.2921, lng: 36.8219 }, // Default location (Nairobi)
+    
+  });
 
-    // Add a marker for the user's location
-    var marker = new google.maps.Marker({
-      position: {lat: -1.2833, lng: 36.8167}, // Set marker position
-      map: map, // Specify the map instance
-      title: 'User Location' // Set marker title (tooltip)
-    });
+  // Try to get the user's current location
+  if (navigator.geolocation) {
+    navigator.geolocation.watchPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+
+        // Center the map on the user's current location
+        map.setCenter({ lat: latitude, lng: longitude });
+
+        // Create a marker to indicate the user's location
+        const marker = new google.maps.Marker({
+          position: { lat: latitude, lng: longitude },
+          map: map,
+          title: "You are here",
+        });
+      },
+      (error) => {
+        console.error("Error getting user location:", error);
+      }
+    );
+  } else {
+    console.error("Geolocation is not supported by this browser.");
   }
+}
 
-  // Call the initMap function when the page has finished loading
-  window.onload = initMap;
+window.onload = initMap;

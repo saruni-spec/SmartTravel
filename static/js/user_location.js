@@ -11,24 +11,32 @@ function showPosition(position) {
   var longitude = position.coords.longitude;
   console.log("Latitude: " + latitude + ", Longitude: " + longitude);
 
-  // Send the location data to the Flask route using fetch API
-  fetch('/profile', {
-    method: 'POST',
+  // Get the CSRF token from the meta tag
+  var csrfToken = document.querySelector('meta[name=csrf-token]').content;
+
+  // Create a new FormData object
+  var formData = new FormData();
+  formData.append("latitude", latitude);
+  formData.append("longitude", longitude);
+
+  // Send the location data to the Flask route using axios
+  axios({
+    method: 'post',
+    url: '/profile/rider',
+    data: formData,
     headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ latitude: latitude, longitude: longitude }),
+      'Content-Type': 'multipart/form-data',
+      'X-CSRFToken': csrfToken // Include the CSRF token in the request
+    }
   })
-    .then(function (response) {
-      if (response.ok) {
-        console.log("Location sent successfully.");
-      } else {
-        console.log("Error sending location.");
-      }
-    })
-    .catch(function (error) {
-      console.log("An error occurred:", error);
-    });
+  .then(function (response) {
+    console.log("Location sent successfully.");
+  })
+  .catch(function (error) {
+    console.log("Error sending location:", error);
+  });
 }
+
+window.onload = trackUserLocation;
 
 

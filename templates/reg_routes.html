@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Registration</h2>
+{% endblock %}
+{% block content %}
+<form action="/routes/registration" method="post" >
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="route_no">route_no</label>
+    <input type="text" name="route_no">
+    <label for="route_start">route_start</label>
+    <input type="text" name="route_start">
+    <label for="route_end">end</label>
+    <input type="text" name="route_end">
+    <label for="route_distance">Distance</label>
+    <input type="text" name="route_distance" >
+
+    <button type="submit">Register</button>
+
+    {% if error %}
+    <span>{{error}}</span>
+    {% endif %}
+</form>
+
+{% endblock %}

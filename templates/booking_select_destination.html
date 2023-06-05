@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}
+map
+{% endblock %}
+{% block content %}
+<style>
+  #map {
+    height: 60%;
+    width: 90%;
+  }
+</style>
+  <div id="map"></div>
+
+  <form action="/booking/select_destination" method="post">
+    <label for="current_location">Current location</label>
+    <input type="text" name="current_location" id="current_location" value="{{current_location}}">
+    <label for="destination">Destination</label>
+    <input type="text" name="destination" id="destination">
+  </form>
+
+  <script src="{{url_for('static',filename='js/map.js')}}"></script>
+{% endblock %}
+

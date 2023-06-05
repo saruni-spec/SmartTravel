@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Profile</h2>
+{% endblock %}
+{% block content %}
+<form action="/profile/owner" method="get">
+    <label for="username">Username</label>
+    <p>{{username}}</p>
+    <label for="current_location">Current Location</label>
+    <p>{{current_location}}</p>
+    <label for="destination">Destination</label>
+    <p>{{destination}}</p>
+    <label for="current_vehicle">Vehicle</label>
+    {{current_vehicle}}
+    <label for="credits">Credits</label>
+    {{credits}}
+    
+    
+    <a href="edit_profile"><button type="button"> edit profile</button></a>
+
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="{{url_for('static', filename='js/user_location.js')}}"></script>
+
+{% endblock %}

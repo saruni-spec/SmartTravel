@@ -3,20 +3,22 @@
 <h2>Registration</h2>
 {% endblock %}
 {% block content %}
-<form action="registration" method="post" onsubmit="return validateForm()">
+<form action="/registration/driver" method="post" onsubmit="return validateForm()">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <label for="username">user_name</label>
+    <label for="username">Driver name</label>
     <input type="text" name="username">
+    <label for="email">Email</label>
+    <input type="email" name="email" id="email">
     <label for="password">Password</label>
     <input type="password" name="password" id="password">
-    {% if error %}
-    <span>{{error}}</span>
-    {% endif %}
+    
     <label for="confirm_password">Confirm Password</label>
     <input type="password" name="confirm_password" id="confirm_password">
     <button type="submit">Register</button>
 
-    <a href="driver.html">Register as Driver</a>
+    {% if error %}
+    <span>{{error}}</span>
+    {% endif %}
 </form>
 
 <script>
