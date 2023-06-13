@@ -1,6 +1,6 @@
 import math
 from sklearn.cluster import KMeans
-from models.stages import  Stages
+from app import current_user
 
 def calculate_distance(lat1,long1,lat2,long2):
     lat1_rad=math.radians(lat1)
@@ -53,7 +53,4 @@ def group_coordinates(coordinates, num_clusters):
 
 
 
-stages_data = Stages.Query.all()
-
-stage_clusters=group_coordinates(stages_data, 5)
-print(find_closest_bus_stop(-1.1781268, 36.9364686, stage_clusters))
+print (current_user.check_if_owner())

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Add driver</h2>
+{% endblock %}
+{% block content %}
+<p>Input driver email to send them confirmation code <br>
+If you skip,the verification code will be sent to you instead.You can then share it with the driver
+</p>
+<form action="/registration/vehicle/driver" method="post" >
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="email">Email</label>
+    <input type="email" name="email" id="email">
+    
+    
+    
+    <button type="submit" name="next">Next</button>
+    <button type="submit" name="skip">Skip</button>
+
+    {% if error %}
+    <span>{{error}}</span>
+    {% endif %}
+</form>
+
+
+{% endblock %}

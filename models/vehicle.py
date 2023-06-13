@@ -1,20 +1,27 @@
 from extensions.extensions import db
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
+from .booking import Booking
+
+
+
 
 class Vehicle(db.Model):
-    __tablename__='vehicle'
+    __tablename__="vehicle"
+   
     vehicle_type=db.Column(db.String(50))
     no_plate=db.Column(db.String(50),primary_key=True)
     capacity=db.Column(db.Integer)
-    owner_email=db.Column(db.String,nullable=False)
-    driver_email=db.Column(db.String,nullable=False)
+    owner_username=db.Column(db.String(100),ForeignKey('owner.user_name'),nullable=False)
+    driver_username=db.Column(db.String(100),ForeignKey('driver.user_name'),nullable=True)
     color=db.Column(db.String(50))
     is_active=db.Column(db.Boolean,default=True)
+    verification_code=db.Column(db.String(50))
 
-    driver=db.relationship("User",foreign_keys=[driver_email],backref="driver",lazy=True)
-    owner=db.relationship("User",foreign_keys=[owner_email],backref="owner",lazy=True)
-
+    booking_details = relationship("Booking", backref="bookings" )
+    
     def __init__(self,no_plate):
-        self.id=no_plate
+        self.no_plate=no_plate
 
     def is_active(self):
         return self.is_active
@@ -22,12 +29,15 @@ class Vehicle(db.Model):
     def get_id(self):
         return self.no_plate
     
-    def save(self,vehicle_type,owner,driver,capacity,color):
+    
+    def save(self,vehicle_type,owner,driver,capacity,color,verification_code):
         self.vehicle_type=vehicle_type
-        self.owner=owner
-        self.driver=driver
+        self.owner_username=owner
+        self.driver_username=driver
         self.capacity=capacity
         self.color=color
+        self.verification_code=verification_code
+        
         db.session.add(self)
         db.session.commit()
 

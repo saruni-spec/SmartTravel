@@ -1,36 +1,21 @@
 {% extends 'base.html' %}
 {% block title %}
-<h2>Registration</h2>
+<h2>Driver Registration</h2>
 {% endblock %}
 {% block content %}
-<form action="/registration/driver" method="post" onsubmit="return validateForm()">
+<form action="/registration/driver" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <label for="username">Driver name</label>
-    <input type="text" name="username">
     <label for="email">Email</label>
     <input type="email" name="email" id="email">
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password">
-    
-    <label for="confirm_password">Confirm Password</label>
-    <input type="password" name="confirm_password" id="confirm_password">
+    <label for="phone_no">Phone no</label>
+    <input type="text" name="phone_no" id="">
+    <label for="license">License or Id No</label>
+    <input type="text" name="license_no" id="license_no">
+    <label for="verification_code">Verification code</label>
+    <input type="text" name="verification_code" id="verification_code">
+
     <button type="submit">Register</button>
+    
 
-    {% if error %}
-    <span>{{error}}</span>
-    {% endif %}
 </form>
-
-<script>
-    function validateForm() {
-        var password = document.getElementById("password").value;
-        var confirm_password = document.getElementById("confirm_password").value;
-
-        if (password !== confirm_password) {
-            alert("Password and Confirm Password must match.");
-            return false;
-        }
-        return true;
-    }
-</script>
 {% endblock %}

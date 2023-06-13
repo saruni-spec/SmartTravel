@@ -13,7 +13,6 @@ from views.profile import bp as profile_bp
 from views.payment import bp as payment_bp
 from views.booking import bp as booking_bp
 from views.reg_stages import bp as reg_stages_bp
-from views.reg_routes import bp as reg_routes_bp
 
 
 
@@ -30,10 +29,10 @@ app.register_blueprint(payment_bp)
 app.register_blueprint(booking_bp)
 app.register_blueprint(index_bp)
 app.register_blueprint(reg_stages_bp)
-app.register_blueprint(reg_routes_bp)
+
 
 app.config['SECRET_KEY']='mysecretkey'
-app.config['GOOGLEMAPS_KEY'] = "AIzaSyA_JxBRmUKjcpPLWXwAagTX9k19tIWi2SQ"
+app.config['GOOGLEMAPS_KEY'] = 'AIzaSyA_JxBRmUKjcpPLWXwAagTX9k19tIWi2SQ'
 
 app.config['SECRET_KEY'] = 'mysecretkey'
 app.config['MAIL_SERVER'] = 'smtp-relay.sendinblue.com' 

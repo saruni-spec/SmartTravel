@@ -22,7 +22,7 @@ function showPosition(position) {
   // Send the location data to the Flask route using axios
   axios({
     method: 'post',
-    url: '/profile/rider',
+    url: window.location.href,
     data: formData,
     headers: {
       'Content-Type': 'multipart/form-data',

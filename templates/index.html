@@ -3,7 +3,11 @@
 Smart Travel
 {% endblock %}
 {% block content %}
+
+<link rel="stylesheet" type=" text/css"href="{{url_for('static',filename='css/article.css')}}">
+<article>
 <a href="{{url_for('registration.register_vehicle')}}">Register Vehicle</a>
 <a href="{{url_for('registration.registration')}}">Register</a>
 <a href="{{url_for('registration.register_driver')}}">Register as Driver</a>
+</article>
 {% endblock %}

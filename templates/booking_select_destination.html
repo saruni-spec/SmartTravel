@@ -5,19 +5,40 @@ map
 {% block content %}
 <style>
   #map {
-    height: 60%;
-    width: 90%;
+    height: 600px;
+    width: 1000px;
   }
 </style>
-  <div id="map"></div>
+<div id="map"></div>
 
-  <form action="/booking/select_destination" method="post">
-    <label for="current_location">Current location</label>
-    <input type="text" name="current_location" id="current_location" value="{{current_location}}">
-    <label for="destination">Destination</label>
-    <input type="text" name="destination" id="destination">
-  </form>
+<form action="/booking/select_destination" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label for="current_location">Current location</label>
+  <input type="text" name="current_location" id="current_location" value="{{ current_location }}">
+  <label for="destination">Destination</label>
+  <input type="text" name="destination" id="destination">
+  <button type="submit">Confirm</button>
+</form>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  window.onload = function() {
+    // Get the user_location data from the Flask view function
+    var user_location = {{ user_location|tojson }};
+    console.log(user_location);
+    var latitude = parseFloat(user_location.latitude);
+    console.log(latitude)
+    var longitude = parseFloat(user_location.longitude);
+  
 
-  <script src="{{url_for('static',filename='js/map.js')}}"></script>
+    // The location of the place
+    var location = { lat: latitude, lng: longitude };
+    console.log(location);
+    // The map, centered at the location
+    var map = new google.maps.Map(
+      document.getElementById('map'), { zoom: 12, center: location });
+    // The marker, positioned at the location
+    var marker = new google.maps.Marker({ position: location, map: map });
+  };
+</script>
+
 {% endblock %}
-

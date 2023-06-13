@@ -1,6 +1,16 @@
 
 from extensions.extensions import db,bcrypt
 
+from sqlalchemy.orm import relationship
+from .driver import Driver
+from .owner import Owner
+from .booking import Booking
+
+
+
+
+
+
 
 
 class User(db.Model):
@@ -10,8 +20,10 @@ class User(db.Model):
     password=db.Column(db.String(100),nullable=False)
     phone=db.Column(db.String(100),nullable=True)
     address=db.Column(db.String(100),nullable=True)
-    is_driver=db.Column(db.Boolean,nullable=True)
-    is_owner=db.Column(db.Boolean,nullable=True)
+
+    driver_details = relationship("Driver", backref="user_is_driver", uselist=False )
+    owner_details = relationship("Owner", backref="user_is_owner", uselist=False )
+    booking_details = relationship("Booking", backref="booking" )
 
     def __init__(self,username):
         self.user_name=username
@@ -26,10 +38,13 @@ class User(db.Model):
         return True
     
     def check_if_driver(self):
-        return self.is_driver
+        driver = Driver.query.filter_by(user_name=self.user_name).first()
+        return True if driver is not None else False
+
     
     def check_if_owner(self):
-        return self.is_owner
+        owner = Owner.query.filter_by(user_name=self.user_name).first()
+        return True if owner is not None else False
 
     def save(self,password):
         self.password=bcrypt.generate_password_hash(password)
@@ -66,13 +81,7 @@ class User(db.Model):
         self.address=address
         db.session.commit()
 
-    def make_driver(self):
-        self.is_driver=True
-        db.session.commit()
 
-    def make_owner(self):
-        self.is_owner=True
-        db.session.commit()
 
     def delete(self):
         db.session.delete(self)

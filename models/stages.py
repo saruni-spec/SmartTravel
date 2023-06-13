@@ -1,5 +1,4 @@
 from extensions.extensions import db
-from sqlalchemy import ForeignKey
 
 class Stages(db.Model):
     __tablename__ = "stage"
@@ -8,9 +7,8 @@ class Stages(db.Model):
     longitude=db.Column(db.Float)
     stage_name=db.Column(db.String(100))
     stage_description=db.Column(db.String(100))
-    route_id=db.Column(db.Integer)
+    
 
-    route_id = db.Column(db.Integer, ForeignKey('route.route_id'))
 
     def __init__(self,stage_no):
         self.stage_no=stage_no

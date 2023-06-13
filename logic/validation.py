@@ -1,5 +1,8 @@
 import re
 from email.utils import parseaddr
+import random
+
+
 
 def validate_password(password):
         if len(password) < 12:
@@ -25,3 +28,10 @@ def validate_email(email):
             return "Invalid email format."
         else:
             return None
+
+
+def generate_verification_code():
+    chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    length = 6
+    code = ''.join(random.choices(chars, k=length))
+    return code

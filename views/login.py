@@ -6,6 +6,7 @@ from flask_wtf.csrf import validate_csrf
 from wtforms.validators import ValidationError
 from datetime import timedelta
 
+
 bp=Blueprint('login',__name__)
 
 @bp.route('/login',methods=['GET','POST'])
@@ -26,11 +27,20 @@ def login():
             
             if user and user.verify_password(password):
                 login_user(user)
-                session['user_id']=user.get_id()
-                session['email']=user.email
-                session['phone']=user.phone
-                session['address']=user.address
-                next_url = session.get('next_url', '/profile')
+                if user.check_if_driver() is True and user.check_if_owner() is True:
+                    print(user.check_if_driver(),user.check_if_owner(),'both')
+                    next_url = session.get('next_url', '/profile/driver')
+                elif user.check_if_driver() is True:
+                    print(user.check_if_driver(),'driver')
+                    next_url = session.get('next_url', '/profile/driver')
+                elif user.check_if_owner() is True:
+                    print(user.check_if_owner(),'owner')
+                    
+                    next_url = session.get('next_url', '/profile/owner')
+                else:
+                    print('only user')
+                    next_url = session.get('next_url', '/profile/rider')
+                
                 print(next_url,'next url')
                 response = make_response(redirect(next_url))
                 response.set_cookie('username', username, max_age=timedelta(days=1))
