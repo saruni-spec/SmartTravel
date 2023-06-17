@@ -65,7 +65,7 @@ class User(db.Model):
     def verify_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
     
-    def change_username(self,username):
+    def change_user_name(self,username):
         self.user_name=username
         db.session.commit()
 

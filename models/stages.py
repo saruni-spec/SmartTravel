@@ -18,7 +18,7 @@ class Stages(db.Model):
         self.longitude=longitude
         self.stage_name=stage_name
         self.stage_description=stage_description
-        self.route_no=route_no
+
         db.session.add(self)
         db.session.commit()
 

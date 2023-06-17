@@ -13,21 +13,41 @@ class Object:
 
 def create_kafka_objects(consumer):
     objects = []
-    print('objectify')
+    print('kafka consuming')
     while True:
         messages = consumer.poll(timeout_ms=1000)
         for tp, msgs in messages.items():
             for msg in msgs:
                 data = json.loads(msg.value.decode('utf-8'))
-                print (data,'data')
-                object = Object(data['vehicle'], data['latitude'], data['longitude'])
-                objects.append(object)
-                print(f"Received message: {msg.value}")
+                print (data,'kafka data')
+                objects.append(data)
         consumer.commit()
         
         return objects
 
-print("here")
+
+
+
+class Notification():
+    def __init__(self,vehicle,destination,pickup_point,user_name):
+        self.vehicle = vehicle
+        self.destination = destination
+        self.pickup_point = pickup_point
+        self.user_name = user_name
+
+def create_kafka_notifications(consumer):
+    notifications = []
+    print('notifications')
+    while True:
+        messages = consumer.poll(timeout_ms=10000)
+        for tp, msgs in messages.items():
+            for msg in msgs:
+                data = json.loads(msg.value.decode('utf-8'))
+                print (data,'notification kafka_data')
+                notifications.append(data)
+        consumer.commit()
+        
+        return notifications
 
 
 

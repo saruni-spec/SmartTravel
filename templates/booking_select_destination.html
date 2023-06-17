@@ -5,8 +5,8 @@ map
 {% block content %}
 <style>
   #map {
-    height: 600px;
-    width: 1000px;
+    height: 400px;
+    width: 1200px;
   }
 </style>
 <div id="map"></div>
@@ -19,8 +19,32 @@ map
   <input type="text" name="destination" id="destination">
   <button type="submit">Confirm</button>
 </form>
+
+<a href="{{ url_for('booking.select_vehicle') }}">
+  <form action="">
+    <p>
+    Taxi Details
+    Plate:{{closest_taxi}}
+
+  </p>
+  </form>
+
+</a>
+<a href="{{ url_for('booking.select_vehicle') }}">
+  <form action="">
+    <p>
+    Bus Details
+    Plate:{{closest_bus}}
+    Pickup point:{{nearest_stage}}
+    Arrives in:{{bus_time}}
+  </p>
+  </form>
+  
+
+</a>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+  
   window.onload = function() {
     // Get the user_location data from the Flask view function
     var user_location = {{ user_location|tojson }};

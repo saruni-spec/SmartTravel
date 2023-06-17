@@ -22,8 +22,9 @@ def find_closest_bus_stop(user_lat, user_lon, bus_stops):
 
     for cluster_label, bus_stops_list in bus_stops.items():
         for bus_stop in bus_stops_list:
-            bus_stop_lat = bus_stop.latitude
-            bus_stop_lon = bus_stop.longitude
+            bus_stop_lat = bus_stop['latitude']
+            bus_stop_lon = bus_stop['longitude']
+            
             distance = calculate_distance(user_lat, user_lon, bus_stop_lat, bus_stop_lon)
             
             if distance < closest_distance:
@@ -38,8 +39,8 @@ def find_closest_bus(user_lat, user_lon, bus_stops,user_distance):
 
     for cluster_label, bus_stops_list in bus_stops.items():
         for bus_stop in bus_stops_list:
-            bus_stop_lat = bus_stop.latitude
-            bus_stop_lon = bus_stop.longitude
+            bus_stop_lat = bus_stop['latitude']
+            bus_stop_lon = bus_stop['longitude']
             distance = calculate_distance(user_lat, user_lon, bus_stop_lat, bus_stop_lon)
             if distance >float( user_distance.split()[0]):
                 if distance < closest_distance:
@@ -57,7 +58,7 @@ def group_coordinates(coordinates, num_clusters):
 
     
     kmeans = KMeans(n_clusters=num_clusters)
-    points = np.array ([[coord.latitude,coord.longitude] for coord in coordinates])
+    points = np.array ([[coord['latitude'],coord['longitude']] for coord in coordinates])
     kmeans.fit(points)
 
     # Get the cluster labels for each coordinate
@@ -81,8 +82,8 @@ def find_bus( bus_stops,user_destination,bus_location,user_time,bus_time):
 
     for cluster_label, bus_stops_list in bus_stops.items():
         for bus_stop in bus_stops_list:
-            bus_stop_lat = bus_stop.latitude
-            bus_stop_lon = bus_stop.longitude
+            bus_stop_lat = bus_stop['latitude']
+            bus_stop_lon = bus_stop['longitude']
             if bus_time>user_time:
                     distance_to_detination=calculate_distance(user_destination['latitude'], user_destination['longitude'],bus_stop_lat, bus_stop_lon)
                     new_distance=calculate_distance(user_destination['latitude'], user_destination['longitude'],bus_location['latitude'], bus_location['longitude'])
@@ -92,3 +93,14 @@ def find_bus( bus_stops,user_destination,bus_location,user_time,bus_time):
     return closest_bus_stop
 
 
+def create_stage_dict(stages):
+    Data=[]
+    for stage in stages:
+        stage_data={
+        'stage_no':stage.stage_no,
+        'latitude':stage.latitude,
+        'longitude':stage.longitude,
+        'stage_name':stage.stage_name,
+        'stage_description':stage.stage_description}
+        Data.append(stage_data)
+    return Data

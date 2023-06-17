@@ -1,4 +1,4 @@
-from flask import render_template, Blueprint, request, session,redirect
+from flask import render_template, Blueprint, request, session,redirect,url_for
 from flask_wtf.csrf import validate_csrf
 from wtforms.validators import ValidationError
 from flask_login import login_required,current_user
@@ -8,6 +8,8 @@ import json
 from functools import wraps
 from models.owner import Owner
 from models.driver import Driver
+from models.user import User
+
 from extensions.extensions import db
 
 
@@ -124,6 +126,7 @@ def profile_driver():
         
         vehicle=Vehicle.query.filter_by(driver_username=user_name).first()
         current_vehicle=vehicle.no_plate
+        session['vehicle']=current_vehicle
         print(current_vehicle,':',latitude, 'latitude',longitude, 'longitude')
         session['current_location'] = {'vehicle':current_vehicle,"latitude": latitude, "longitude": longitude}
         message = json.dumps({'vehicle':current_vehicle,"latitude": latitude, "longitude": longitude})
@@ -147,6 +150,8 @@ def profile_driver():
 @bp.route('/profile/driver/select_destination',methods=['GET','POST'])
 @login_required
 def driver_select_destination():
+    
+
     if request.method == 'POST':
         token = request.form.get('csrf_token')
         try:
@@ -161,5 +166,47 @@ def driver_select_destination():
 
 @bp.route('/profile/edit',methods=['GET','POST']) 
 def edit_profile():
-    return render_template('profile_edit.html')
+    from logic.validation import validate_email,validate_password
+    username=current_user.user_name
+    user=User.query.filter_by(user_name=username).first()
+    if request.method == 'POST':
+
+        token = request.form.get('csrf_token')
+        try:
+            validate_csrf(token)
+        except ValidationError :
+            error="Invalid CSRF token"
+        
+        
+
+        user_name=request.form.get('user_name')
+        if user_name !='':
+            if current_user.user_name!=user_name:
+                user.change_user_name(user_name)
+        email=request.form.get('email')
+        if email !='':
+            if current_user.email!=email:
+                error=validate_email(email)
+                if not error:
+                    user.add_email(email)
+
+        phone_number=request.form.get('phone_number')
+        if phone_number !='':
+            if current_user.phone!=phone_number:
+                user.add_phone(phone_number)
+        
+
+        
+        address=request.form.get('address')
+        if address !='':
+            if current_user.address!=address:
+                user.add_address(address)
+        
+        
+        if error is None:
+            db.session.commit()
+            return redirect(url_for('profile.profile_driver'))
+        else:
+            return render_template('profile_edit.html',error=error)
+    return render_template('profile_edit.html',user_name=current_user.user_name,email=current_user.email,phone=current_user.phone,address=current_user.address)
 

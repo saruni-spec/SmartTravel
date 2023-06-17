@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Profile</h2>
+{% endblock %}
+{% block content %}
+
+   <form action="/profile/driver/set_destination" method="post">
+    <label for="destination">Destination</label>
+    <input type="text" name="destination" id="destination">
+    <button type="submit">Next</button>
+
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="{{url_for('static', filename='js/user_location.js')}}"></script>
+
+{% endblock %}

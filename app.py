@@ -5,6 +5,7 @@ from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager
 from flask_migrate import Migrate
 
+
 from views.index import bp as index_bp
 from views.registration import bp as  registration_bp
 from views.login import bp as login_bp
@@ -87,6 +88,11 @@ def unauthorized():
 @app.route('/')
 def index():
     return redirect('/index')
+
+@app.route('/favicon.ico')
+def favicon():
+    return redirect(request.referrer) 
+
 
 
 if __name__ == '__main__':

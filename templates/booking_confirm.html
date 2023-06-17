@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Notifications</h2>
+{% endblock %}
+{% block content %}
+{% if details is none %}
+
+<p>no new notifications</p>
+
+{% elif details is iterable and details|length >0 %}
+{% for detail in details %} 
+
+<form action="/booking/confirm" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+{{detail.destination}}
+{{detail.pickup_point}}
+<button type="submit" name="confirmation" value="yes">Accept</button>
+<button type="submit" name="confirmation" value="no">Reject</button>    
+</form>
+{% endfor %}
+{% else %}
+<p>no notifications</p>
+{% endif %}
+{% endblock %}

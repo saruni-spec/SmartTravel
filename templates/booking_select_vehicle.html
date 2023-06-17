@@ -4,19 +4,22 @@
 {% endblock %}
 {% block content %}
 <form action="/booking/select_vehicle" method="post">
-    <label for="vehicle">vehicle</label>
-    <p>{{plate}}</p>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="vehicle">Vehicle</label>
+    <p>{{ vehicle_no }}</p>
     <label for="driver">Driver</label>
-    <p>{{driver}}</p>
+    <p>{{ driver }}</p>
     <label for="seats">How many seats do you need?</label>
     <input type="number" name="no_of_seats" value="5">
 
-    <label for="destination">destination</label>
-    {{destination}}
-    <label for="pickup">Picku up point</label>
-    {{pickup_point}}
+    <label for="destination">Destination</label>
+    {{ destination }}
+    <label for="pickup">Pickup point</label>
+    {{ pickup_point }}
 
+    <p>{{ waiting_message }}</p>
     <button type="submit">Book</button>
-
 </form>
+
+
 {% endblock %}

@@ -15,35 +15,39 @@ class Booking(db.Model):
     vehicle_plate=db.Column(db.String(50),ForeignKey("vehicle.no_plate"),nullable=False)
     Fare=db.Column(db.Integer, nullable=False)
     Status=db.Column(db.String(100), nullable=False)
-    payment_type=db.Column(db.String(20),nullable=False)
-    card_number=db.Column(db.String(20),nullable=False)
+    payment_type=db.Column(db.String(20),nullable=True)
+    card_number=db.Column(db.String(20),nullable=True)
 
 
-    def __init__(self, user_email, phone, date, time, pickup_point, destination, vehicle, Fare):
-        self.email = user_email
+    def __init__(self, user_name, phone, date, time, pickup_point, destination, vehicle, Fare):
+        self.user_name = user_name
         self.phone = phone
         self.date = date
         self.time = time
         self.pickup_point = pickup_point
         self.destination = destination
-        self.vehicle = vehicle
+        self.vehicle_plate = vehicle
         self.Fare = Fare
         self.Status = "Pending"
 
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+    def confirm(self):
+        self.Status="confirmed"
+        db.session.add(self.Status)
+        db.session.commit()
     
     def payment(self, payment_type, card_number):
-        self.payment_type = payment_type
-        self.card_number = card_number
-        self.Status="Paid"
-        db.session.add(self.payment_type,self.card_number,self.Status)
-        db.session.commit()
+
+            self.payment_type = payment_type
+            self.card_number = card_number
+            self.Status="Paid"
+            db.session.commit()
 
     def cancel(self):
         self.Status="Cancelled"
-        db.session.add(self.Status)
         db.session.commit()
         
     

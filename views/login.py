@@ -5,6 +5,7 @@ from flask_login import login_user
 from flask_wtf.csrf import validate_csrf
 from wtforms.validators import ValidationError
 from datetime import timedelta
+from flask import url_for
 
 
 bp=Blueprint('login',__name__)
@@ -29,19 +30,20 @@ def login():
                 login_user(user)
                 if user.check_if_driver() is True and user.check_if_owner() is True:
                     print(user.check_if_driver(),user.check_if_owner(),'both')
-                    next_url = session.get('next_url', '/profile/driver')
+                    next_url = session.get('next_url', url_for('profile.profile_owner'))
                 elif user.check_if_driver() is True:
                     print(user.check_if_driver(),'driver')
-                    next_url = session.get('next_url', '/profile/driver')
+                    next_url = session.get('next_url', url_for('profile.profile_driver'))
                 elif user.check_if_owner() is True:
                     print(user.check_if_owner(),'owner')
                     
-                    next_url = session.get('next_url', '/profile/owner')
+                    next_url = session.get('next_url', url_for('profile.profile_owner'))
                 else:
                     print('only user')
-                    next_url = session.get('next_url', '/profile/rider')
+                    next_url = session.get('next_url', url_for('profile.rider'))
                 
-                print(next_url,'next url')
+                if next_url == url_for('login.login'):
+                    next_url = url_for('index.index')
                 response = make_response(redirect(next_url))
                 response.set_cookie('username', username, max_age=timedelta(days=1))
                 return response

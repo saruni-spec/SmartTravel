@@ -9,7 +9,7 @@ class Driver(db.Model):
     __tablename__ = 'driver'
     user_name=db.Column(db.String(100),ForeignKey('user.user_name'),nullable=False)
     licence_no=db.Column(db.String(100),primary_key=True)
-    
+    is_active=db.Column(db.Boolean,default=True)
     drives = relationship("Vehicle", backref="drives", uselist=False )
     
     
@@ -25,11 +25,11 @@ class Driver(db.Model):
         return self.licence_no
     
     def is_active(self):
-        return True
+        return self.is_active
         
-    def status(self,status="is_active"):
-        self.status=status
-        return self.status
+    def status(self,is_active):
+        self.is_active=is_active
+        db.session.commit()
     
     def save(self):
         db.session.add(self)
