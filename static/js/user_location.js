@@ -18,15 +18,15 @@ function showPosition(position) {
   var formData = new FormData();
   formData.append("latitude", latitude);
   formData.append("longitude", longitude);
+  formData.append("csrf_token", csrfToken); // Include the CSRF token as a form field
 
   // Send the location data to the Flask route using axios
   axios({
     method: 'post',
-    url: window.location.href,
+    url: '/tracker/track',
     data: formData,
     headers: {
-      'Content-Type': 'multipart/form-data',
-      'X-CSRFToken': csrfToken // Include the CSRF token in the request
+      'Content-Type': 'multipart/form-data'
     }
   })
   .then(function (response) {
@@ -36,7 +36,7 @@ function showPosition(position) {
     console.log("Error sending location:", error);
   });
 }
-
 window.onload = trackUserLocation;
+
 
 

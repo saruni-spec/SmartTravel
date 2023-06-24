@@ -3,7 +3,9 @@
 <h2>Passengers</h2>
 {% endblock %}
 {% block content %}
+<div class="home">
 <form action="book/passengers" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="vehicle">vehicle</label>
     <p>{{plate}}</p>
     <label for="passenger">{{passenger_name}}</label>
@@ -15,4 +17,5 @@
     <input type="text">
 
 </form>
+</div>
 {% endblock %}

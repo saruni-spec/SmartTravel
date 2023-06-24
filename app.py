@@ -4,6 +4,8 @@ from extensions.extensions import *
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager
 from flask_migrate import Migrate
+from extensions.celery import Celery
+from extensions.tasks import *
 
 
 from views.index import bp as index_bp
@@ -14,6 +16,13 @@ from views.profile import bp as profile_bp
 from views.payment import bp as payment_bp
 from views.booking import bp as booking_bp
 from views.reg_stages import bp as reg_stages_bp
+from extensions.tasks import bp as tracking_bp
+
+
+
+
+
+
 
 
 
@@ -30,6 +39,7 @@ app.register_blueprint(payment_bp)
 app.register_blueprint(booking_bp)
 app.register_blueprint(index_bp)
 app.register_blueprint(reg_stages_bp)
+app.register_blueprint(tracking_bp)
 
 
 app.config['SECRET_KEY']='mysecretkey'
@@ -59,7 +69,8 @@ with app.app_context():
     db.create_all()
 migrate = Migrate(app, db)
 
-
+celery = Celery('your_app_name', broker='redis://localhost:6379/0')
+celery.conf.update(app.config)
 
 
 csrf = CSRFProtect()
@@ -74,7 +85,7 @@ def load_user(username):
 
 @app.before_request
 def store_next_url():
-    if request.endpoint != 'login.login' and request.endpoint !='static':
+    if request.endpoint != 'login.login' and request.endpoint != 'static' and request.path != '/favicon.ico':
         session['next_url'] = request.url
 
 @login_manager.unauthorized_handler
@@ -91,11 +102,16 @@ def index():
 
 @app.route('/favicon.ico')
 def favicon():
-    return redirect(request.referrer) 
+    return '', 204
 
 
-
+from celery import current_app
+from celery.bin import worker
 if __name__ == '__main__':
     app.run(debug=True)
+    
+    worker = worker.worker(app=current_app)
+    worker.run()
+    
 
 

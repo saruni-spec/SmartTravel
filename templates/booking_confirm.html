@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}
+<a href="{{url_for('profile.profile_driver')}}">Profile</a>
+
 <h2>Notifications</h2>
 {% endblock %}
 {% block content %}
@@ -11,14 +13,41 @@
 {% for detail in details %} 
 
 <form action="/booking/confirm" method="post">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-{{detail.destination}}
-{{detail.pickup_point}}
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<p>Destination:{{detail.destination}}  <br></p>  
+<p>Pickup_point:{{detail.pickup_point[0]}}</p>
+<input type="hidden" name="id" id="id" value="{{detail.booking_id}}">
 <button type="submit" name="confirmation" value="yes">Accept</button>
 <button type="submit" name="confirmation" value="no">Reject</button>    
+<input type="hidden" value="{{confirmed_message}}">
 </form>
 {% endfor %}
 {% else %}
 <p>no notifications</p>
 {% endif %}
+
+
+<script>
+
+// Get all the forms
+const forms = document.querySelectorAll('form[action="/booking/confirm"]');
+
+forms.forEach(form => {
+  // Get the 'status' input field
+  const statusInput = form.querySelector('input[id="status"]');
+
+  // Check if the status is 'confirmed' or 'cancelled'
+  if (statusInput.value === 'confirmed' || statusInput.value === 'cancelled') {
+    // Hide the 'Accept' and 'Reject' buttons
+    const acceptButton = form.querySelector('button[value="yes"]');
+    const rejectButton = form.querySelector('button[value="no"]');
+    acceptButton.style.display = 'none';
+    rejectButton.style.display = 'none';
+
+    // Show the 'status' input field
+    statusInput.style.display = 'block';
+  }
+});
+
+</script>
 {% endblock %}

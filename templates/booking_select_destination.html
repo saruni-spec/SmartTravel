@@ -1,47 +1,65 @@
 {% extends 'base.html' %}
 {% block title %}
+<a href="{{url_for('profile.rider')}}">Profile</a>
 map
 {% endblock %}
 {% block content %}
 <style>
   #map {
-    height: 400px;
-    width: 1200px;
+    height: 60%;
+    width: 90%;
   }
 </style>
-<div id="map"></div>
+<div class="booking">
+  <div id="map" class="column1"></div>
+  <div class="column2">
+    <form id="select-destination-form" action="/booking/select_destination" method="post">
+      <input type="hidden" name="form-name" value="destination-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label for="current_location">Current location</label>
+      <input type="text" name="current_location" id="current_location" value="{{ user_location }}">
+      <label for="destination">Destination</label>
+      <input type="text" name="destination" id="destination">
 
-<form action="/booking/select_destination" method="post">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <label for="current_location">Current location</label>
-  <input type="text" name="current_location" id="current_location" value="{{ current_location }}">
-  <label for="destination">Destination</label>
-  <input type="text" name="destination" id="destination">
-  <button type="submit">Confirm</button>
-</form>
+      {% if error %}
+    <span>{{error}}</span>
+    {% endif %}
+      <button type="submit">Confirm</button>
+    </form>
 
-<a href="{{ url_for('booking.select_vehicle') }}">
-  <form action="">
-    <p>
-    Taxi Details
-    Plate:{{closest_taxi}}
+    <form class="vehicle" id="taxi-form" method="post" action="/booking/select_destination">
+      <input type="hidden" name="form-name" value="taxi-form">
+        <p>
+          
+        {{closest_taxi}}
+          
+        </p>
+      
+      <button type="submit"></button>
+    </form>
 
-  </p>
+    <form class="vehicle" id="bus-form" method="post" action="/booking/select_destination">
+      <input type="hidden" name="form-name" value="bus-form">
+        <p>
+          {{closest_bus}}
+          
+        </p>
+      
+      <button type="submit"></button>
+    </form>
+
+    <form class="vehicle" id="hybrid-form" method="post" action="/booking/select_destination">
+      <input type="hidden" name="form-name" value="hybrid-form">
+      <p>
+        Car Details
+        Plate:{{closest_hybrid}}
+      </p>
+    
+    <button type="submit"></button>
   </form>
+  </div>
+</div>
 
-</a>
-<a href="{{ url_for('booking.select_vehicle') }}">
-  <form action="">
-    <p>
-    Bus Details
-    Plate:{{closest_bus}}
-    Pickup point:{{nearest_stage}}
-    Arrives in:{{bus_time}}
-  </p>
-  </form>
-  
-
-</a>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
   
@@ -64,5 +82,33 @@ map
     var marker = new google.maps.Marker({ position: location, map: map });
   };
 </script>
+<script>
+// Get the two forms with the class 'vehicle'
+const vehicleForms = document.querySelectorAll('.vehicle');
+
+// Check if the 'formSubmitted' cookie is set to 'true'
+if (document.cookie.includes('formSubmitted=true')) {
+  // Show the two forms
+  vehicleForms.forEach(form => {
+    form.style.display = 'block';
+  });
+} else {
+  // Hide the forms initially
+  vehicleForms.forEach(form => {
+    form.style.display = 'none';
+  });
+}
+
+// Get the 'Confirm' button
+const confirmButton = document.querySelector('button[type="submit"]');
+
+// Add an event listener to the 'Confirm' button
+confirmButton.addEventListener('click', () => {
+  // Set the 'formSubmitted' cookie to 'true'
+  document.cookie = 'formSubmitted=true';
+});
+
+</script>
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/booking.css')}}">
 
 {% endblock %}

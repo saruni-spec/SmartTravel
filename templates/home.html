@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}
+
+{% endblock %}
+{% block content %}
+
+
+<div class="index">
+    <div class="container">
+<a href="{{url_for('registration.register_vehicle')}}" class="a">Get a ride</a>
+</div>
+</div>
+
+<div class="index">
+    <div class="container">
+<a href="{{url_for('registration.registration')}}" class="a">Hail a Taxi</a>
+</div>
+</div>
+
+<div class="index">
+    <div class="container">
+<a href="{{url_for('registration.register_driver')}}" class="a">Book a bus seat</a>
+</div>
+</div>
+
+<div class="index">
+    <div class="container">
+<a href="{{url_for('registration.register_driver')}}" class="a">Share a ride</a>
+</div>
+</div>
+
+{% endblock %}

@@ -1,4 +1,4 @@
-from flask import render_template,Blueprint,session
+from flask import render_template,Blueprint,session,redirect,url_for
 from datetime import datetime
 from flask import request
 from logic.matching import *
@@ -10,7 +10,7 @@ from flask_login import current_user
 from flask_googlemaps import   Map
 from kafka import KafkaConsumer,KafkaProducer
 from flask import jsonify
-from extensions.celery import process_notifications,Notofications
+from extensions.celery import process_notifications
 
 
 from flask_wtf.csrf import validate_csrf
@@ -26,13 +26,33 @@ from .profile import is_driver
 
 
 
+
+
 consumer_bus = KafkaConsumer('bus_coordinates',group_id='my-group',bootstrap_servers=['localhost:9092'],consumer_timeout_ms=10000)
-consumer_taxi=KafkaConsumer('bus_coordinates',group_id='my-group-taxi',bootstrap_servers=['localhost:9092'],consumer_timeout_ms=10000 )
+consumer_taxi=KafkaConsumer('taxi_coordinates',group_id='taxi',bootstrap_servers=['localhost:9092'],consumer_timeout_ms=10000 )
+consumer_hybrid=KafkaConsumer('hybrid_coordinates',group_id='hybrid',bootstrap_servers=['localhost:9092'],consumer_timeout_ms=10000 )
 producer = KafkaProducer(bootstrap_servers='localhost:9092')
 
+from datetime import datetime
 
-            
-
+def get_direction(vehicle_data, destination):
+    if vehicle_data is None:
+        return None
+    bus_group = []
+    for bus in vehicle_data:
+            print(bus,'bus in get distance')
+            bus_id = bus['vehicle']
+            distance_to_destination = calculate_distance(destination['latitude'], destination['longitude'], bus['latitude'], bus['longitude'])
+            bus_timestamp = datetime.strptime(bus['timestamp'], "%H:%M:%S")
+            for other_bus in vehicle_data:
+                if bus_id == other_bus['vehicle'] and bus is not other_bus:
+                    other_bus_timestamp = datetime.strptime(other_bus['timestamp'], "%H:%M:%S")
+                    if bus_timestamp > other_bus_timestamp:
+                        other_bus_distance = calculate_distance(destination['latitude'], destination['longitude'], other_bus['latitude'], other_bus['longitude'])
+                        if distance_to_destination < other_bus_distance:
+                            if bus not in bus_group:
+                                bus_group.append(bus)
+    return bus_group
 
 def closest_stage(user_location):
         stages_data =create_stage_dict( Stages.query.all())
@@ -58,121 +78,133 @@ def closest_taxi(user_location,taxi_data):
         print(latitude,longitude,'in closes taxi')
         closest_taxi=(find_closest_bus_stop(latitude, longitude, taxi_clusters))
     
-        destination_lat = float(closest_taxi['latitude'])
-        destination_lng = float(closest_taxi['longitude'])
+        if closest_taxi is None:
+                return None
+        else:
+                destination_lat = float(closest_taxi['latitude'])
+                destination_lng = float(closest_taxi['longitude'])
         distance = get_distance(latitude, longitude, destination_lat, destination_lng)
         return[closest_taxi,distance]
 
-def closest_bus(closest_stage,bus_data):
+
+
+def bus(bus_data,stage,user_time):
         bus_clusters=group_coordinates(bus_data, 5)
         print(bus_clusters,'closest bus')
-        latitude = float(closest_stage[0]['latitude']) 
-        longitude = float(closest_stage[0]['longitude'])
+        latitude = float(stage[0]['latitude']) 
+        longitude = float(stage[0]['longitude'])
         print(latitude,longitude ,'in closest bus')
-        closest_bus=(find_closest_bus(latitude, longitude, bus_clusters,closest_stage[1]))
-        print(closest_bus,'closest bus in none toye!!!!!')
+        closest_bus=(find_bus(bus_clusters,stage,user_time))
         if closest_bus is None:
-                destination_lat = -1.1
-                destination_lng = 36.9
+                return None
         else:
-                destination_lat = float(closest_bus['latitude'])
-                destination_lng = float(closest_bus['longitude'])
-        distance = get_distance(latitude, longitude, destination_lat, destination_lng)
-        return[closest_bus,distance]
+                
+                return closest_bus
 
 
-def bus(closest_stage,bus_data,destination,bus_location,user_time,bus_time):
-        bus_clusters=group_coordinates(bus_data, 5)
-        print(bus_clusters,'closest bus')
-        latitude = float(closest_stage[0]['latitude']) 
-        longitude = float(closest_stage[0]['longitude'])
-        print(latitude,longitude ,'in closest bus')
-        closest_bus=(find_bus(bus_clusters,destination,bus_location,user_time,bus_time))
-        if closest_bus is None:
-                destination_lat = -1.1
-                destination_lng = 36.9
-        else:
-                destination_lat = float(closest_bus['latitude'])
-                destination_lng = float(closest_bus['longitude'])
-        distance = get_distance(latitude, longitude, destination_lat, destination_lng)
-        return[closest_bus,distance]
-
-
-
-def get_time(origin_location, destination_location, travel_mode, api_key):
-    print(origin_location,'origin location')
-    print(destination_location,'destination location')
-    print(travel_mode,'travel mode')
-    url = f"https://maps.googleapis.com/maps/api/directions/json?origin={origin_location}&destination={destination_location}&mode={travel_mode}&key={api_key}"
-    response = requests.get(url)
-    data = response.json()
-    if data['status'] == 'OK':
-        route = data['routes'][0]
-        leg = route['legs'][0]
-        duration = leg['duration']['text']
-        print(duration,'duration')
-        return duration
-    else:
-        return None
 
 bp=Blueprint('booking',__name__)
 
 @bp.route('/booking/select_destination',methods=['GET','POST'])  
 @login_required
 def select_destination():
-        bus_data=create_kafka_objects(consumer_bus)
-        print(bus_data,'bus data')
-        taxi_data=create_kafka_objects(consumer_taxi)
-        print(taxi_data,'taxi data')
+        
         user_location=session.get('current_location')
+        user_location_name=session.get('location_name')
         if user_location is None:
-                user_location={'user':current_user.user_name,'latitude':-1.1,'longitude':36.9}
+                user_location=None
         print(user_location,'user location in post up')
         print(jsonify(user_location),'user location in jsonify up')
         if request.method=='POST':
-                destination=request.form.get('destination')
-                session['destination']=destination
-                import requests
+                form_name = request.form.get('form-name')
+                print(form_name,'form name')
+                if form_name == 'destination-form':
+                        bus_data=create_kafka_objects(consumer_bus)
+                        print(bus_data,'bus data fro kafka')
+                        taxi_data=create_kafka_objects(consumer_taxi)
+                        print(taxi_data,'taxi data from kafka')
+                        
+                        destination_name=request.form.get('destination')
+                        print(destination_name,'destination selected in form')
+                        if destination_name=='':
+                                error='Please select Destination'
+                                return render_template('booking_select_destination.html',user_location=user_location,error=error)
+                        session['destination']=destination_name
+                        import requests
 
-                api_key = "AIzaSyA_JxBRmUKjcpPLWXwAagTX9k19tIWi2SQ"
+                        api_key = "AIzaSyA_JxBRmUKjcpPLWXwAagTX9k19tIWi2SQ"
 
-                url = f"https://maps.googleapis.com/maps/api/geocode/json?address={destination}&key={api_key}"
-                response = requests.get(url)
-                data = response.json()
-                if data['status'] == 'OK':
-                        result = data['results'][0]
-                        location = result['geometry']['location']
-                        latitude = location['lat']
-                        longitude = location['lng']
-                        destination={'location':destination,'latitude':latitude,'longitude':longitude,'user':current_user.user_name}
-                else:
-                        Error= "Unable to retrieve coordinates."
+                        url = f"https://maps.googleapis.com/maps/api/geocode/json?address={destination_name}&key={api_key}"
+                        response = requests.get(url)
+                        data = response.json()
+                        if data['status'] == 'OK':
+                                result = data['results'][0]
+                                location = result['geometry']['location']
+                                latitude = location['lat']
+                                longitude = location['lng']
+                                destination={'location':destination_name,'latitude':latitude,'longitude':longitude,'user':current_user.user_name}
+                                print(destination['location'],'destination after geocoding')
+                        else:
+                                error= "Unable to retrieve coordinates."
 
+                        
+                        same_direction_buses=get_direction(bus_data,destination)
+                        
+                        print(same_direction_buses,'same direction buses')
+                        nearest_stage=closest_stage(user_location)
+                        print(nearest_stage[0]['stage_name'],'nearest stage to user')
+                        if user_location is None or user_location=='':
+                                error='Please select your location'
+                                return render_template('booking_select_destination.html',error=error)
+                        nearest_taxi=closest_taxi(user_location,taxi_data)
+                        print(nearest_taxi,'nearest taxi in post')
+                        if nearest_taxi is None:
+                                my_taxi=None
+                                taxi_message='No taxi nearby'
+                        else:
+                                taxi_location_name=reverse_geocode(nearest_taxi[0]['latitude'], nearest_taxi[0]['longitude'])
+                                taxi_arrival_time=get_time(user_location_name, taxi_location_name,"driving", api_key)
+                                my_taxi=nearest_taxi[0]['vehicle']
+                                taxi_message='Click here to book your taxi'
+                                taxi_time=get_time(session.get('location_name'), destination_name,"driving", api_key)
+                                print(taxi_time,'taxi time in post')
+                        
+                        
+                        
+                        
+                        user_time=get_time(session.get('location_name'), nearest_stage[0]['stage_name'],"walking", api_key)
+                        print(f"{user_time} Time needed for user to walk to stage {nearest_stage[0]['stage_name']}")
+                        bus_time=get_time(nearest_stage[0]['stage_name'], destination_name,"driving", api_key)
+                        print(f"{bus_time} Total time for user to get to destination on bus")
+                        a_bus=bus(same_direction_buses,nearest_stage,user_time)
+                        if a_bus is None:
+                                bus_message='No bus nearby'
+                                
+
+                        else:
+                                
+                                #bus_location_name=reverse_geocode(a_bus[0]['latitude'], a_bus[0]['longitude'])
+                                #bus_arrival_time=get_time(nearest_stage[0]['stage_name'], bus_location_name,"driving", api_key)
+                                #my_bus=a_bus[0]['vehicle']
+                                bus_message='Click here to select a bus'
+                        print(a_bus,'a bus in post')
+                        session['closest_bus']=a_bus
+                        session['closest_taxi']=my_taxi
+                        session['closest_stage']=nearest_stage[0]['stage_name']
+                        session['pickup_point']=user_location_name
                 
-                nearest_stage=closest_stage(user_location)
-                
-                session['stage_name']=nearest_stage
-                print(nearest_stage,'nearest stage in post')
-                print(taxi_data,'taxi_data')
-                nearest_taxi=closest_taxi(user_location,taxi_data)
-                print(nearest_taxi,'nearest taxi in post')
-                nearest_bus=closest_bus(nearest_stage,bus_data)
-                print(user_location,'user location in post')
-                print(nearest_bus,'nearest bus in post')
-                bus_time=get_time(session.get('location_name'), destination['location'],"driving", api_key)
-                print(bus_time,'bus time in post')
-                user_time=get_time(session.get('location_name'), nearest_stage[0]['stage_name'],"walking", api_key)
-                print(user_time,'user time in post')
-                session['pickup_point']=[nearest_stage[0]['stage_name'],user_location]
-                a_bus=bus(nearest_stage,bus_data,destination,user_location,user_time,bus_time)
-                print(a_bus,'a bus in post')
-                session['closest_bus']='fgt'
-                session['closest_taxi']='fgt'
-               
-                return render_template('booking_select_destination.html',closest_bus='fgt',bus_time=bus_time,closest_stage=nearest_stage[0]['stage_name'],user_time=user_time,closest_taxi='fgt',user_location=user_location)
-        
-        
-
+                        return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location)
+                elif form_name == 'taxi-form':
+                        session['arrival_time']=taxi_arrival_time
+                        session['vehicle_type']='taxi'
+                        return redirect(url_for('booking.select_taxi'))
+                elif form_name == 'bus-form':
+                        session['bus_arrival_time']=bus_time
+                        session['user_to_stage_time']=user_time
+                        session['vehicle_type']='bus'
+                        return redirect(url_for('booking.bus_options'))
+                elif form_name == 'hybrid-form':
+                        pass
         return render_template('booking_select_destination.html',user_location=user_location,user_name='')
 
 
@@ -180,6 +212,67 @@ def select_destination():
 notifications=[]
 
 @bp.route('/booking/select_vehicle',methods=['GET','POST'])
+@login_required
+def select_vehicle():
+        user_name=current_user.user_name
+        print(user_name,'user name in select taxi')
+        phone_number=current_user.phone
+        date=datetime.now().strftime("%Y-%m-%d")
+        time=datetime.now().strftime("%H:%M:%S")
+        destination=session.get('destination')
+        vehicle_no=session.get('closest_taxi')
+        print(vehicle_no,'vehicle no in select vehicle')
+        vehicle_type=session.get('vehicle_type')
+        if vehicle_type=='taxi':
+                pickup_point=session.get('pickup_point')
+                arrival_time=session.get('arrival_time')
+        else:
+                pickup_point=session.get('closest_stage')
+                arrival_time=session.get('bus_arrival_time')
+        vehicle_type=Vehicle.query.filter_by(no_plate=vehicle_no).first()
+        
+        Fare=10
+        
+        if request.method=='POST':
+                user_name=current_user.user_name
+                print(user_name,'user name in select taxi')
+                phone_number=current_user.phone
+                date=datetime.now().strftime("%Y-%m-%d")
+                time=datetime.now().strftime("%H:%M:%S")
+                destination=session.get('destination')
+                vehicle_no=session.get('closest_taxi')
+                print(vehicle_no,'vehicle no in select vehicle')
+                vehicle_type=session.get('vehicle_type')
+                if vehicle_type=='taxi':
+                       pickup_point=session.get('pickup_point')
+                       arrival_time=session.get('arrival_time')
+                else:
+                       pickup_point=session.get('closest_stage')
+                       arrival_time=session.get('bus_arrival_time')
+                vehicle_type=Vehicle.query.filter_by(no_plate=vehicle_no).first()
+                
+                Fare=10
+                booking=Booking(user_name, phone_number, date, time, pickup_point, destination, vehicle_no, Fare)
+                booking.save()
+                booking_notification={'vehicle':vehicle_no,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'booking_id':booking.id}
+                session['booking']=booking_notification
+                notifications.append(booking_notification)
+                message = json.dumps({'vehicle':vehicle_no,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'booking_id':booking.id})
+                producer.send('booking_notification', value=message.encode())
+                print(vehicle_no,'vehicle in bookind')
+                
+
+                return redirect(url_for('booking.wait_confirmation'))
+        
+
+                
+
+
+
+        return render_template('booking_select_vehicle.html')
+
+
+@bp.route('/booking/bus_options',methods=['GET','POST'])
 @login_required
 def select_vehicle():
         
@@ -190,28 +283,22 @@ def select_vehicle():
                 date=datetime.now().strftime("%Y-%m-%d")
                 time=datetime.now().strftime("%H:%M:%S")
                 destination=session.get('destination')
-                vehicle_no=session.get('closest_bus')
+                vehicle_no=session.get('closest_vehicle',None)
                 print(vehicle_no,'vehicle no in select vehicle')
                 vehicle_type=Vehicle.query.filter_by(no_plate=vehicle_no).first()
                 pickup_point=session.get('pickup_point')
                 Fare=10
                 booking=Booking(user_name, phone_number, date, time, pickup_point[0], destination, vehicle_no, Fare)
                 booking.save()
-                booking_notification={'vehicle':vehicle_no,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time}
+                booking_notification={'vehicle':vehicle_no,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'booking_id':booking.id}
+                session['booking']=booking_notification
                 notifications.append(booking_notification)
-                message = json.dumps({'vehicle':vehicle_no,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time})
+                message = json.dumps({'vehicle':vehicle_no,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'booking_id':booking.id})
                 producer.send('booking_notification', value=message.encode())
                 print(vehicle_no,'vehicle in bookind')
-                if booking.Status=='Confirmed':
-                        waiting_message='Booking confirmed'
-                elif booking.Status=='Cancelled':
-                        waiting_message='Booking cancelled'
-                else:
-                        waiting_message='WAiting for confirmation'
+                
 
-
-
-                return render_template('booking_select_vehicle.html',waiting_message=waiting_message,vehicle_no=vehicle_no)
+                return redirect(url_for('booking.wait_confirmation'))
         
 
                 
@@ -221,9 +308,9 @@ def select_vehicle():
         return render_template('booking_select_vehicle.html')
 
 
-
 from datetime import datetime, timedelta
 def receive_notification(notifications ,current_vehicle):
+        current_notifiations=[]
         current_time = datetime.now()
         for notification in notifications:
             if notification['vehicle']==current_vehicle:
@@ -231,19 +318,20 @@ def receive_notification(notifications ,current_vehicle):
                 time_difference = current_time - timestamp
                 if time_difference > timedelta(minutes=3):
                     print(notification,'sent to driver')
-
-                    return notification
-            else:
-                return None
+                    current_notifiations.append(notification)
             
+                
+        return current_notifiations 
 
 @bp.route('/booking/confirm',methods=['GET','POST'])
 @login_required
 @is_driver
 def confirm_booking():
         details=[]
-        details.append(receive_notification(notifications,session.get('vehicle')))
-        print(details,'details in confirm')
+        details=receive_notification(notifications,session.get('vehicle'))
+        for detail in details:
+                print(detail,'details xxx///')
+        confirmed_message='waiting'
 
         if request.method=='POST':
                 token = request.form.get('csrf_token')
@@ -251,17 +339,65 @@ def confirm_booking():
                         validate_csrf(token)
                 except ValidationError :
                         error="Invalid CSRF token"
+
+                id=request.form.get('id')
+                
+
                 confirmation=request.form.get('confirmation')
-                booking=Booking.query.filter_by(user_name=details[0]['rider']).first()
+                booking=Booking.query.filter_by(id=id).first()
+                
+                            
                 if confirmation=='yes':
-                        
+                        print(booking.Status,'booking in confirmed')
                         booking.confirm()
-                        
-                        return render_template('booking_confirm.html',details=details,confirmed_message='Booking confirmed')
+                        confirmed_message='Booking confirmed'
+                        print(booking.Status,'check booking in confirmed')
+                        return render_template('booking_confirm.html',details=details,confirmed_message=confirmed_message)
 
                 else:
-                
+                        print('booking in cancelled')
                         booking.cancel()
-                return render_template('booking_confirm.html',details=details,confirmed_message='Booking cancelled')
+                        confirmed_message='Booking cancelled'
+                return render_template('booking_confirm.html',details=details,confirmed_message=confirmed_message)
 
-        return render_template('booking_confirm.html',details=details)
+        return render_template('booking_confirm.html',details=details,confirmed_message=confirmed_message)
+
+@bp.route('/booking/wait_confirmation',methods=['GET','POST'])
+@login_required
+def wait_confirmation():
+       waiting_message='Your booking is in process. Please wait for confirmation.'
+       vehicle_no=session.get('booking')['vehicle']
+       destination=session.get('booking')['destination']
+       pickup_point=session.get('booking')['pickup_point']
+       booking_id=session.get('booking')['booking_id']
+       booking=Booking.query.filter_by(id=booking_id).first()
+       if request.method=='POST':
+        token = request.form.get('csrf_token')
+        try:
+                validate_csrf(token)
+        except ValidationError :
+                error="Invalid CSRF token"
+        confirm=request.form.get('confirm')
+        
+        
+        if confirm=='check':
+                while 1:
+                        booking=Booking.query.filter_by(id=booking_id).first()
+                        print(booking.Status,'booking in check here')
+                        if booking.Status=='confirmed':
+                                        waiting_message='Booking confirmed'
+                                        break
+                        elif booking.Status=='Cancelled':
+                                        waiting_message='Booking cancelled'
+                                        break
+                                
+        
+                if waiting_message=='Booking confirmed':
+                        return render_template('booking_wait_confirmation.html',waiting_message=waiting_message,vehicle_no=vehicle_no,destination=destination,pickup_point=pickup_point)
+                else:
+                        return redirect(url_for('booking.select_vehicle'))
+                                
+               
+        
+                      
+       return render_template('booking_wait_confirmation.html',waiting_message=waiting_message,vehicle_no=vehicle_no,destination=destination,pickup_point=pickup_point)

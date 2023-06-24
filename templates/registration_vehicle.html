@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}
-<h2>Vehicle Registration</h2>
+
 {% endblock %}
 {% block content %}
+<div class="home">
+<h2>Vehicle Registration</h2>
 <form action="/registration/vehicle" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="id_no">License or Id No</label>
@@ -25,4 +27,5 @@
     
 
 </form>
+</div>
 {% endblock %}

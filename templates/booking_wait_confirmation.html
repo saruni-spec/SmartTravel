@@ -1,26 +1,23 @@
 {% extends 'base.html' %}
 {% block title %}
-<a href="{{url_for('booking.select_destination')}}">Get a ride</a>
 <a href="{{url_for('profile.rider')}}">Profile</a>
 <h2>booking</h2>
 {% endblock %}
 {% block content %}
-<form action="/booking/select_vehicle" method="post">
+<form action="/booking/wait_confirmation" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="vehicle">Vehicle</label>
     <p>{{ vehicle_no }}</p>
     <label for="driver">Driver</label>
     <p>{{ driver }}</p>
-    <label for="seats">How many seats do you need?</label>
-    <input type="number" name="no_of_seats" value="5">
-
     <label for="destination">Destination</label>
     {{ destination }}
     <label for="pickup">Pickup point</label>
-    {{ pickup_point }}
+    {{ pickup_point[0]}}
 
     <p>{{ waiting_message }}</p>
-    <button type="submit">Book</button>
+    <button type="submit" name="confirm" value="check">Check</button>
+    <button type="submit" name="confirm" value="proceed">Proceed</button>
 </form>
 
 

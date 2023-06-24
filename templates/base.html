@@ -2,25 +2,57 @@
 <html>
 <head>
   <meta name="csrf-token" content="{{ csrf_token() }}">
+
   <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmartTravel</title>
     <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/forms.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/top-nav.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/body.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/colors.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/links.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/home.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_JxBRmUKjcpPLWXwAagTX9k19tIWi2SQ" async defer></script>
 
       
 </head>
 <body>
-    <header>
- {% block title %}
- {% endblock %}
-    </header>
-    <main>
+  <div class="topnav" id="myTopnav">
+    <a href="{{url_for('index.index')}}" class="active">Smart Travel</a>
+    <a href="{{url_for('login.login')}}" >Login</a>
+    <a href="{{url_for('booking.select_destination')}}">Get a ride</a>
+    <a href="{{url_for('profile.profile')}}">Profile</a>
+    <a href="{{url_for('map.user_location')}}">Map</a>
+    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+      <i class="fa fa-bars"></i>
+    </a>
+  </div>
+ 
+    
+      <header>
+        
+        {% block title %}
+        {% endblock %}
+           </header>
+           <main>
 {% block content %}
 {% endblock %}
-    </main>
-    <footer>
+</main>
+<footer>
         
-    </footer>
+</footer>
+   
+    
+    <script>
+        function myFunction() {
+          var x = document.getElementById("myTopnav");
+          if (x.className === "topnav") {
+            x.className += " responsive";
+          } else {
+            x.className = "topnav";
+          }
+        }
+        </script>
 </body>
 </html>

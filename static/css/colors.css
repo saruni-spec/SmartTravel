@@ -1,0 +1,24 @@
+/* colors.css */
+
+:root {
+  /* Primary Colors */
+  --primary-background-color:#333 ;
+  --primary-text-color: #f2f2f2;
+
+  /* Link Colors */
+  --link-color: var(--primary-text-color);
+  --link-hover-background-color: #ddd;
+  --link-hover-color: #000;
+  --link-active-background-color: #04AA6D;
+  --link-active-color: #fff;
+
+  /* Secondary Colors */
+  --secondary-background-color: #fff;
+  --secondary-text-color: #333;
+  --secondary-border-color: #ddd;
+
+  /* Accent Colors */
+  --accent-color-1: #024212;
+  --accent-color-2: #aaf8d8;
+  --accent-color-3: #ddd;
+}

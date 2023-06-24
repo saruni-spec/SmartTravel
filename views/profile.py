@@ -40,39 +40,27 @@ producer = KafkaProducer(bootstrap_servers='localhost:9092')
 
 bp = Blueprint('profile', __name__) 
 
+@bp.route('/profile', methods=['GET', 'POST'])
+def profile():
+    if current_user.is_authenticated:
+        if current_user.check_if_driver():
+            return redirect(url_for('profile.profile_driver'))
+        elif current_user.check_if_owner:
+            return redirect(url_for('profile.profile_owner'))
+        else:
+            return redirect(url_for('profile.rider'))
+    else:
+        return redirect(url_for('login.login'))
+
+
+
 
 @bp.route('/profile/rider', methods=['GET', 'POST'])
 @login_required
 def rider():
     user_name=current_user.user_name
-    if request.method == 'POST':
-        token = request.form.get('csrf_token')
-        try:
-            validate_csrf(token)
-        except ValidationError :
-            error="Invalid CSRF token"
-        latitude = request.form.get('latitude')
-        longitude = request.form.get('longitude')
-        session['current_location'] = {"username":user_name,"latitude": latitude, "longitude": longitude}
-        
-        message = json.dumps({"username":user_name,"latitude": latitude, "longitude": longitude})
-        producer.send('user_coordinates', value=message.encode())
-        
-    
-
-    else:
-        
-        if session.get('current_location')  is None:
-            location_name = ""
-        else:
-            location_name = reverse_geocode(session.get('current_location').get('latitude'), session.get('current_location').get('longitude'))
-            session['location_name']=location_name
-        return render_template('profile_rider.html',user_name=user_name,current_location=location_name)
-
-
-
-    
-    return render_template('profile_rider.html')
+   
+    return render_template('profile_rider.html',user_name=user_name)
             
 
 @bp.route('/profile/owner', methods=['GET', 'POST'])
@@ -80,31 +68,9 @@ def rider():
 @is_owner
 def profile_owner():
     user_name=current_user.user_name
-    if request.method == 'POST':
-        token = request.form.get('csrf_token')
-        try:
-            validate_csrf(token)
-        except ValidationError :
-            error="Invalid CSRF token"
-        
-        print(user_name,'owner')
-        latitude = request.form.get('latitude')
-        longitude = request.form.get('longitude')
-        session['current_location'] = {'owner':user_name,"latitude": latitude, "longitude": longitude}
-        message = json.dumps({'owner':user_name,"latitude": latitude, "longitude": longitude})
-        producer.send('owner_coordinates', value=message.encode())
-        
-    else:
-        if session.get('current_location')  is None:
-            location_name = ""
-        else:
-            location_name = reverse_geocode(session.get('current_location').get('latitude'), session.get('current_location').get('longitude'))
-            session['location_name']=location_name
-        return render_template('profile_owner.html',user_name=user_name,current_location=location_name)
     
 
-
-    return render_template('profile_owner.html')
+    return render_template('profile_owner.html',user_name=user_name)
 
 
 
@@ -113,38 +79,9 @@ def profile_owner():
 @login_required
 @is_driver
 def profile_driver():
-    from models.vehicle import Vehicle
     user_name=current_user.user_name
-    if request.method == 'POST':
-        token = request.form.get('csrf_token')
-        try:
-            validate_csrf(token)
-        except ValidationError :
-            error="Invalid CSRF token"
-        latitude = request.form.get('latitude')
-        longitude = request.form.get('longitude')
-        
-        vehicle=Vehicle.query.filter_by(driver_username=user_name).first()
-        current_vehicle=vehicle.no_plate
-        session['vehicle']=current_vehicle
-        print(current_vehicle,':',latitude, 'latitude',longitude, 'longitude')
-        session['current_location'] = {'vehicle':current_vehicle,"latitude": latitude, "longitude": longitude}
-        message = json.dumps({'vehicle':current_vehicle,"latitude": latitude, "longitude": longitude})
-        producer.send('bus_coordinates', value=message.encode())
-        
-
-    else:
-        if session.get('current_location')  is None:
-            location_name = ""
-        else:
-            location_name = reverse_geocode(session.get('current_location').get('latitude'), session.get('current_location').get('longitude'))
-            session['location_name']=location_name
-        return render_template('profile_driver.html',user_name=user_name,current_location=location_name)
-
-
-
     
-    return render_template('profile_driver.html')
+    return render_template('profile_driver.html',user_name=user_name)
 
 
 @bp.route('/profile/driver/select_destination',methods=['GET','POST'])
@@ -209,4 +146,7 @@ def edit_profile():
         else:
             return render_template('profile_edit.html',error=error)
     return render_template('profile_edit.html',user_name=current_user.user_name,email=current_user.email,phone=current_user.phone,address=current_user.address)
+
+
+
 

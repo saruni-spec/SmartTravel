@@ -36,7 +36,6 @@ class Booking(db.Model):
 
     def confirm(self):
         self.Status="confirmed"
-        db.session.add(self.Status)
         db.session.commit()
     
     def payment(self, payment_type, card_number):

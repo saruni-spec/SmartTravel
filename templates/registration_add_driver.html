@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}
-<h2>Add driver</h2>
+
 {% endblock %}
 {% block content %}
+<div class="home">
+<h2>Add driver</h2>
 <p>Input driver email to send them confirmation code <br>
 If you skip,the verification code will be sent to you instead.You can then share it with the driver
 </p>
@@ -21,5 +23,5 @@ If you skip,the verification code will be sent to you instead.You can then share
     {% endif %}
 </form>
 
-
+</div>
 {% endblock %}

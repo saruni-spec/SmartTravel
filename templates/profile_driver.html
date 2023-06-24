@@ -1,25 +1,20 @@
 {% extends 'base.html' %}
 {% block title %}
+<a href="{{url_for('booking.confirm_booking')}}">Check Bookings</a>
 <h2>Profile</h2>
 {% endblock %}
 {% block content %}
-
+<div class="home">
     <label for="username">Username</label>
     <p>{{user_name}}</p>
-    <label for="current_location">Current Location</label>
-    <p>{{current_location}}</p>
-    <label for="destination">Destination</label>
-    <p>{{destination}}</p>
-    <label for="current_vehicle">Current Vehicle</label>
-    {{current_vehicle}}
-    <label for="credits">Available Seats</label>
-    {{credits}}
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    
     
     <a href="riders"><button type="button">Current passengers</button></a>
-    <a href="{{url_for('profile.edit_profile')}}"><button type="button"> edit profile</button></a>
+    <a href="{{url_for('profile.edit_profile')}}"> edit profile</a>
 
 
-
+</div>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="{{url_for('static', filename='js/user_location.js')}}"></script>
 

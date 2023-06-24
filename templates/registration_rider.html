@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}
-<h2>Registration</h2>
+
 {% endblock %}
 {% block content %}
+<div class="home">
+<h2>Registration</h2>
 <form action="/registration/rider" method="post" onsubmit="return validateForm()">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="username">user_name</label>
@@ -18,6 +20,8 @@
     {% endif %}
     <a href="{{url_for('registration.register_driver')}}">Register as Driver</a>
 </form>
+</div>
+
 <script src="{{url_for('static',filename='js/confirm_password.js')}}"></script>
 
 

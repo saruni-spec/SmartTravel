@@ -28,20 +28,7 @@ def login():
             
             if user and user.verify_password(password):
                 login_user(user)
-                if user.check_if_driver() is True and user.check_if_owner() is True:
-                    print(user.check_if_driver(),user.check_if_owner(),'both')
-                    next_url = session.get('next_url', url_for('profile.profile_owner'))
-                elif user.check_if_driver() is True:
-                    print(user.check_if_driver(),'driver')
-                    next_url = session.get('next_url', url_for('profile.profile_driver'))
-                elif user.check_if_owner() is True:
-                    print(user.check_if_owner(),'owner')
-                    
-                    next_url = session.get('next_url', url_for('profile.profile_owner'))
-                else:
-                    print('only user')
-                    next_url = session.get('next_url', url_for('profile.rider'))
-                
+                next_url=session.get('next_url',url_for('index.index'))
                 if next_url == url_for('login.login'):
                     next_url = url_for('index.index')
                 response = make_response(redirect(next_url))

@@ -3,6 +3,7 @@
 <h2>Profile</h2>
 {% endblock %}
 {% block content %}
+<div class="home">
 <form action="/profile/edit" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="username">Change Username</label>
@@ -21,4 +22,5 @@
     <button type="submit">Save</button>
 
 </form>
+</div>
 {% endblock %}

@@ -1,13 +1,27 @@
 {% extends 'base.html' %}
 {% block title %}
-Smart Travel
+
 {% endblock %}
 {% block content %}
 
-<link rel="stylesheet" type=" text/css"href="{{url_for('static',filename='css/article.css')}}">
-<article>
-<a href="{{url_for('registration.register_vehicle')}}">Register Vehicle</a>
-<a href="{{url_for('registration.registration')}}">Register</a>
-<a href="{{url_for('registration.register_driver')}}">Register as Driver</a>
-</article>
+
+<div class="index">
+    <div class="container">
+<a href="{{url_for('registration.register_vehicle')}}" class="a">Register Vehicle</a>
+</div>
+</div>
+
+<div class="index">
+    <div class="container">
+<a href="{{url_for('registration.registration')}}" class="a">Register</a>
+</div>
+</div>
+
+<div class="index">
+    <div class="container">
+<a href="{{url_for('registration.register_driver')}}" class="a">Register as Driver</a>
+</div>
+</div>
+
+
 {% endblock %}
