@@ -14,8 +14,9 @@
     <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/home.css')}}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_JxBRmUKjcpPLWXwAagTX9k19tIWi2SQ" async defer></script>
-
-      
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="{{url_for('static', filename='js/user_location.js')}}"></script>
+   
 </head>
 <body>
   <div class="topnav" id="myTopnav">
@@ -24,6 +25,12 @@
     <a href="{{url_for('booking.select_destination')}}">Get a ride</a>
     <a href="{{url_for('profile.profile')}}">Profile</a>
     <a href="{{url_for('map.user_location')}}">Map</a>
+    
+    {% if current_user.is_authenticated %}
+    {% if current_user.check_if_driver() %}
+      <a href="{{ url_for('booking.confirm_booking') }}">Notifications</a>
+    {% endif %}
+  {% endif %}
     <a href="javascript:void(0);" class="icon" onclick="myFunction()">
       <i class="fa fa-bars"></i>
     </a>
@@ -54,5 +61,8 @@
           }
         }
         </script>
+      
+         
+       
 </body>
 </html>

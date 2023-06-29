@@ -15,7 +15,7 @@ class Vehicle(db.Model):
     owner_username=db.Column(db.String(100),ForeignKey('owner.user_name'),nullable=False)
     driver_username=db.Column(db.String(100),ForeignKey('driver.user_name'),nullable=True)
     color=db.Column(db.String(50))
-    is_active=db.Column(db.Boolean,default=True)
+    is_active=db.Column(db.Boolean,default=False)
     verification_code=db.Column(db.String(50))
 
     booking_details = relationship("Booking", backref="bookings" )

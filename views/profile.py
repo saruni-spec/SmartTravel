@@ -74,13 +74,29 @@ def profile_owner():
 
 
 
-
+from models.vehicle import Vehicle
+from models.stages import Stages
+from logic.matching import find_closest_bus_stop_to_bus
 @bp.route('/profile/driver', methods=['GET', 'POST'])
 @login_required
 @is_driver
 def profile_driver():
     user_name=current_user.user_name
-    
+    stages=Stages.query.all()
+    if request.method == 'POST':
+        token = request.form.get('csrf_token')
+        try:
+            validate_csrf(token)
+        except ValidationError :
+            error="Invalid CSRF token"
+            return error,404
+        docked = request.form.get('docked') == 'true'
+        destination= request.form.get('destination')
+        docking_stage=find_closest_bus_stop_to_bus(session.get('latitude'),session.get('longitude'),stages)
+        session['docking_stage']=docking_stage
+        print(docked,'is docked')
+        session['is_docked'] = docked
+        session['bus_destination'] = destination
     return render_template('profile_driver.html',user_name=user_name)
 
 

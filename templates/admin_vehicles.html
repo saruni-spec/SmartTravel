@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>payment</h2>
+{% endblock %}
+{% block content %}
+{% if vehicles is none %}
+<p>No vehicles are registered</p>
+{% elif vehicles is iterable and vehicles|length >0 %}
+{% for vehicle in vehicles %}
+
+<form action="/admin/vehicles" method="post">
+    <label for="no_plate">No Plate</label>
+    {{vehicle.no_plate}}
+    <label for="driver">Driver</label>
+    {{vehicle.driver_username}}
+    <label for="owner">Owner</label>
+    {{vehicle.owner_username}}
+    <label for="capacity">Capacity</label>
+    {{vehicle.capacity}}
+    <label for="color">Color</label>
+    {{vehicle.color}}
+    <label for="vehicle_type">Type</label>
+    {{vehicle.vehicle_type}}
+    </form>
+{% endfor %}
+{% else %}
+<p>no vehicles registered</p>
+{% endif %}
+{% endblock %}

@@ -5,17 +5,44 @@
 {% endblock %}
 {% block content %}
 <div class="home">
+    <form action="/profile/driver" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label class="switch">
+            <input type="checkbox" id="dockedCheckbox" name="docked" onchange="sendData(this.checked)">
+            <span class="slider round"></span>
+        </label>
+        
+        <label for="destination" id="destination_name" style="display: none;">Destination</label>
+        <input type="text" name="destination" id="destination" style="display: none;">
+        <button type="submit" name="submit" id="submit" style="display: none;">Confirm</button>
+    </form>
+
     <label for="username">Username</label>
     <p>{{user_name}}</p>
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    
-    
+
     <a href="riders"><button type="button">Current passengers</button></a>
     <a href="{{url_for('profile.edit_profile')}}"> edit profile</a>
-
-
 </div>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="{{url_for('static', filename='js/user_location.js')}}"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+
+    function toggleDestinationField(checked) {
+        var destinationName = document.getElementById('destination_name');
+        var destination = document.getElementById('destination');
+        var submit = document.getElementById('submit')
+        if (checked) {
+            destinationName.style.display = 'block';
+            destination.style.display = 'block';
+            submit.style.display = 'block';
+        } else {
+            destinationName.style.display = 'none';
+            destination.style.display = 'none';
+            submit.style.display = 'none';
+        }
+    }
+</script>
+
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/switch.css')}}">
 {% endblock %}

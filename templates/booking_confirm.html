@@ -11,16 +11,34 @@
 
 {% elif details is iterable and details|length >0 %}
 {% for detail in details %} 
-
+{% if confirmed_message=="Booking cancelled" %}
 <form action="/booking/confirm" method="post">
-<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-<p>Destination:{{detail.destination}}  <br></p>  
-<p>Pickup_point:{{detail.pickup_point[0]}}</p>
-<input type="hidden" name="id" id="id" value="{{detail.booking_id}}">
-<button type="submit" name="confirmation" value="yes">Accept</button>
-<button type="submit" name="confirmation" value="no">Reject</button>    
-<input type="hidden" value="{{confirmed_message}}">
-</form>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <p>Destination:{{detail.destination}}  <br></p>  
+  <p>Pickup_point:{{detail.pickup_point}}</p>
+  <input type="hidden" name="id" id="id" value="{{detail.booking_id}}">
+  <p>{{confirmed_message}}</p>
+  </form>
+{% elif confirmed_message=="Booking confirmed" %}
+<form action="/booking/confirm" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <p>Destination:{{detail.destination}}  <br></p>  
+  <p>Pickup_point:{{detail.pickup_point}}</p>
+  <input type="hidden" name="id" id="id" value="{{detail.booking_id}}">
+  <p>{{confirmed_message}}</p>
+  </form>
+{% else %}
+<form action="/booking/confirm" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <p>Destination:{{detail.destination}}  <br></p>  
+  <p>Pickup_point:{{detail.pickup_point}}</p>
+  <input type="hidden" name="id" id="id" value="{{detail.booking_id}}">
+  <button type="submit" name="confirmation" value="yes">Accept</button>
+  <button type="submit" name="confirmation" value="no">Reject</button>    
+  <input type="hidden" value="{{confirmed_message}}">
+  </form>
+{% endif %}
+
 {% endfor %}
 {% else %}
 <p>no notifications</p>
@@ -50,4 +68,7 @@ forms.forEach(form => {
 });
 
 </script>
+
+
+
 {% endblock %}

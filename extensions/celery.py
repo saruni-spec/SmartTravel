@@ -7,22 +7,13 @@ import sys
 sys.path.append('/home/boss')
 
 
-
 from celery import Celery
 
-celery = Celery('myapp', broker='redis://localhost:6379/0')
-
-# Optional configuration - If you have any additional Celery settings, you can define them here.
-# For example:
-# app.conf.update(
-#     result_backend='redis://localhost:6379/0',
-#     timezone='Europe/London',
-# )
-
-
-
-
-
+celery = Celery('celery', broker='redis://localhost:6379/3' ,include=['tasks'])
+celery.conf.update(
+    broker='redis://localhost:6379/3',
+    result_backend='redis://localhost:6379/3'
+)
 
 
 

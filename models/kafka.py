@@ -28,6 +28,7 @@ def create_kafka_objects(consumer):
 
 
 
+
 class Notification():
     def __init__(self,vehicle,destination,pickup_point,user_name):
         self.vehicle = vehicle

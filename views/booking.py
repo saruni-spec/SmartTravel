@@ -11,7 +11,7 @@ from flask_googlemaps import   Map
 from kafka import KafkaConsumer,KafkaProducer
 from flask import jsonify
 from extensions.celery import process_notifications
-
+from extensions.tasks import start_routing
 
 from flask_wtf.csrf import validate_csrf
 from wtforms.validators import ValidationError
@@ -88,7 +88,8 @@ def closest_taxi(user_location,taxi_data):
 
 
 
-def bus(bus_data,stage,user_time):
+def bus(bus_data,stage,user_time,destination,closest_stage):
+        
         bus_clusters=group_coordinates(bus_data, 5)
         print(bus_clusters,'closest bus')
         latitude = float(stage[0]['latitude']) 
@@ -116,6 +117,12 @@ def select_destination():
         print(user_location,'user location in post up')
         print(jsonify(user_location),'user location in jsonify up')
         if request.method=='POST':
+                token = request.form.get('csrf_token')
+                try:
+                        validate_csrf(token)
+                except ValidationError :
+                        error="Invalid CSRF token"
+                        return error,404
                 form_name = request.form.get('form-name')
                 print(form_name,'form name')
                 if form_name == 'destination-form':
@@ -146,7 +153,7 @@ def select_destination():
                                 print(destination['location'],'destination after geocoding')
                         else:
                                 error= "Unable to retrieve coordinates."
-
+                        session['destination_coordinates']={'latitude':destination['latitude'],'longitude':destination['longitude']}
                         
                         same_direction_buses=get_direction(bus_data,destination)
                         
@@ -162,13 +169,17 @@ def select_destination():
                                 my_taxi=None
                                 taxi_message='No taxi nearby'
                         else:
+                                print('we have a nearest taxi')
                                 taxi_location_name=reverse_geocode(nearest_taxi[0]['latitude'], nearest_taxi[0]['longitude'])
+                                session['taxi_location_name']=taxi_location_name
                                 taxi_arrival_time=get_time(user_location_name, taxi_location_name,"driving", api_key)
+                                session['arrival_time']=taxi_arrival_time
                                 my_taxi=nearest_taxi[0]['vehicle']
                                 taxi_message='Click here to book your taxi'
                                 taxi_time=get_time(session.get('location_name'), destination_name,"driving", api_key)
                                 print(taxi_time,'taxi time in post')
-                        
+                                session['taxi_travel_time']=get_time(destination_name,session.get('location'),'driving',api_key)
+                                print (session.get('taxi_travel_time'),'taxi travel time ')
                         
                         
                         
@@ -186,34 +197,40 @@ def select_destination():
                                 #bus_location_name=reverse_geocode(a_bus[0]['latitude'], a_bus[0]['longitude'])
                                 #bus_arrival_time=get_time(nearest_stage[0]['stage_name'], bus_location_name,"driving", api_key)
                                 #my_bus=a_bus[0]['vehicle']
+                                for each_bus in a_bus:
+                                        bus_location=reverse_geocode(each_bus['latitude'], each_bus['longitude'])
+                                        bus['arrival_time']=get_time(nearest_stage[0]['stage_name'],bus_location,'driving',api_key)
                                 bus_message='Click here to select a bus'
+                                session['user_to_stage_time']=user_time
+                                session['bus_travel_time']=get_time(nearest_stage[0]['stage_name'],destination_name,'driving',api_key)
                         print(a_bus,'a bus in post')
                         session['closest_bus']=a_bus
                         session['closest_taxi']=my_taxi
                         session['closest_stage']=nearest_stage[0]['stage_name']
                         session['pickup_point']=user_location_name
                 
-                        return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location)
+                        return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location_name)
                 elif form_name == 'taxi-form':
-                        session['arrival_time']=taxi_arrival_time
+                        
                         session['vehicle_type']='taxi'
+                        
                         return redirect(url_for('booking.select_taxi'))
                 elif form_name == 'bus-form':
-                        session['bus_arrival_time']=bus_time
-                        session['user_to_stage_time']=user_time
+                        
                         session['vehicle_type']='bus'
+                        
                         return redirect(url_for('booking.bus_options'))
                 elif form_name == 'hybrid-form':
                         pass
-        return render_template('booking_select_destination.html',user_location=user_location,user_name='')
+        return render_template('booking_select_destination.html',user_location=user_location_name)
 
 
 
 notifications=[]
 
-@bp.route('/booking/select_vehicle',methods=['GET','POST'])
+@bp.route('/booking/select_taxi',methods=['GET','POST'])
 @login_required
-def select_vehicle():
+def select_taxi():
         user_name=current_user.user_name
         print(user_name,'user name in select taxi')
         phone_number=current_user.phone
@@ -223,43 +240,24 @@ def select_vehicle():
         vehicle_no=session.get('closest_taxi')
         print(vehicle_no,'vehicle no in select vehicle')
         vehicle_type=session.get('vehicle_type')
-        if vehicle_type=='taxi':
-                pickup_point=session.get('pickup_point')
-                arrival_time=session.get('arrival_time')
-        else:
-                pickup_point=session.get('closest_stage')
-                arrival_time=session.get('bus_arrival_time')
-        vehicle_type=Vehicle.query.filter_by(no_plate=vehicle_no).first()
+        travel_time=session.get('taxi_travel_time')
         
-        Fare=10
+        pickup_point=session.get('pickup_point')
+        arrival_time=session.get('arrival_time')
+       
+        vehicle=Vehicle.query.filter_by(no_plate=vehicle_no).first()
+        
+        fare=10
         
         if request.method=='POST':
-                user_name=current_user.user_name
-                print(user_name,'user name in select taxi')
-                phone_number=current_user.phone
-                date=datetime.now().strftime("%Y-%m-%d")
-                time=datetime.now().strftime("%H:%M:%S")
-                destination=session.get('destination')
-                vehicle_no=session.get('closest_taxi')
-                print(vehicle_no,'vehicle no in select vehicle')
-                vehicle_type=session.get('vehicle_type')
-                if vehicle_type=='taxi':
-                       pickup_point=session.get('pickup_point')
-                       arrival_time=session.get('arrival_time')
-                else:
-                       pickup_point=session.get('closest_stage')
-                       arrival_time=session.get('bus_arrival_time')
-                vehicle_type=Vehicle.query.filter_by(no_plate=vehicle_no).first()
-                
-                Fare=10
-                booking=Booking(user_name, phone_number, date, time, pickup_point, destination, vehicle_no, Fare)
+                booking=Booking(user_name, phone_number, date, time, pickup_point, destination, vehicle_no, fare)
                 booking.save()
                 booking_notification={'vehicle':vehicle_no,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'booking_id':booking.id}
                 session['booking']=booking_notification
                 notifications.append(booking_notification)
-                message = json.dumps({'vehicle':vehicle_no,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'booking_id':booking.id})
+                message = json.dumps(booking_notification)
                 producer.send('booking_notification', value=message.encode())
-                print(vehicle_no,'vehicle in bookind')
+                print(vehicle_no,'vehicle in booking')
                 
 
                 return redirect(url_for('booking.wait_confirmation'))
@@ -269,43 +267,40 @@ def select_vehicle():
 
 
 
-        return render_template('booking_select_vehicle.html')
+        return render_template('booking_select_taxi.html',travel_time=travel_time,fare=fare,vehicle_no=vehicle_no,arrival_time=arrival_time,pickup_point=pickup_point,destination=destination,vehicle_type=vehicle_type)
 
 
 @bp.route('/booking/bus_options',methods=['GET','POST'])
 @login_required
-def select_vehicle():
+def bus_options():
+        buses=session.get('closest_bus')
+        pickup_point=session.get('closest_stage')
+        travel_time=session.get('travel time')
         
+        user_name=current_user.user_name
+        print(user_name,'user name in select taxi')
+        phone_number=current_user.phone
+        date=datetime.now().strftime("%Y-%m-%d")
+        time=datetime.now().strftime("%H:%M:%S")
+        destination=session.get('destination')
+        
+        fare=10
+        print(pickup_point,'pickup point in bus options')
+        print(buses,'buses in bus options')
         if request.method=='POST':
-                user_name=current_user.user_name
-                print(user_name,'user name in select vehicle')
-                phone_number='888'
-                date=datetime.now().strftime("%Y-%m-%d")
-                time=datetime.now().strftime("%H:%M:%S")
-                destination=session.get('destination')
-                vehicle_no=session.get('closest_vehicle',None)
-                print(vehicle_no,'vehicle no in select vehicle')
-                vehicle_type=Vehicle.query.filter_by(no_plate=vehicle_no).first()
-                pickup_point=session.get('pickup_point')
-                Fare=10
-                booking=Booking(user_name, phone_number, date, time, pickup_point[0], destination, vehicle_no, Fare)
+                vehicle_no=request.form.get('vehicle')
+                booking=Booking(user_name, phone_number, date, time, pickup_point, destination, vehicle_no, fare)
                 booking.save()
                 booking_notification={'vehicle':vehicle_no,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'booking_id':booking.id}
                 session['booking']=booking_notification
                 notifications.append(booking_notification)
-                message = json.dumps({'vehicle':vehicle_no,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'booking_id':booking.id})
+                message = json.dumps(booking_notification)
                 producer.send('booking_notification', value=message.encode())
-                print(vehicle_no,'vehicle in bookind')
+                print(vehicle_no,'vehicle in booking')
                 
-
                 return redirect(url_for('booking.wait_confirmation'))
-        
 
-                
-
-
-
-        return render_template('booking_select_vehicle.html')
+        return render_template('booking_bus_options.html',buses=buses,pickup_point=pickup_point,destination=destination,travel_time=travel_time)
 
 
 from datetime import datetime, timedelta
@@ -323,15 +318,23 @@ def receive_notification(notifications ,current_vehicle):
                 
         return current_notifiations 
 
+
+
+
+
+
+
+
 @bp.route('/booking/confirm',methods=['GET','POST'])
 @login_required
 @is_driver
 def confirm_booking():
+        booking_notification=session.get('booking')
         details=[]
         details=receive_notification(notifications,session.get('vehicle'))
-        for detail in details:
-                print(detail,'details xxx///')
+        
         confirmed_message='waiting'
+
 
         if request.method=='POST':
                 token = request.form.get('csrf_token')
@@ -342,11 +345,12 @@ def confirm_booking():
 
                 id=request.form.get('id')
                 
+                
 
                 confirmation=request.form.get('confirmation')
                 booking=Booking.query.filter_by(id=id).first()
                 
-                            
+                        
                 if confirmation=='yes':
                         print(booking.Status,'booking in confirmed')
                         booking.confirm()
@@ -358,14 +362,23 @@ def confirm_booking():
                         print('booking in cancelled')
                         booking.cancel()
                         confirmed_message='Booking cancelled'
+                for notification in details:
+                        if notification['booking_id']==id:
+                                notification['status']='Cancelled'
+                        else:
+                               notification['status']='Confirmed'
                 return render_template('booking_confirm.html',details=details,confirmed_message=confirmed_message)
+               
 
-        return render_template('booking_confirm.html',details=details,confirmed_message=confirmed_message)
+        return render_template('booking_confirm.html',details=details,confirmed_message=confirmed_message,booking_notification=booking_notification)
+
+
 
 @bp.route('/booking/wait_confirmation',methods=['GET','POST'])
 @login_required
 def wait_confirmation():
        waiting_message='Your booking is in process. Please wait for confirmation.'
+       booking_notification=session.get('booking')
        vehicle_no=session.get('booking')['vehicle']
        destination=session.get('booking')['destination']
        pickup_point=session.get('booking')['pickup_point']
@@ -393,11 +406,38 @@ def wait_confirmation():
                                 
         
                 if waiting_message=='Booking confirmed':
-                        return render_template('booking_wait_confirmation.html',waiting_message=waiting_message,vehicle_no=vehicle_no,destination=destination,pickup_point=pickup_point)
+                        return redirect(url_for('booking.wait_for_vehicle'))
                 else:
                         return redirect(url_for('booking.select_vehicle'))
                                 
                
         
                       
-       return render_template('booking_wait_confirmation.html',waiting_message=waiting_message,vehicle_no=vehicle_no,destination=destination,pickup_point=pickup_point)
+       return render_template('booking_wait_confirmation.html',booking_notification=booking_notification,waiting_message=waiting_message,vehicle_no=vehicle_no,destination=destination,pickup_point=pickup_point)
+
+
+
+
+@bp.route('/booking/wait_for_vehicle',methods=['GET','POST'])
+@login_required
+def wait_for_vehicle():
+    user_name=current_user.user_name
+    vehicle_no=session.get('booking')['vehicle']
+    destination=session.get('booking')['destination']
+    pickup_point=session.get('booking')['pickup_point']
+    wait_time=session.get('arrival_time')
+    
+    
+    start_routing.delay()
+    return render_template('booking_wait_for_vehicle.html',user_name=user_name,wait_time=wait_time,vehicle_no=vehicle_no,destination=destination,pickup_point=pickup_point)
+
+
+
+           
+
+
+@bp.route('/booking/review',methods=['GET','POST'])
+@login_required
+@is_driver
+def review():
+        return render_template('booking_review.html')

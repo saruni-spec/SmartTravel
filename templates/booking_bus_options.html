@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}
+<a href="{{url_for('booking.select_destination')}}">Get a ride</a>
+<a href="{{url_for('profile.rider')}}">Profile</a>
+<h2>booking</h2>
+{% endblock %}
+{% block content %}
+<form action="booking/bus_options.html">
+    <label for="pickup_point">Pickup Point</label>
+    <p>{{pickup_point}}</p>
+    <label for="destination">Destination</label>
+    {{ destination }}
+    <label for="duration">Travel Time</label>
+    <p>{{travel_time}}</p>
+</form>
+{% if buses is none %}
+<p>No buses vailable</p>
+{% elif buses is iterable and buses|length >0 %}
+{% for bus in buses %}
+
+<form action="/booking/bus_options" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="vehicle">Vehicle</label>
+    <input type="hidden" name="vehicle" id="vehicle" value="{{ bus.vehicle}} ">
+    <p>{{ bus.vehicle}}</p>
+    <label for="time">Estimated arrival time</label>
+    <p>{{bus.arrival_time}}</p>
+    
+    <label for="Fare">Fare</label>
+    <p>{{fare}}</p>
+    <button type="submit">Confirm Booking</button>
+</form>
+
+{% endfor %}
+{% else %}
+<p>no buses to book</p>
+{% endif %}
+
+
+{% endblock %}

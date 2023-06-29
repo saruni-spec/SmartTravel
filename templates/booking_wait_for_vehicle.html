@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}
+<a href="{{url_for('profile.rider')}}">Profile</a>
+<h2>booking</h2>
+{% endblock %}
+{% block content %}
+<form action="/booking/wait_for_vehicle" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="vehicle">Vehicle</label>
+    <p>{{ vehicle_no }}</p>
+    <label for="driver">Driver</label>
+    <p>{{ driver }}</p>
+    <label for="destination">Destination</label>
+    {{ destination }}
+    <label for="pickup">Pickup point</label>
+    {{ pickup_point}}
+    <label for="wait_time">Wait time</label>
+    <p>{{ wait_time}}</p>
+
+    <button type="submit">Cancel booking</button>
+
+    
+</form>
+
+<script>
+  function checkDestination() {
+      fetch('/tracker/destination')
+          .then(response => response.text())
+          .then(data => {
+              if (data === "success") {
+                  window.location.href = '/booking/review';
+              }
+          });
+  }
+
+  setInterval(checkDestination, 60000); // Check every 5 seconds
+</script>
+
+{% endblock %}

@@ -155,3 +155,36 @@ def get_direction(vehicle_data, destination):
                             if bus not in bus_group:
                                 bus_group.append(bus)
     return bus_group
+
+def docked_buses(user_destination,bus_details):
+    docked_buses=[]
+    if bus_details is None:
+        return None
+    else:
+        for bus in bus_details:
+            if bus['docked']:
+                if bus['destination']==user_destination:
+                    docked_buses.append(bus)
+
+
+
+
+def find_closest_bus_stop_to_bus(user_lat, user_lon, bus_stops):
+    if bus_stops is None:  # Check if bus_stops is None
+        return None
+    
+    closest_distance = float('inf')
+    closest_bus_stop = None
+
+    
+    for bus_stop in bus_stops:
+        bus_stop_lat = bus_stop.latitude
+        bus_stop_lon = bus_stop.longitude
+        
+        distance = calculate_distance(user_lat, user_lon, bus_stop_lat, bus_stop_lon)
+        
+        if distance < closest_distance:
+            closest_distance = distance
+            closest_bus_stop = bus_stop
+
+    return closest_bus_stop

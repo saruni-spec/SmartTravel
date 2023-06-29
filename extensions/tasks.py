@@ -30,12 +30,22 @@ def track_user():
             return error,400
         latitude = request.form.get('latitude')
         longitude = request.form.get('longitude')
+        session['tracking_coordinates'] = {'latitude':latitude,'longitude': longitude}
         if is_driver == True:
             vehicle=Vehicle.query.filter_by(driver_username=user_name).first()
             current_vehicle=vehicle.no_plate
             tracking_details = {"vehicle": current_vehicle, "latitude": latitude, "longitude": longitude,'timestamp':time}
             print(tracking_details,'tracking_details driver')
             if vehicle.vehicle_type=='bus':
+                docked=session.get('docked',None)
+                
+                if docked:
+                    
+                    tracking_details['bus_destination']=session.get('bus_destination',None)
+                    tracking_details['docked']=docked
+                    tracking_details['docking_stage']=session.get('docking_stage',None)
+                else:
+                    tracking_details['docked']=False
                 message = json.dumps(tracking_details)
                 producer.send('bus_coordinates', value=message.encode())
             elif vehicle.vehicle_type=='taxi':
@@ -58,6 +68,7 @@ def track_user():
         location_name = reverse_geocode(session.get('current_location').get('latitude'), session.get('current_location').get('longitude'))
         session['location_name']=location_name
         return "success"
+    return "Method not allowed"
     
 
 @celery.task(bind=True)
@@ -66,10 +77,32 @@ def start_tracking():
 
 
 
+@bp.route('/tracker/destination', methods=['GET', 'POST'])
+@login_required
+def reach_destination():
+    import time
+    tolerance = 0.005  # Adjust the tolerance level as needed
+    destination_coordinates = session.get('destination_coordinates')
+    print('it is ineveitable')
+    while True:
+        current_coordinates = session.get('tracking_coordinates')
+        if current_coordinates is not None:
+            current_lat = current_coordinates.get('latitude')
+            current_lon = current_coordinates.get('longitude')
 
+            lat_diff = abs(float(current_lat) - float(destination_coordinates['latitude']))
+            lon_diff = abs(float(current_lon) - float(destination_coordinates['longitude']))
 
+            if lat_diff <= tolerance and lon_diff <= tolerance:
+                session['arrived'] = True
+                return "success"
+            else:
+                session['arrived'] = False
+                print('not arrived')
+        
+        time.sleep(60)
 
-
-
-
-
+@celery.task
+def start_routing():
+    reach_destination()
+    

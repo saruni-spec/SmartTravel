@@ -17,7 +17,7 @@ map
       <input type="hidden" name="form-name" value="destination-form">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <label for="current_location">Current location</label>
-      <input type="text" name="current_location" id="current_location" value="{{ user_location }}">
+      <p>{{user_location}}</p>
       <label for="destination">Destination</label>
       <input type="text" name="destination" id="destination">
 
@@ -28,6 +28,7 @@ map
     </form>
 
     <form class="vehicle" id="taxi-form" method="post" action="/booking/select_destination">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input type="hidden" name="form-name" value="taxi-form">
         <p>
           
@@ -40,6 +41,7 @@ map
 
     <form class="vehicle" id="bus-form" method="post" action="/booking/select_destination">
       <input type="hidden" name="form-name" value="bus-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <p>
           {{closest_bus}}
           
@@ -50,6 +52,7 @@ map
 
     <form class="vehicle" id="hybrid-form" method="post" action="/booking/select_destination">
       <input type="hidden" name="form-name" value="hybrid-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <p>
         Car Details
         Plate:{{closest_hybrid}}
