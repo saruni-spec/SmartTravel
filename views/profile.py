@@ -81,7 +81,11 @@ from logic.matching import find_closest_bus_stop_to_bus
 @login_required
 @is_driver
 def profile_driver():
+    from extensions.tasks import start_booking
     user_name=current_user.user_name
+    vehicle=Vehicle.query.filter_by(driver_username=user_name).first()
+    capacity=vehicle.capacity
+    session['my_vehicle']=vehicle.no_plate
     stages=Stages.query.all()
     if request.method == 'POST':
         token = request.form.get('csrf_token')
@@ -90,14 +94,15 @@ def profile_driver():
         except ValidationError :
             error="Invalid CSRF token"
             return error,404
-        docked = request.form.get('docked') == 'true'
+        docked = request.form.get('docked')=='true'
         destination= request.form.get('destination')
+        start_booking.delay()
         docking_stage=find_closest_bus_stop_to_bus(session.get('latitude'),session.get('longitude'),stages)
         session['docking_stage']=docking_stage
         print(docked,'is docked')
         session['is_docked'] = docked
         session['bus_destination'] = destination
-    return render_template('profile_driver.html',user_name=user_name)
+    return render_template('profile_driver.html',user_name=user_name,capacity=capacity)
 
 
 @bp.route('/profile/driver/select_destination',methods=['GET','POST'])

@@ -88,20 +88,20 @@ def closest_taxi(user_location,taxi_data):
 
 
 
-def bus(bus_data,stage,user_time,destination,closest_stage):
+def bus(bus_data):
+        if bus_data is None or len(bus_data)==0:
+                return None
         
         bus_clusters=group_coordinates(bus_data, 5)
         print(bus_clusters,'closest bus')
-        latitude = float(stage[0]['latitude']) 
-        longitude = float(stage[0]['longitude'])
-        print(latitude,longitude ,'in closest bus')
-        closest_bus=(find_bus(bus_clusters,stage,user_time))
-        if closest_bus is None:
+        if bus_clusters is None:
                 return None
-        else:
-                
-                return closest_bus
-
+        buses=[]
+        for cluster_label, bus_list in bus_clusters.items():
+               for bus in bus_list:
+                       buses.append(bus)
+               
+        return buses
 
 
 bp=Blueprint('booking',__name__)
@@ -111,7 +111,10 @@ bp=Blueprint('booking',__name__)
 def select_destination():
         
         user_location=session.get('current_location')
+        print(user_location,'user location in select destination')
+        
         user_location_name=session.get('location_name')
+        print(user_location_name,'user location name in select destination')
         if user_location is None:
                 user_location=None
         print(user_location,'user location in post up')
@@ -127,7 +130,144 @@ def select_destination():
                 print(form_name,'form name')
                 if form_name == 'destination-form':
                         bus_data=create_kafka_objects(consumer_bus)
-                        print(bus_data,'bus data fro kafka')
+                        old_bus_data=data = [
+    {
+        "vehicle": "EFG901",
+        "latitude": -1.28639,
+        "longitude": 36.8172,
+        "timestamp": "2023-06-30 21:30:00",
+        "bus_destination": "Nairobi CBD",
+        "docked": True,
+        "docking_stage": "Nairobi CBD"
+    },
+    {
+        "vehicle": "HIJ234",
+        "latitude": -1.17554,
+        "longitude": 36.9411,
+        "timestamp": "2023-06-30 22:45:00",
+        "bus_destination": "Ruiru",
+        "docked": True,
+        "docking_stage": "Kahawa Sukari"
+    },
+    {
+        "vehicle": "KLM567",
+        "latitude": -1.28639,
+        "longitude": 36.8172,
+        "timestamp": "2023-06-30 23:59:00",
+        "bus_destination": "Ruiru",
+        "docked": True,
+        "docking_stage": "Nairobi CBD"
+    },
+    {
+        "vehicle": "NOP890",
+        "latitude": -1.28639,
+        "longitude": 36.8172,
+        "timestamp": "2023-07-01 01:15:00",
+        "bus_destination": "Juja ",
+        "docked": True,
+        "docking_stage": "Nairobi CBD"
+    },
+    {
+        "vehicle": "QRS123",
+        "latitude": -1.28639,
+        "longitude": 36.8172,
+        "timestamp": "2023-07-01 02:30:00",
+        "bus_destination": "Thika",
+        "docked": True,
+        "docking_stage": "Nairobi CBD"
+    },
+    {
+        "vehicle": "ABC123",
+        "latitude": -1.28639,
+        "longitude": 36.8172,
+        "timestamp": "2023-06-30 09:00:00",
+        "bus_destination": "Juja",
+        "docked": True,
+        "docking_stage": "Nairobi CBD"
+    },
+    {
+        "vehicle": "DEF456",
+        "latitude": -1.23488,
+        "longitude": 36.8892,
+        "timestamp": "2023-06-30 10:15:00",
+        "bus_destination": "Juja",
+        "docked": True,
+        "docking_stage": "Ruaraka (Getrude's Children's Hospital)"
+    },
+    {
+        "vehicle": "GHI789",
+        "latitude": -1.18699,
+        "longitude": 36.9199,
+        "timestamp": "2023-06-30 11:30:00",
+        "bus_destination": "Nairobi",
+        "docked": True,
+        "docking_stage": "Kahawa West"
+    },
+    {
+        "vehicle": "JKL012",
+        "latitude": -1.21418,
+        "longitude": 36.8907,
+        "timestamp": "2023-06-30 12:45:00",
+        "bus_destination": "Nairobi",
+        "docked": True,
+        "docking_stage": "Roysambu"
+    },
+    {
+        "vehicle": "MNO345",
+        "latitude": -1.09793,
+        "longitude": 37.0166,
+        "timestamp": "2023-06-30 14:00:00",
+        "docked": False,
+        
+    },
+    {
+        "vehicle": "PQR678",
+        "latitude": -1.17554,
+        "longitude": 36.9411,
+        "timestamp": "2023-06-30 15:15:00",
+        "bus_destination": "Nairobi",
+        "docked": True,
+        "docking_stage": "Kahawa Sukari"
+    },
+    {
+        "vehicle": "STU901",
+        "latitude": -1.22054,
+        "longitude": 36.9029,
+        "timestamp": "2023-06-30 16:30:00",
+        "bus_destination": "Nairobi",
+        "docked": True,
+        "docking_stage": "Kasarani Sports Complex"
+    },
+    {
+        "vehicle": "VWX234",
+        "latitude": -1.14406,
+        "longitude": 36.9608,
+        "timestamp": "2023-06-30 17:45:00",
+        "bus_destination": "Nairobi",
+        "docked": True,
+        "docking_stage": "Kenyatta University"
+    },
+    {
+        "vehicle": "YZA567",
+        "latitude": -1.18345,
+        "longitude": 36.9272,
+        "timestamp": "2023-06-30 19:00:00",
+        "bus_destination": "Nairobi",
+        "docked": True,
+        "docking_stage": "Kahawa Wendani"
+    },
+    {
+        "vehicle": "BCD890",
+        "latitude": -1.03867,
+        "longitude": 37.0768,
+        "timestamp": "2023-06-30 20:15:00",
+        "docked": False,
+        
+    }
+]
+
+                        print(old_bus_data,'bus data fro kafka')
+                        bus_data = [bus for bus in old_bus_data if bus['docked']]
                         taxi_data=create_kafka_objects(consumer_taxi)
                         print(taxi_data,'taxi data from kafka')
                         
@@ -155,9 +295,7 @@ def select_destination():
                                 error= "Unable to retrieve coordinates."
                         session['destination_coordinates']={'latitude':destination['latitude'],'longitude':destination['longitude']}
                         
-                        same_direction_buses=get_direction(bus_data,destination)
                         
-                        print(same_direction_buses,'same direction buses')
                         nearest_stage=closest_stage(user_location)
                         print(nearest_stage[0]['stage_name'],'nearest stage to user')
                         if user_location is None or user_location=='':
@@ -178,7 +316,7 @@ def select_destination():
                                 taxi_message='Click here to book your taxi'
                                 taxi_time=get_time(session.get('location_name'), destination_name,"driving", api_key)
                                 print(taxi_time,'taxi time in post')
-                                session['taxi_travel_time']=get_time(destination_name,session.get('location'),'driving',api_key)
+                                session['taxi_travel_time']=get_time(destination_name,session.get('location_name'),'driving',api_key)
                                 print (session.get('taxi_travel_time'),'taxi travel time ')
                         
                         
@@ -187,7 +325,12 @@ def select_destination():
                         print(f"{user_time} Time needed for user to walk to stage {nearest_stage[0]['stage_name']}")
                         bus_time=get_time(nearest_stage[0]['stage_name'], destination_name,"driving", api_key)
                         print(f"{bus_time} Total time for user to get to destination on bus")
-                        a_bus=bus(same_direction_buses,nearest_stage,user_time)
+                        session['travel_time']=bus_time
+
+                        routed_bus_data=find_route(bus_data)
+                        viable_buses=allow_passenger(routed_bus_data,destination_name,nearest_stage[0]['stage_name'])
+
+                        a_bus=bus(viable_buses)
                         if a_bus is None:
                                 bus_message='No bus nearby'
                                 
@@ -197,9 +340,7 @@ def select_destination():
                                 #bus_location_name=reverse_geocode(a_bus[0]['latitude'], a_bus[0]['longitude'])
                                 #bus_arrival_time=get_time(nearest_stage[0]['stage_name'], bus_location_name,"driving", api_key)
                                 #my_bus=a_bus[0]['vehicle']
-                                for each_bus in a_bus:
-                                        bus_location=reverse_geocode(each_bus['latitude'], each_bus['longitude'])
-                                        bus['arrival_time']=get_time(nearest_stage[0]['stage_name'],bus_location,'driving',api_key)
+                                
                                 bus_message='Click here to select a bus'
                                 session['user_to_stage_time']=user_time
                                 session['bus_travel_time']=get_time(nearest_stage[0]['stage_name'],destination_name,'driving',api_key)
@@ -222,7 +363,7 @@ def select_destination():
                         return redirect(url_for('booking.bus_options'))
                 elif form_name == 'hybrid-form':
                         pass
-        return render_template('booking_select_destination.html',user_location=user_location_name)
+        return render_template('booking_select_destination.html',user_location=user_location,user_location_name=user_location_name)
 
 
 
@@ -275,7 +416,7 @@ def select_taxi():
 def bus_options():
         buses=session.get('closest_bus')
         pickup_point=session.get('closest_stage')
-        travel_time=session.get('travel time')
+        travel_time=session.get('travel_time')
         
         user_name=current_user.user_name
         print(user_name,'user name in select taxi')
@@ -288,17 +429,27 @@ def bus_options():
         print(pickup_point,'pickup point in bus options')
         print(buses,'buses in bus options')
         if request.method=='POST':
-                vehicle_no=request.form.get('vehicle')
-                booking=Booking(user_name, phone_number, date, time, pickup_point, destination, vehicle_no, fare)
-                booking.save()
-                booking_notification={'vehicle':vehicle_no,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'booking_id':booking.id}
-                session['booking']=booking_notification
-                notifications.append(booking_notification)
-                message = json.dumps(booking_notification)
-                producer.send('booking_notification', value=message.encode())
-                print(vehicle_no,'vehicle in booking')
-                
-                return redirect(url_for('booking.wait_confirmation'))
+                booked_seats=int(request.form.get('no_of_seats'))
+                no_plate=request.form.get('vehicle')
+                no_plate=no_plate.strip()
+                print(no_plate,'vehicle no in bus options')
+                vehicle=Vehicle.query.filter_by(no_plate=no_plate).first()
+                print(vehicle,'vehicle bus in bus options')
+                proceed=vehicle.accept_bookings(booked_seats)
+                if proceed:
+                        booking=Booking(user_name, phone_number, date, time, pickup_point, destination, no_plate, fare)
+                        booking.save()
+                        booking_notification={'vehicle':no_plate,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'booking_id':booking.id}
+                        session['booking']=booking_notification
+                        notifications.append(booking_notification)
+                        message = json.dumps(booking_notification)
+                        producer.send('booking_notification', value=message.encode())
+                        print(no_plate,'vehicle in booking')
+                        
+                        return redirect(url_for('booking.wait_confirmation'))
+                else:
+                       error='Sorry, we are out of seats'
+                       return render_template('booking_bus_options.html',error=error,buses=buses,pickup_point=pickup_point,destination=destination,travel_time=travel_time)
 
         return render_template('booking_bus_options.html',buses=buses,pickup_point=pickup_point,destination=destination,travel_time=travel_time)
 
@@ -317,6 +468,7 @@ def receive_notification(notifications ,current_vehicle):
             
                 
         return current_notifiations 
+
 
 
 

@@ -22,11 +22,12 @@
   <div class="topnav" id="myTopnav">
     <a href="{{url_for('index.index')}}" class="active">Smart Travel</a>
     <a href="{{url_for('login.login')}}" >Login</a>
+    {% if current_user.is_authenticated %}
     <a href="{{url_for('booking.select_destination')}}">Get a ride</a>
     <a href="{{url_for('profile.profile')}}">Profile</a>
     <a href="{{url_for('map.user_location')}}">Map</a>
     
-    {% if current_user.is_authenticated %}
+    
     {% if current_user.check_if_driver() %}
       <a href="{{ url_for('booking.confirm_booking') }}">Notifications</a>
     {% endif %}

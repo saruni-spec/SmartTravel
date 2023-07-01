@@ -29,7 +29,10 @@ class Vehicle(db.Model):
     def get_id(self):
         return self.no_plate
     
-    
+    def add_driver(self,driver_username):
+        self.driver_username=driver_username
+        db.session.commit()
+        
     def save(self,vehicle_type,owner,driver,capacity,color,verification_code):
         self.vehicle_type=vehicle_type
         self.owner_username=owner
@@ -60,3 +63,22 @@ class Vehicle(db.Model):
     def unregister_vehicle(self):
         self.is_active=False
         db.session.commit()
+        
+    
+    def accept_bookings(self,no_of_seats):
+        if self.temporary_capacity>0:
+            if self.temporary_capacity>=no_of_seats:
+                self.temporary_capacity=self.temporary_capacity-no_of_seats
+                return True
+    
+    def check_availability(self):
+        return self.temporary_capacity
+    
+    def stop_bookings(self):
+        from flask import session
+        self.temporary_capacity=self.capacity
+        session['docked']=False
+        
+        
+
+        

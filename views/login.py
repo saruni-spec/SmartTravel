@@ -40,7 +40,7 @@ def login():
                     vehicle=Vehicle.query.filter_by(owner_username=current_user.user_name).first()
                     session['vehicle']=vehicle.no_plate
                 next_url=session.get('next_url',url_for('index.index'))
-                if next_url == url_for('login.login'):
+                if next_url == url_for('login.login') :
                     next_url = url_for('index.index')
                 response = make_response(redirect(next_url))
                 response.set_cookie('username', username, max_age=timedelta(days=1))

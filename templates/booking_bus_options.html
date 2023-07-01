@@ -13,6 +13,9 @@
     <label for="duration">Travel Time</label>
     <p>{{travel_time}}</p>
 </form>
+{% if error %}
+{{error}}
+{% endif %}
 {% if buses is none %}
 <p>No buses vailable</p>
 {% elif buses is iterable and buses|length >0 %}
@@ -23,10 +26,11 @@
     <label for="vehicle">Vehicle</label>
     <input type="hidden" name="vehicle" id="vehicle" value="{{ bus.vehicle}} ">
     <p>{{ bus.vehicle}}</p>
-    <label for="time">Estimated arrival time</label>
-    <p>{{bus.arrival_time}}</p>
-    
-    <label for="Fare">Fare</label>
+    <label for="seats">Seats_available</label>
+    {{Seats_available}}
+    <label for="no_of_seats">No of seats</label>
+    <input type="number" max="5" name="no_of_seats" id="no_of_seats">
+    <label for="Fare">Fare per person</label>
     <p>{{fare}}</p>
     <button type="submit">Confirm Booking</button>
 </form>
@@ -35,6 +39,5 @@
 {% else %}
 <p>no buses to book</p>
 {% endif %}
-
 
 {% endblock %}

@@ -155,6 +155,7 @@ def register_driver():
                     current_user.add_phone(request.form.get('phone_no'))
                     driver=Driver(current_user.user_name,request.form.get('license_no'))
                     driver.save()
+                    vehicle.add_driver(current_user.user_name)
                     return redirect('/profile/driver')
                 else:
                     return render_template('registration_driver.html',error=error)

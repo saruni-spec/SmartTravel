@@ -1,5 +1,5 @@
 from .celery import celery
-from flask import Blueprint, request, session
+from flask import Blueprint, request, session,redirect
 from flask_wtf.csrf import validate_csrf
 from wtforms.validators import ValidationError
 from flask_login import login_required, current_user
@@ -8,6 +8,7 @@ import json
 from models.vehicle import Vehicle
 from logic.routing import *
 from datetime import datetime
+from flask import url_for
 
 
 
@@ -18,6 +19,7 @@ bp = Blueprint('tracker', __name__)
 @login_required
 def track_user():
     user_name = current_user.user_name
+    print(user_name,'tracking user_name')
     is_driver=current_user.check_if_driver()
     if request.method == 'POST':
         time=datetime.now().strftime("%H:%M:%S")
@@ -33,6 +35,7 @@ def track_user():
         session['tracking_coordinates'] = {'latitude':latitude,'longitude': longitude}
         if is_driver == True:
             vehicle=Vehicle.query.filter_by(driver_username=user_name).first()
+            
             current_vehicle=vehicle.no_plate
             tracking_details = {"vehicle": current_vehicle, "latitude": latitude, "longitude": longitude,'timestamp':time}
             print(tracking_details,'tracking_details driver')
@@ -68,7 +71,7 @@ def track_user():
         location_name = reverse_geocode(session.get('current_location').get('latitude'), session.get('current_location').get('longitude'))
         session['location_name']=location_name
         return "success"
-    return "Method not allowed"
+    return redirect(url_for('index.index'))
     
 
 @celery.task(bind=True)
@@ -106,3 +109,24 @@ def reach_destination():
 def start_routing():
     reach_destination()
     
+
+
+@bp.route('/profile/driver/capacity', methods=['GET', 'POST'])
+@login_required
+def book_vehicle():
+    from flask import jsonify
+    import time
+    vehicle_plate=session.get('my_vehicle',None)
+    vehicle=Vehicle.query.filter_by(no_plate=vehicle_plate).first()
+    
+    capacity=vehicle.check_availability()
+    if capacity<=2:
+        vehicle.stop_bookings()
+
+    
+    return jsonify({'capacity': capacity})   
+
+
+@celery.task
+def start_booking():
+    book_vehicle ()

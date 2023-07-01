@@ -56,7 +56,7 @@ def find_closest_bus_stop(user_lat, user_lon, bus_stops):
     return closest_bus_stop
 
 def find_closest_bus(user_lat, user_lon, bus_stops,user_distance):
-    if bus_stops is None:  # Check if bus_stops is None
+    if bus_stops is None :  # Check if bus_stops is None
         return None
     
     
@@ -78,7 +78,7 @@ def find_closest_bus(user_lat, user_lon, bus_stops,user_distance):
 
 
 def group_coordinates(coordinates, num_clusters):
-    if not coordinates:  # Check if coordinates list is empty
+    if not coordinates or len(coordinates) == 0:  # Check if coordinates list is empty
         return None
     # Perform K-means clustering
     if len(coordinates) < num_clusters:
@@ -138,7 +138,7 @@ def create_stage_dict(stages):
 from datetime import datetime
 
 def get_direction(vehicle_data, destination):
-    if vehicle_data is None:
+    if vehicle_data is None or len(vehicle_data)==0:  # Check if bus_stops is None
         return None
     bus_group = []
     for bus in vehicle_data:
@@ -158,7 +158,7 @@ def get_direction(vehicle_data, destination):
 
 def docked_buses(user_destination,bus_details):
     docked_buses=[]
-    if bus_details is None:
+    if bus_details is None or len(bus_details)==0:  # Check if bus_stops is None
         return None
     else:
         for bus in bus_details:
@@ -170,7 +170,7 @@ def docked_buses(user_destination,bus_details):
 
 
 def find_closest_bus_stop_to_bus(user_lat, user_lon, bus_stops):
-    if bus_stops is None:  # Check if bus_stops is None
+    if bus_stops is None or len(bus_stops)==0:  # Check if bus_stops is None
         return None
     
     closest_distance = float('inf')
@@ -188,3 +188,67 @@ def find_closest_bus_stop_to_bus(user_lat, user_lon, bus_stops):
             closest_bus_stop = bus_stop
 
     return closest_bus_stop
+
+def find_route(bus_data):
+    if bus_data is None or len(bus_data)==0:
+        return None
+    else:
+        print(bus_data,'bus data in find route')
+        
+        from models.routes import Route
+        routes=Route.query.all()
+        for bus in bus_data:
+            if bus['docked']:
+                
+                current_stage=bus['docking_stage']
+                destination=bus['bus_destination']
+                viable_routes=[]
+                for route in routes:
+                    for stage in route.stages:
+                        print(stage.stage_name,'stage name in before stage loop')
+                        print(current_stage,'current stage in before stage loop')
+                        if stage.stage_name==current_stage:
+                            print(stage.stage_name,'stage name in stage loop')
+                            print(current_stage,'current stage in stage loop')
+                            condition1=True
+                    for another_stage in route.stages:
+                        print(another_stage.stage_name,'stage name in before destination loop')
+                        print(destination,'destination in  before destination loop')
+                        if another_stage.stage_name==destination:
+                            print(another_stage.stage_name,'stage name in destination loop')
+                            print(destination,'destination in destination loop')
+                            condition2=True
+                    if condition1 and condition2:
+                        viable_routes.append(route)
+            if viable_routes is None or len(viable_routes)==0:
+                return None
+            else:
+                print (viable_routes,'viable routes in find route')
+                shortest_route=viable_routes[0]
+                for route in viable_routes:
+                    print(route,'route in find route')
+                    print(route.stages,'route stages in find route')
+                    print(route.route_distane,'route distane in find route')
+                    if route.route_distane<=shortest_route.route_distane:
+                        shortest_route=route
+        
+                bus['shortest_route']={'id':shortest_route.id,'distance':shortest_route.route_distane}
+    return bus_data
+    
+def allow_passenger(bus_data,passenger_destination,nearest_stage):
+    from models.routes import Route
+    if bus_data is None:
+        return None
+    else:
+
+        viable_buses=[]
+        for bus in bus_data:
+            if bus['docking_stage']==nearest_stage:
+                route_id=bus['shortest_route']['id']
+                route=Route.query.filter_by(id=route_id).first()
+                stages=route.stages
+                for stage in stages:
+                    if stage.stage_name==passenger_destination:
+                        viable_buses.append(bus)
+                    
+        return viable_buses

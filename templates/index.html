@@ -5,23 +5,30 @@
 {% block content %}
 
 
-<div class="index">
+<div class="index0" >
     <div class="container">
-<a href="{{url_for('registration.register_vehicle')}}" class="a">Register Vehicle</a>
-</div>
+      <a href="{{url_for('registration.register_vehicle')}}" class="a">Register</a>
+      <div class="sign_up"> <p>Sign         up<br>Vehicle</p></div>
+    </div>
+    
+  </div>
+  
+<div class="index2">
+    <div class="container">
+<a href="{{url_for('registration.register_driver')}}" class="a">Register</a>
+<div class="sign_up"> <p>Sign         up to<br>Drive</p></div>
 </div>
 
-<div class="index">
+</div>
+
+<div class="index3">
     <div class="container">
 <a href="{{url_for('registration.registration')}}" class="a">Register</a>
-</div>
-</div>
-
-<div class="index">
-    <div class="container">
-<a href="{{url_for('registration.register_driver')}}" class="a">Register as Driver</a>
-</div>
+<div class="sign_up"> <p>Sign         up to<br>Ride</p></div>
 </div>
 
+</div>
+
+  
 
 {% endblock %}

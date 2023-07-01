@@ -18,7 +18,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #f2f2f2;
+  background-color: var(--link-background-color);
   -webkit-transition: .4s;
   transition: .4s;
 }
@@ -30,17 +30,17 @@
   width: 26px;
   left: 4px;
   bottom: 4px;
-  background-color: white;
+  background-color: var(--link-background-color);
   -webkit-transition: .4s;
   transition: .4s;
 }
 
 input:checked + .slider {
-  background-color: #024212;
+  background-color: var(--link-color);
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #024212;
+  box-shadow: 0 0 1px var(--link-active-color);
 }
 
 input:checked + .slider:before {

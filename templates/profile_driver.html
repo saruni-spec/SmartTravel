@@ -4,26 +4,32 @@
 <h2>Profile</h2>
 {% endblock %}
 {% block content %}
-<div class="home">
+<div class="profile">
     <form action="/profile/driver" method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label class="switch">
             <input type="checkbox" id="dockedCheckbox" name="docked" onchange="sendData(this.checked)">
             <span class="slider round"></span>
         </label>
+        <label for="username">Username</label>
+    <p>{{user_name}}</p>
         
         <label for="destination" id="destination_name" style="display: none;">Destination</label>
         <input type="text" name="destination" id="destination" style="display: none;">
+        <input type="text" name="capacity" id="capacity" style="display: none;">
         <button type="submit" name="submit" id="submit" style="display: none;">Confirm</button>
+        <p id="capacity"></p>
+
+        <a href="riders"><button type="button" class="a-form">Current passengers</button></a>
+        <a href="{{url_for('profile.edit_profile')}}" class="a-form"> edit profile</a>
     </form>
 
-    <label for="username">Username</label>
-    <p>{{user_name}}</p>
+    
 
-    <a href="riders"><button type="button">Current passengers</button></a>
-    <a href="{{url_for('profile.edit_profile')}}"> edit profile</a>
+   
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/axios@0.24.0/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <script>
@@ -36,13 +42,37 @@
             destinationName.style.display = 'block';
             destination.style.display = 'block';
             submit.style.display = 'block';
+            capacity.style.display = 'block'
         } else {
             destinationName.style.display = 'none';
             destination.style.display = 'none';
             submit.style.display = 'none';
+            capacity.style.display = 'none'
         }
     }
 </script>
 
+<script>
+
+// Function to update the capacity on the page
+function updateCapacity() {
+  // Send a GET request to the /profile/driver route
+  axios.get('/profile/driver')
+    .then(response => {
+      // Get the current capacity from the response
+      const capacity = response.data.capacity;
+
+      // Get the element that displays the current capacity
+      const capacityElement = document.querySelector('#capacity');
+
+      // Update the element with the new capacity
+      capacityElement.textContent = `Current capacity: ${capacity}`;
+    });
+}
+
+// Update the capacity every 60 seconds
+setInterval(updateCapacity, 5000);
+</script>
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/profile.css')}}">
 <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/switch.css')}}">
 {% endblock %}

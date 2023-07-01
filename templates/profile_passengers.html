@@ -3,7 +3,7 @@
 <h2>Passengers</h2>
 {% endblock %}
 {% block content %}
-<div class="home">
+<div class="profile">
 <form action="book/passengers" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="vehicle">vehicle</label>
@@ -18,4 +18,5 @@
 
 </form>
 </div>
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/profile.css')}}">
 {% endblock %}

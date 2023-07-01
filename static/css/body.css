@@ -1,24 +1,29 @@
 body, html {
-    margin: 0;
-    padding: 0;
-    background-color: var(--primary-text-color);
-    color: var(--primary-background-color);
-  }
-  
-  main {
-    height: 100vh;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-items: center;
-    background-color: var(--primary-text-color);
-    color: var(--primary-background-color);
-  }
-  
-  header {
-    height: 5vh;
-    width: 100%;
-    background-color: var(--primary-text-color);
-    color: var(--primary-background-color);
-  }
-  
+  margin: 0;
+  padding: 0;
+  background-color: var(--primary-text-color);
+  color: var(--primary-background-color);
+}
+
+main {
+
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: var(--primary-text-color);
+  color: var(--primary-background-color);
+  overflow: auto; /* Add this line to enable overflow */
+  overflow-y: scroll;
+}
+
+
+header {
+  height: 5vh;
+  width: 100%;
+  background-color: var(--primary-text-color);
+  color: var(--primary-background-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

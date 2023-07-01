@@ -2,6 +2,7 @@ from flask import Blueprint,render_template
 from models.stages import Stages
 from logic.matching import *
 from logic.routing import *
+from flask_login import login_required
 
 
 
@@ -21,3 +22,17 @@ def reg_stages():
     distance = get_distance(origin_lat, origin_lng, destination_lat, destination_lng)
     print('Distance:', distance,":",closest_stage.stage_name)
     return render_template('reg_stages.html')
+
+
+@bp.route('/reg_stages/route',methods=['GET','POST'])
+@login_required
+def reg_stages_route():
+    from models.routes import Route
+    
+    route = Route(1)
+    print(route.id,'route_id')
+    print(route.stages,'route_stages')
+    distance=calculate_route_distance(route)
+    print(distance,'longest_distance')
+    route.distane(distance)
+    return render_template('reg_stages_route.html')

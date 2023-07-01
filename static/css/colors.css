@@ -2,23 +2,19 @@
 
 :root {
   /* Primary Colors */
-  --primary-background-color:#333 ;
+  --primary-background-color:#060138 ;
   --primary-text-color: #f2f2f2;
+  --secondary-background-color:black;
+  --secondary-text-color:black;
 
   /* Link Colors */
-  --link-color: var(--primary-text-color);
-  --link-hover-background-color: #ddd;
-  --link-hover-color: #000;
-  --link-active-background-color: #04AA6D;
-  --link-active-color: #fff;
+  --link-color: rgb(77, 23, 34);
+  --link-hover-background-color: #3f0101;
+  --link-hover-color: #350000;
+  --link-active-background-color: #c21f2c;
+  --link-active-color: #3d0202;
 
-  /* Secondary Colors */
-  --secondary-background-color: #fff;
-  --secondary-text-color: #333;
-  --secondary-border-color: #ddd;
-
-  /* Accent Colors */
-  --accent-color-1: #024212;
-  --accent-color-2: #aaf8d8;
-  --accent-color-3: #ddd;
+  --secondary-border-color:rgb(5, 5, 139);
+  --primary-border-color:black;
+  
 }

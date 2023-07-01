@@ -28,6 +28,26 @@ def get_distance(origin_lat, origin_lng, destination_lat, destination_lng):
 
 
 
+def calculate_route_distance(route):
+    stages = route.stages  # Assuming 'stages' is a list of stage objects in the route
+    longest_distance = 0.0
+
+    for i in range(len(stages) - 1):
+        stage1 = stages[i]
+        stage2 = stages[i+1]
+        print(stage1.latitude, stage1.longitude, 'for stage 1')
+        print(stage2.latitude, stage2.longitude, 'for stage 2')
+        distance_str = get_distance(stage1.latitude, stage1.longitude, stage2.latitude, stage2.longitude)
+        distance = float(distance_str.split()[0])  # Extract the numeric part and convert to float
+        print(distance, 'distance')
+        if distance > longest_distance:
+            longest_distance = distance
+
+    return longest_distance
+
+
+
+
 def reverse_geocode(latitude, longitude):
     # Replace YOUR_API_KEY with your actual API key
 
