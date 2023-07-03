@@ -47,3 +47,15 @@ button:active{
 .a-form:active {
   background-color: var(--link-active-color);
 }
+.bus_options{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--primary-border-color);
+  
+}
+.bus_options>*{
+  margin: 1%;
+  
+}

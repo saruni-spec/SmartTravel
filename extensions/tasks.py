@@ -111,17 +111,52 @@ def start_routing():
     
 
 
+
+
+notification_list=[]
+consumer_notifications=KafkaConsumer('booking_notification',group_id='background_notifications',bootstrap_servers=['localhost:9092'],consumer_timeout_ms=10000)
 @bp.route('/profile/driver/capacity', methods=['GET', 'POST'])
 @login_required
 def book_vehicle():
     from flask import jsonify
-    import time
+    from models.kafka import check_notifications
     vehicle_plate=session.get('my_vehicle',None)
+        
     vehicle=Vehicle.query.filter_by(no_plate=vehicle_plate).first()
-    
-    capacity=vehicle.check_availability()
-    if capacity<=2:
-        vehicle.stop_bookings()
+    if session.get('docked'):
+
+        if len(notification_list)==0 or notification_list is None:
+            session['capacity']=vehicle.capacity
+        
+        current_capacity=session.get('capacity',None)
+        print(current_capacity,'current_capacity in book_vehicle task')
+        print(vehicle.no_plate,'vehicle in book_vehicle task')
+        notifications=session.get('notifications',None)
+
+        
+        current_notifications=check_notifications(notifications,vehicle.no_plate,notification_list)
+        if len(current_notifications)==0:
+            bookings=0
+            capacity=None
+        else:
+            print(current_notifications[1],'new_notifications in book_vehicle task')
+            bookings=current_notifications[1]
+        print(bookings,'bookings in book_vehicle task')
+        if bookings is None:
+            bookings=0
+        if current_capacity is None or current_capacity<=2:
+            session['docked']=False
+            capacity=0
+        else:
+            
+            capacity=current_capacity-bookings
+            
+        if capacity<=2:
+            notification_list.clear()
+            session['docked']=False
+        session['capacity']=capacity
+    else:
+        capacity='Not accepting bookings'
 
     
     return jsonify({'capacity': capacity})   

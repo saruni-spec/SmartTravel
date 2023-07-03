@@ -64,20 +64,6 @@ class Vehicle(db.Model):
         self.is_active=False
         db.session.commit()
         
-    
-    def accept_bookings(self,no_of_seats):
-        if self.temporary_capacity>0:
-            if self.temporary_capacity>=no_of_seats:
-                self.temporary_capacity=self.temporary_capacity-no_of_seats
-                return True
-    
-    def check_availability(self):
-        return self.temporary_capacity
-    
-    def stop_bookings(self):
-        from flask import session
-        self.temporary_capacity=self.capacity
-        session['docked']=False
         
         
 

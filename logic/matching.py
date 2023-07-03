@@ -205,18 +205,14 @@ def find_route(bus_data):
                 viable_routes=[]
                 for route in routes:
                     for stage in route.stages:
-                        print(stage.stage_name,'stage name in before stage loop')
-                        print(current_stage,'current stage in before stage loop')
+                       
                         if stage.stage_name==current_stage:
-                            print(stage.stage_name,'stage name in stage loop')
-                            print(current_stage,'current stage in stage loop')
+                           
                             condition1=True
                     for another_stage in route.stages:
-                        print(another_stage.stage_name,'stage name in before destination loop')
-                        print(destination,'destination in  before destination loop')
+                        
                         if another_stage.stage_name==destination:
-                            print(another_stage.stage_name,'stage name in destination loop')
-                            print(destination,'destination in destination loop')
+                            
                             condition2=True
                     if condition1 and condition2:
                         viable_routes.append(route)

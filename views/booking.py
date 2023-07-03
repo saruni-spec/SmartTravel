@@ -27,11 +27,14 @@ from .profile import is_driver
 
 
 
-
+consumer_notifications=KafkaConsumer('booking_notification',group_id='notifications',bootstrap_servers=['localhost:9092'],consumer_timeout_ms=10000)
 consumer_bus = KafkaConsumer('bus_coordinates',group_id='my-group',bootstrap_servers=['localhost:9092'],consumer_timeout_ms=10000)
 consumer_taxi=KafkaConsumer('taxi_coordinates',group_id='taxi',bootstrap_servers=['localhost:9092'],consumer_timeout_ms=10000 )
 consumer_hybrid=KafkaConsumer('hybrid_coordinates',group_id='hybrid',bootstrap_servers=['localhost:9092'],consumer_timeout_ms=10000 )
 producer = KafkaProducer(bootstrap_servers='localhost:9092')
+
+
+
 
 from datetime import datetime
 
@@ -142,12 +145,12 @@ def select_destination():
     },
     {
         "vehicle": "HIJ234",
-        "latitude": -1.17554,
-        "longitude": 36.9411,
+        "latitude": -1.28639,
+        "longitude": 36.8172,
         "timestamp": "2023-06-30 22:45:00",
         "bus_destination": "Ruiru",
         "docked": True,
-        "docking_stage": "Kahawa Sukari"
+        "docking_stage": "Nairobi CBD"
     },
     {
         "vehicle": "KLM567",
@@ -435,21 +438,19 @@ def bus_options():
                 print(no_plate,'vehicle no in bus options')
                 vehicle=Vehicle.query.filter_by(no_plate=no_plate).first()
                 print(vehicle,'vehicle bus in bus options')
-                proceed=vehicle.accept_bookings(booked_seats)
-                if proceed:
-                        booking=Booking(user_name, phone_number, date, time, pickup_point, destination, no_plate, fare)
-                        booking.save()
-                        booking_notification={'vehicle':no_plate,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'booking_id':booking.id}
-                        session['booking']=booking_notification
-                        notifications.append(booking_notification)
-                        message = json.dumps(booking_notification)
-                        producer.send('booking_notification', value=message.encode())
-                        print(no_plate,'vehicle in booking')
-                        
-                        return redirect(url_for('booking.wait_confirmation'))
-                else:
-                       error='Sorry, we are out of seats'
-                       return render_template('booking_bus_options.html',error=error,buses=buses,pickup_point=pickup_point,destination=destination,travel_time=travel_time)
+                
+                
+                booking=Booking(user_name, phone_number, date, time, pickup_point, destination, no_plate, fare)
+                booking.save()
+                booking_notification={'vehicle':no_plate,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'date':date,'booking_id':booking.id,'no_of_seats':booked_seats}
+                session['booking']=booking_notification
+                notifications.append(booking_notification)
+                message = json.dumps(booking_notification)
+                producer.send('booking_notification', value=message.encode())
+                print(no_plate,'vehicle in booking')
+                
+                return redirect(url_for('booking.wait_confirmation'))
+                
 
         return render_template('booking_bus_options.html',buses=buses,pickup_point=pickup_point,destination=destination,travel_time=travel_time)
 
@@ -484,10 +485,10 @@ def confirm_booking():
         booking_notification=session.get('booking')
         details=[]
         details=receive_notification(notifications,session.get('vehicle'))
-        
+        session['notifications']=details
         confirmed_message='waiting'
 
-
+        
         if request.method=='POST':
                 token = request.form.get('csrf_token')
                 try:

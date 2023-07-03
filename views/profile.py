@@ -3,7 +3,7 @@ from flask_wtf.csrf import validate_csrf
 from wtforms.validators import ValidationError
 from flask_login import login_required,current_user
 from logic.routing import *
-from kafka import KafkaProducer
+from kafka import KafkaProducer,KafkaConsumer
 import json
 from functools import wraps
 from models.owner import Owner
@@ -73,20 +73,24 @@ def profile_owner():
     return render_template('profile_owner.html',user_name=user_name)
 
 
-
+from models.kafka import create_kafka_notifications,remove_duplicate_notifications
 from models.vehicle import Vehicle
 from models.stages import Stages
 from logic.matching import find_closest_bus_stop_to_bus
+from datetime import datetime
+
 @bp.route('/profile/driver', methods=['GET', 'POST'])
 @login_required
 @is_driver
 def profile_driver():
     from extensions.tasks import start_booking
+    docked = session.get('docked', False)
     user_name=current_user.user_name
     vehicle=Vehicle.query.filter_by(driver_username=user_name).first()
     capacity=vehicle.capacity
     session['my_vehicle']=vehicle.no_plate
     stages=Stages.query.all()
+    
     if request.method == 'POST':
         token = request.form.get('csrf_token')
         try:
@@ -94,15 +98,28 @@ def profile_driver():
         except ValidationError :
             error="Invalid CSRF token"
             return error,404
-        docked = request.form.get('docked')=='true'
+        
+        
+
+        
+        print(vehicle.capacity,'capacity in profile')
+        error=None
         destination= request.form.get('destination')
         start_booking.delay()
-        docking_stage=find_closest_bus_stop_to_bus(session.get('latitude'),session.get('longitude'),stages)
-        session['docking_stage']=docking_stage
-        print(docked,'is docked')
-        session['is_docked'] = docked
+        coordinates=session.get('tracking_coordinates')
+        if coordinates is not None:
+            docking_stage=find_closest_bus_stop_to_bus(coordinates['latitude'],coordinates['longitude'],stages)
+            session['docking_stage']=docking_stage.stage_name
+        else:
+            error="Please turn on GPS"
+        session['is_docked'] = True
         session['bus_destination'] = destination
-    return render_template('profile_driver.html',user_name=user_name,capacity=capacity)
+        print(destination,'destination in proifle')
+        session['docked']=True
+        if error:
+            return render_template('profile_driver.html',user_name=user_name,capacity=capacity,error=error,docked=docked)
+        
+    return render_template('profile_driver.html',user_name=user_name,capacity=capacity,docked=docked)
 
 
 @bp.route('/profile/driver/select_destination',methods=['GET','POST'])

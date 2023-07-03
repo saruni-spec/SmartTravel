@@ -1,25 +1,36 @@
 {% extends 'base.html' %}
 {% block title %}
-<a href="{{url_for('booking.confirm_booking')}}">Check Bookings</a>
+
 <h2>Profile</h2>
 {% endblock %}
 {% block content %}
-<div class="profile">
+<div id="profile" style="display: flex; flex-direction: column; align-items: center; justify-content: center;" >
     <form action="/profile/driver" method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <label for="destination" id="destination_name" >Destination</label>
+        <input type="text" name="destination" id="destination" >
         <label class="switch">
-            <input type="checkbox" id="dockedCheckbox" name="docked" onchange="sendData(this.checked)">
-            <span class="slider round"></span>
+            {% if docked %}
+            <input type="checkbox" id="dockedCheckbox" name="docked" checked>
+        {% else %}
+            <input type="checkbox" id="dockedCheckbox" name="docked">
+        {% endif %}
+        <span class="slider round"></span>
         </label>
+    {% if error%}
+    <p>{{error}}</p>
+    {% endif %}
+        
+        <p id="capacity_value"></p>
+</form>
+</div>
+<div class="profile" >
+    <form action="">
         <label for="username">Username</label>
     <p>{{user_name}}</p>
         
-        <label for="destination" id="destination_name" style="display: none;">Destination</label>
-        <input type="text" name="destination" id="destination" style="display: none;">
-        <input type="text" name="capacity" id="capacity" style="display: none;">
-        <button type="submit" name="submit" id="submit" style="display: none;">Confirm</button>
-        <p id="capacity"></p>
-
+        
         <a href="riders"><button type="button" class="a-form">Current passengers</button></a>
         <a href="{{url_for('profile.edit_profile')}}" class="a-form"> edit profile</a>
     </form>
@@ -35,21 +46,43 @@
 <script>
 
     function toggleDestinationField(checked) {
-        var destinationName = document.getElementById('destination_name');
         var destination = document.getElementById('destination');
-        var submit = document.getElementById('submit')
+        
+        
         if (checked) {
-            destinationName.style.display = 'block';
-            destination.style.display = 'block';
-            submit.style.display = 'block';
-            capacity.style.display = 'block'
-        } else {
-            destinationName.style.display = 'none';
-            destination.style.display = 'none';
-            submit.style.display = 'none';
-            capacity.style.display = 'none'
-        }
+            
+            var csrfToken = document.querySelector('meta[name=csrf-token]').content;
+
+  // Create a new FormData object
+            var formData = new FormData();
+            formData.append("destination", destination.value);
+            formData.append("csrf_token", csrfToken); // Include the CSRF token as a form field
+
+            // Send the location data to the Flask route using axios
+            axios({
+                method: 'post',
+                url: '/profile/driver',
+                data: formData,
+                headers: {
+                'Content-Type': 'multipart/form-data'
+                }
+            })
+            .then(function (response) {
+                console.log("Docking sent successfully.");
+            })
+            .catch(function (error) {
+                console.log("Error sending docking:", error);
+            });
+        } 
+        
     }
+        // Get a reference to the checkbox element
+        const dockedCheckbox = document.querySelector('#dockedCheckbox');
+
+// Add an event listener to the checkbox that calls the toggleDestinationField function when the checkbox is changed
+dockedCheckbox.addEventListener('change', (event) => {
+  toggleDestinationField(event.target.checked);
+});
 </script>
 
 <script>
@@ -57,13 +90,13 @@
 // Function to update the capacity on the page
 function updateCapacity() {
   // Send a GET request to the /profile/driver route
-  axios.get('/profile/driver')
+  axios.get('/profile/driver/capacity')
     .then(response => {
       // Get the current capacity from the response
       const capacity = response.data.capacity;
 
       // Get the element that displays the current capacity
-      const capacityElement = document.querySelector('#capacity');
+      const capacityElement = document.querySelector('#capacity_value');
 
       // Update the element with the new capacity
       capacityElement.textContent = `Current capacity: ${capacity}`;
@@ -73,6 +106,10 @@ function updateCapacity() {
 // Update the capacity every 60 seconds
 setInterval(updateCapacity, 5000);
 </script>
+
+
+
+
 <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/profile.css')}}">
 <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/switch.css')}}">
 {% endblock %}

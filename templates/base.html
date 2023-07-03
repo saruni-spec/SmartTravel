@@ -29,6 +29,7 @@
     
     
     {% if current_user.check_if_driver() %}
+     <a href="{{url_for('booking.confirm_booking')}}">Check Bookings</a>
       <a href="{{ url_for('booking.confirm_booking') }}">Notifications</a>
     {% endif %}
   {% endif %}

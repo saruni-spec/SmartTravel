@@ -21,7 +21,7 @@
 {% elif buses is iterable and buses|length >0 %}
 {% for bus in buses %}
 
-<form action="/booking/bus_options" method="post">
+<form action="/booking/bus_options" method="post" class="bus_options">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="vehicle">Vehicle</label>
     <input type="hidden" name="vehicle" id="vehicle" value="{{ bus.vehicle}} ">
