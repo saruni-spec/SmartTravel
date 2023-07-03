@@ -1,8 +1,8 @@
 body, html {
   margin: 0;
   padding: 0;
-  background-color: var(--primary-text-color);
-  color: var(--primary-background-color);
+  background-color: var(--primary-background-color);
+  color: var(--primary-text-color);
 }
 
 main {
@@ -11,8 +11,9 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: var(--primary-text-color);
-  color: var(--primary-background-color);
+  align-items: center;
+  background-color: var(--primary-backround-color);
+  color: var(--primary-text-color);
   overflow: auto; /* Add this line to enable overflow */
   overflow-y: scroll;
 }
@@ -21,9 +22,24 @@ main {
 header {
   height: 5vh;
   width: 100%;
-  background-color: var(--primary-text-color);
-  color: var(--primary-background-color);
+  background-color: var(--secondary-background-color);
+  color: var(--secondary-text-color);
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+
+body {
+  font-family: 'Roboto', Arial, sans-serif; /* Font for normal text */
+  
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', Arial, sans-serif; /* Font for headers */
+}
+
+a {
+  font-family: 'Open Sans', Arial, sans-serif; 
+  text-decoration: none; 
 }

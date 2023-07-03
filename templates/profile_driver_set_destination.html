@@ -3,7 +3,7 @@
 <h2>Profile</h2>
 {% endblock %}
 {% block content %}
-<div class="profile">
+
    <form action="/profile/driver/set_destination" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="destination">Destination</label>
@@ -11,7 +11,7 @@
     <button type="submit">Next</button>
 
 </form>
-</div>
+
 
 <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/profile.css')}}">
 {% endblock %}

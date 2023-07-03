@@ -3,16 +3,20 @@ form {
   flex-direction: column; /* Ensures items stack vertically */
   justify-content: center;
   align-items: center;
-  height: 80%;
-  width: 80%;
- 
+  height: auto;
+  width:auto;
+  padding: 5%;
+  margin-top: 5%;
+  border: 1px solid var(--primary-border-color);
+  border-radius: 10px;
+  background-color: var(--primary-form-color);
 }
 form > * {
-  margin: 10%; /* Adjust the margin between items as needed */
+  margin: 1%; /* Adjust the margin between items as needed */
 }
 
 form > *:first-child {
-  margin-top: 2%; /* Set top margin to 0 for the first child element */
+  margin-top: 1%; /* Set top margin to 0 for the first child element */
 }
 button{
     display: inline-block;
@@ -33,7 +37,7 @@ button:active{
 .a-form {
   display: inline-block;
   padding: 10px 20px;
-  background-color: var(--link-active-background-color);
+  background-color: var(--primary-form-color);
   color: var(--link-color);
   text-decoration: none;
   border: none;

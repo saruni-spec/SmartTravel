@@ -3,7 +3,7 @@
 <h2>Profile</h2>
 {% endblock %}
 {% block content %}
-<div class="profile">
+
     <form action="">
     <label for="username">Username</label>
     <p>{{user_name}}</p>
@@ -12,7 +12,7 @@
     
     <a href="{{url_for('profile.edit_profile')}}" class="a-form"> edit profile</a>
 </form>
-    </div>
+    
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 

@@ -4,7 +4,7 @@
 <h2>Profile</h2>
 {% endblock %}
 {% block content %}
-<div id="profile" style="display: flex; flex-direction: column; align-items: center; justify-content: center;" >
+
     <form action="/profile/driver" method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
@@ -24,8 +24,8 @@
         
         <p id="capacity_value"></p>
 </form>
-</div>
-<div class="profile" >
+
+
     <form action="">
         <label for="username">Username</label>
     <p>{{user_name}}</p>
@@ -38,7 +38,7 @@
     
 
    
-</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/axios@0.24.0/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

@@ -3,7 +3,7 @@
     width: 100%;
     grid-template-columns: 70% 30%;
     grid-template-rows: 80% 80%;
-    height: 80vh;
+    height: 100vh
   }
   
   .column1 {

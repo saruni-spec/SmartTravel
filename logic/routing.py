@@ -1,6 +1,7 @@
 import requests
 import os
 
+api_key=os.environ.get('google_api_key')
 def get_distance(origin_lat, origin_lng, destination_lat, destination_lng):
     # Replace YOUR_API_KEY with your actual API key
    
@@ -12,7 +13,7 @@ def get_distance(origin_lat, origin_lng, destination_lat, destination_lng):
     params = {
         'origin': f'{origin_lat},{origin_lng}',
         'destination': f'{destination_lat},{destination_lng}',
-        'key': os.environ.get('google_api_key')
+        'key': api_key
     }
 
     # Make the HTTP request

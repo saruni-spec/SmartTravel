@@ -1,7 +1,7 @@
 from flask import render_template,Blueprint,current_app,redirect,session,make_response
 from flask import request
 from models.user import User
-from flask_login import login_user,current_user
+from flask_login import login_user,current_user,logout_user,login_required
 from flask_wtf.csrf import validate_csrf
 from wtforms.validators import ValidationError
 from datetime import timedelta
@@ -52,3 +52,11 @@ def login():
                 error='Invalid User'
                 return render_template('login.html',error=error)
     return render_template('login.html')
+
+
+@bp.route('/logout')
+@login_required
+def logout():
+    with current_app.app_context():
+        logout_user()
+        return redirect('/login')

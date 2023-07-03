@@ -27,7 +27,7 @@ map
       <button type="submit">Confirm</button>
     </form>
 
-    <form class="vehicle" id="taxi-form" method="post" action="/booking/select_destination">
+    <form id="taxi-form" method="post" action="/booking/select_destination">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input type="hidden" name="form-name" value="taxi-form">
         <p>
@@ -39,7 +39,7 @@ map
       <button type="submit"></button>
     </form>
 
-    <form class="vehicle" id="bus-form" method="post" action="/booking/select_destination">
+    <form id="bus-form" method="post" action="/booking/select_destination">
       <input type="hidden" name="form-name" value="bus-form">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <p>
@@ -50,7 +50,7 @@ map
       <button type="submit"></button>
     </form>
 
-    <form class="vehicle" id="hybrid-form" method="post" action="/booking/select_destination">
+    <form id="hybrid-form" method="post" action="/booking/select_destination">
       <input type="hidden" name="form-name" value="hybrid-form">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <p>
