@@ -56,6 +56,7 @@
   // Create a new FormData object
             var formData = new FormData();
             formData.append("destination", destination.value);
+            formData.append("is_docked", dockedCheckbox.checked ? 'on' : '');
             formData.append("csrf_token", csrfToken); // Include the CSRF token as a form field
 
             // Send the location data to the Flask route using axios
@@ -74,8 +75,34 @@
                 console.log("Error sending docking:", error);
             });
         } 
+        else{
+            var csrfToken = document.querySelector('meta[name=csrf-token]').content;
+
+// Create a new FormData object
+          var formData = new FormData();
+          formData.append("is_docked", '');
+          formData.append("csrf_token", csrfToken); // Include the CSRF token as a form field
+
+          // Send the location data to the Flask route using axios
+          axios({
+              method: 'post',
+              url: '/profile/driver',
+              data: formData,
+              headers: {
+              'Content-Type': 'multipart/form-data'
+              }
+          })
+          .then(function (response) {
+              console.log("Docking sent successfully.");
+          })
+          .catch(function (error) {
+              console.log("Error sending docking:", error);
+          });
+      } 
+
+        }
         
-    }
+    
         // Get a reference to the checkbox element
         const dockedCheckbox = document.querySelector('#dockedCheckbox');
 

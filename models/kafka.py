@@ -101,8 +101,8 @@ def check_notifications(notifications,no_plate,notification_list):
                                 else:
                                     print('message not exits')
                                     notification_list.append(notification)
-                                    count=count+1
+                                    count=count+int(notification['no_of_seats'])
                         else:
                             notification_list.append(notification)
-                            count=count+1
+                            count=count+int(notification['no_of_seats'])
     return [notification_list,count]

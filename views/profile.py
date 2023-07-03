@@ -85,9 +85,10 @@ from datetime import datetime
 def profile_driver():
     from extensions.tasks import start_booking
     docked = session.get('docked', False)
+    print(docked,'docked in profile nnnn')
     user_name=current_user.user_name
     vehicle=Vehicle.query.filter_by(driver_username=user_name).first()
-    capacity=vehicle.capacity
+    
     session['my_vehicle']=vehicle.no_plate
     stages=Stages.query.all()
     
@@ -101,25 +102,31 @@ def profile_driver():
         
         
 
-        
-        print(vehicle.capacity,'capacity in profile')
-        error=None
-        destination= request.form.get('destination')
-        start_booking.delay()
-        coordinates=session.get('tracking_coordinates')
-        if coordinates is not None:
-            docking_stage=find_closest_bus_stop_to_bus(coordinates['latitude'],coordinates['longitude'],stages)
-            session['docking_stage']=docking_stage.stage_name
+        is_docked=request.form.get('is_docked')
+        print(is_docked,'is_docked in profile')
+        if is_docked == 'on':
+            print(vehicle.capacity,'capacity in profile')
+            error=None
+            destination= request.form.get('destination')
+            start_booking.delay()
+            coordinates=session.get('tracking_coordinates')
+            if coordinates is not None:
+                docking_stage=find_closest_bus_stop_to_bus(coordinates['latitude'],coordinates['longitude'],stages)
+                session['docking_stage']=docking_stage.stage_name
+            else:
+                error="Please turn on GPS"
+            session['is_docked'] = True
+            session['bus_destination'] = destination
+            print(destination,'destination in proifle')
+            session['docked']=True
+            if error:
+                return render_template('profile_driver.html',user_name=user_name,error=error,docked=docked)
         else:
-            error="Please turn on GPS"
-        session['is_docked'] = True
-        session['bus_destination'] = destination
-        print(destination,'destination in proifle')
-        session['docked']=True
-        if error:
-            return render_template('profile_driver.html',user_name=user_name,capacity=capacity,error=error,docked=docked)
-        
-    return render_template('profile_driver.html',user_name=user_name,capacity=capacity,docked=docked)
+            session['is_docked'] = False
+            session['docked']=False
+            
+            
+    return render_template('profile_driver.html',user_name=user_name,docked=docked)
 
 
 @bp.route('/profile/driver/select_destination',methods=['GET','POST'])

@@ -1,0 +1,135 @@
+data = [
+    {
+        "vehicle": "EFG901",
+        "latitude": -1.28639,
+        "longitude": 36.8172,
+        "timestamp": "2023-06-30 21:30:00",
+        "bus_destination": "Nairobi CBD",
+        "docked": True,
+        "docking_stage": "Nairobi CBD"
+    },
+    {
+        "vehicle": "HIJ234",
+        "latitude": -1.28639,
+        "longitude": 36.8172,
+        "timestamp": "2023-06-30 22:45:00",
+        "bus_destination": "Ruiru",
+        "docked": True,
+        "docking_stage": "Nairobi CBD"
+    },
+    {
+        "vehicle": "KLM567",
+        "latitude": -1.28639,
+        "longitude": 36.8172,
+        "timestamp": "2023-06-30 23:59:00",
+        "bus_destination": "Ruiru",
+        "docked": True,
+        "docking_stage": "Nairobi CBD"
+    },
+    {
+        "vehicle": "NOP890",
+        "latitude": -1.28639,
+        "longitude": 36.8172,
+        "timestamp": "2023-07-01 01:15:00",
+        "bus_destination": "Juja ",
+        "docked": True,
+        "docking_stage": "Nairobi CBD"
+    },
+    {
+        "vehicle": "QRS123",
+        "latitude": -1.28639,
+        "longitude": 36.8172,
+        "timestamp": "2023-07-01 02:30:00",
+        "bus_destination": "Thika",
+        "docked": True,
+        "docking_stage": "Nairobi CBD"
+    },
+    {
+        "vehicle": "ABC123",
+        "latitude": -1.28639,
+        "longitude": 36.8172,
+        "timestamp": "2023-06-30 09:00:00",
+        "bus_destination": "Juja",
+        "docked": True,
+        "docking_stage": "Nairobi CBD"
+    },
+    {
+        "vehicle": "DEF456",
+        "latitude": -1.23488,
+        "longitude": 36.8892,
+        "timestamp": "2023-06-30 10:15:00",
+        "bus_destination": "Juja",
+        "docked": True,
+        "docking_stage": "Ruaraka (Getrude's Children's Hospital)"
+    },
+    {
+        "vehicle": "GHI789",
+        "latitude": -1.18699,
+        "longitude": 36.9199,
+        "timestamp": "2023-06-30 11:30:00",
+        "bus_destination": "Nairobi",
+        "docked": True,
+        "docking_stage": "Kahawa West"
+    },
+    {
+        "vehicle": "JKL012",
+        "latitude": -1.21418,
+        "longitude": 36.8907,
+        "timestamp": "2023-06-30 12:45:00",
+        "bus_destination": "Nairobi",
+        "docked": True,
+        "docking_stage": "Roysambu"
+    },
+    {
+        "vehicle": "MNO345",
+        "latitude": -1.09793,
+        "longitude": 37.0166,
+        "timestamp": "2023-06-30 14:00:00",
+        "docked": False,
+        
+    },
+    {
+        "vehicle": "PQR678",
+        "latitude": -1.17554,
+        "longitude": 36.9411,
+        "timestamp": "2023-06-30 15:15:00",
+        "bus_destination": "Nairobi",
+        "docked": True,
+        "docking_stage": "Kahawa Sukari"
+    },
+    {
+        "vehicle": "STU901",
+        "latitude": -1.22054,
+        "longitude": 36.9029,
+        "timestamp": "2023-06-30 16:30:00",
+        "bus_destination": "Nairobi",
+        "docked": True,
+        "docking_stage": "Kasarani Sports Complex"
+    },
+    {
+        "vehicle": "VWX234",
+        "latitude": -1.14406,
+        "longitude": 36.9608,
+        "timestamp": "2023-06-30 17:45:00",
+        "bus_destination": "Nairobi",
+        "docked": True,
+        "docking_stage": "Kenyatta University"
+    },
+    {
+        "vehicle": "YZA567",
+        "latitude": -1.18345,
+        "longitude": 36.9272,
+        "timestamp": "2023-06-30 19:00:00",
+        "bus_destination": "Nairobi",
+        "docked": True,
+        "docking_stage": "Kahawa Wendani"
+    },
+    {
+        "vehicle": "BCD890",
+        "latitude": -1.03867,
+        "longitude": 37.0768,
+        "timestamp": "2023-06-30 20:15:00",
+        "docked": False,
+        
+    }
+]

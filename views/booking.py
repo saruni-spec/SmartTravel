@@ -396,7 +396,7 @@ def select_taxi():
         if request.method=='POST':
                 booking=Booking(user_name, phone_number, date, time, pickup_point, destination, vehicle_no, fare)
                 booking.save()
-                booking_notification={'vehicle':vehicle_no,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'booking_id':booking.id}
+                booking_notification={'vehicle':vehicle_no,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'booking_id':booking.id,'seen':False}
                 session['booking']=booking_notification
                 notifications.append(booking_notification)
                 message = json.dumps(booking_notification)
@@ -442,7 +442,7 @@ def bus_options():
                 
                 booking=Booking(user_name, phone_number, date, time, pickup_point, destination, no_plate, fare)
                 booking.save()
-                booking_notification={'vehicle':no_plate,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'date':date,'booking_id':booking.id,'no_of_seats':booked_seats}
+                booking_notification={'vehicle':no_plate,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'date':date,'booking_id':booking.id,'no_of_seats':booked_seats,'seen':False}
                 session['booking']=booking_notification
                 notifications.append(booking_notification)
                 message = json.dumps(booking_notification)
@@ -482,11 +482,11 @@ def receive_notification(notifications ,current_vehicle):
 @login_required
 @is_driver
 def confirm_booking():
-        booking_notification=session.get('booking')
+        
         details=[]
         details=receive_notification(notifications,session.get('vehicle'))
         session['notifications']=details
-        confirmed_message='waiting'
+        
 
         
         if request.method=='POST':
@@ -496,10 +496,10 @@ def confirm_booking():
                 except ValidationError :
                         error="Invalid CSRF token"
 
-                id=request.form.get('id')
+                id=int(request.form.get('id'))
                 
                 
-
+                print(id,'id in confirm booking')
                 confirmation=request.form.get('confirmation')
                 booking=Booking.query.filter_by(id=id).first()
                 
@@ -509,21 +509,25 @@ def confirm_booking():
                         booking.confirm()
                         confirmed_message='Booking confirmed'
                         print(booking.Status,'check booking in confirmed')
-                        return render_template('booking_confirm.html',details=details,confirmed_message=confirmed_message)
+                        
 
                 else:
                         print('booking in cancelled')
                         booking.cancel()
                         confirmed_message='Booking cancelled'
                 for notification in details:
+                        print('ni notifications')
                         if notification['booking_id']==id:
-                                notification['status']='Cancelled'
-                        else:
-                               notification['status']='Confirmed'
+                                print (notification,'before seen')
+                                notification['seen']=True 
+                                print (notification,'after seen')
+                                
+                                      
+                        
                 return render_template('booking_confirm.html',details=details,confirmed_message=confirmed_message)
                
 
-        return render_template('booking_confirm.html',details=details,confirmed_message=confirmed_message,booking_notification=booking_notification)
+        return render_template('booking_confirm.html',details=details)
 
 
 

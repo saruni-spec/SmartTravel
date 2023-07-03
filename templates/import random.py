@@ -59,5 +59,3 @@ for i in range(20):
     }
     users.append(user_data)
 
-no='HIJ234'
-print(no=='HIJ234')

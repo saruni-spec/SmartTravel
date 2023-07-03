@@ -1,5 +1,5 @@
 import requests
-api_key = 'AIzaSyA_JxBRmUKjcpPLWXwAagTX9k19tIWi2SQ'
+import os
 
 def get_distance(origin_lat, origin_lng, destination_lat, destination_lng):
     # Replace YOUR_API_KEY with your actual API key
@@ -12,7 +12,7 @@ def get_distance(origin_lat, origin_lng, destination_lat, destination_lng):
     params = {
         'origin': f'{origin_lat},{origin_lng}',
         'destination': f'{destination_lat},{destination_lng}',
-        'key': api_key
+        'key': os.environ.get('google_api_key')
     }
 
     # Make the HTTP request
@@ -70,6 +70,3 @@ def reverse_geocode(latitude, longitude):
 
 
 
-key3='AIzaSyAf1AH2Lh3Xh5nlSUlvnc5UWpAWib4MpFA'
-key2='AIzaSyA_JxBRmUKjcpPLWXwAagTX9k19tIWi2SQ'
-key1='AIzaSyAWYvsq4IwJAe-0p6kWv5pm20hj5BrIFvo'

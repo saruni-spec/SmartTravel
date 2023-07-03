@@ -23,7 +23,7 @@ from views.admin import bp as admin_bp
 
 
 
-
+import os
 
 
 from models.user import User
@@ -43,15 +43,15 @@ app.register_blueprint(tracking_bp)
 app.register_blueprint(admin_bp)
 
 
-app.config['SECRET_KEY']='mysecretkey'
-app.config['GOOGLEMAPS_KEY'] = 'AIzaSyA_JxBRmUKjcpPLWXwAagTX9k19tIWi2SQ'
+app.config['SECRET_KEY']=os.environ.get('mysecretkey')
 
-app.config['SECRET_KEY'] = 'mysecretkey'
+app.config['GOOGLEMAPS_KEY'] = os.environ.get('google_api_key')
+
 app.config['MAIL_SERVER'] = 'smtp-relay.sendinblue.com' 
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'oddsthingshere@gmail.com'  
-app.config['MAIL_PASSWORD'] = '2Eq6Gy87LKVfhzAv'  
+app.config['MAIL_PASSWORD'] =  os.environ.get('mail_api_key')
 app.config['MAIL_DEFAULT_SENDER'] = 'oddsthingshere@gmail.com'  
 app.config['MAIL_MAX_EMAILS'] = None
 app.config['MAIL_ASCII_ATTACHMENTS'] = False
