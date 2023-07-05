@@ -14,6 +14,8 @@
   --secondary-form-color:rgba(75, 108, 218, 0.849);
   --other-form-color:rgb(148, 62, 80);
   
+  --alert-color:red;
+
   /* Link Colors */
   --secondary-link-color: rgb(77, 23, 34);
   --secondary-link-hover-background-color: #3f0101;
@@ -22,6 +24,7 @@
   --secondary-link-active-color: #3d0202;
 
   --link-color: rgba(75, 108, 218, 0.849);
+  --link-text-color:rgb(39, 2, 107);
   --link-hover-background-color: #6879c5;
   --link-hover-color: #012188;
   --link-active-background-color: #01164e;

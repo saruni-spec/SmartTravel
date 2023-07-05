@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Payment</h2>
+{% endblock %}
+{% block content %}
+<form action="">
+<label for="pickup_point">From:</label>
+<p class="output">{{pickup_point}}</p>
+<label for="destination">To:</label>
+<p class="output">{{destination}}</p>
+<label for="date">On Date:</label>
+<p class="date">{{date}}</p>
+<label for="time">At:</label>
+<p class="output">{{time}}</p>
+<label for="amount">Amount to be Paid</label>
+<p class="output">{{amount}}</p>
+
+<p class="ouput">{{response}}</p>
+
+<button class="intaSendPayButton" data-amount="{{amount}}" data-currency="KES" data-phone_number="{{phone_number}}">Pay Now</button>
+</form>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/payment.css')}}">
+<script src="https://unpkg.com/intasend-inlinejs-sdk@3.0.4/build/intasend-inline.js"></script>
+<script>
+new window.IntaSend({
+    // Replace with your Publishable Key
+    publicAPIKey: "ISPubKey_test_813b4dcb-fb5e-46b6-b244-5f9f2cc742c0",
+    live: false //set to true when going live
+  })
+  .on("COMPLETE", (results) => console.log("Do something on success", results))
+  .on("FAILED", (results) => console.log("Do something on failure", results))
+  .on("IN-PROGRESS", (results) => console.log("Payment in progress status", results))
+</script>
+{% endblock %}

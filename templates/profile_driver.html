@@ -27,9 +27,17 @@
 
 
     <form action="">
-        <label for="username">Username</label>
-    <p>{{user_name}}</p>
-        
+    <label for="username">Username</label>
+    <p class="output">{{user_name}}</p>
+    <label for="email">Email</label>
+    <p class="output">{{email}}</p>
+    <label for="phone_number">Phone Number</label>
+    <p class="output">{{phone_number}}</p>
+    <label for="address"><Address></Address></label>
+    <p class="output">{{address}}</p>
+    <label for="vehicle">Vehicle</label>
+    <p class="output">{{vehicle_no}}</p>
+    <a href="{{url_for('profile.edit_profile')}}" class="a-form"> edit profile</a>
         
         <a href="riders"><button type="button" class="a-form">Current passengers</button></a>
         <a href="{{url_for('profile.edit_profile')}}" class="a-form"> edit profile</a>

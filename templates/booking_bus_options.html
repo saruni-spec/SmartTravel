@@ -1,17 +1,15 @@
 {% extends 'base.html' %}
 {% block title %}
-<a href="{{url_for('booking.select_destination')}}">Get a ride</a>
-<a href="{{url_for('profile.rider')}}">Profile</a>
 <h2>booking</h2>
 {% endblock %}
 {% block content %}
 <form action="booking/bus_options.html">
     <label for="pickup_point">Pickup Point</label>
-    <p>{{pickup_point}}</p>
+    <p class="output">{{pickup_point}}</p>
     <label for="destination">Destination</label>
     {{ destination }}
     <label for="duration">Travel Time</label>
-    <p>{{travel_time}}</p>
+    <p class="output">{{travel_time}}</p>
 </form>
 {% if error %}
 {{error}}
@@ -25,13 +23,13 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="vehicle">Vehicle</label>
     <input type="hidden" name="vehicle" id="vehicle" value="{{ bus.vehicle}} ">
-    <p>{{ bus.vehicle}}</p>
+    <p class="output">{{ bus.vehicle}}</p>
     <label for="seats">Seats_available</label>
-    {{Seats_available}}
-    <label for="no_of_seats">No of seats</label>
+    <p class="output">{{Seats_available}}</p>
+    <label for="no_of_seats">Select No of seats</label>
     <input type="number" max="5" name="no_of_seats" id="no_of_seats">
     <label for="Fare">Fare per person</label>
-    <p>{{fare}}</p>
+    <p class="output">{{fare}}</p>
     <button type="submit">Confirm Booking</button>
 </form>
 

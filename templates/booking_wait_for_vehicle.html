@@ -1,21 +1,19 @@
 {% extends 'base.html' %}
 {% block title %}
-<a href="{{url_for('profile.rider')}}">Profile</a>
 <h2>booking</h2>
 {% endblock %}
 {% block content %}
 <form action="/booking/wait_for_vehicle" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="vehicle">Vehicle</label>
-    <p>{{ vehicle_no }}</p>
-    <label for="driver">Driver</label>
-    <p>{{ driver }}</p>
+    <p class="output">{{ vehicle_no }}</p>
+    
     <label for="destination">Destination</label>
-    {{ destination }}
+    <p class="output">{{ destination }}</p>
     <label for="pickup">Pickup point</label>
-    {{ pickup_point}}
+    <p class="output">{{ pickup_point}}</p>
     <label for="wait_time">Wait time</label>
-    <p>{{ wait_time}}</p>
+    <p class="output">{{ wait_time}}</p>
 
     <button type="submit">Cancel booking</button>
 

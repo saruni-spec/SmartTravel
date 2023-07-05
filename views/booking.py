@@ -122,6 +122,9 @@ def select_destination():
                 user_location=None
         print(user_location,'user location in post up')
         print(jsonify(user_location),'user location in jsonify up')
+        hybrid_message=session.get('hybrid_message',None)
+        taxi_message=session.get('taxi_message',None)
+        bus_message=session.get('bus_message',None)
         if request.method=='POST':
                 token = request.form.get('csrf_token')
                 try:
@@ -273,6 +276,8 @@ def select_destination():
                         bus_data = [bus for bus in old_bus_data if bus['docked']]
                         taxi_data=create_kafka_objects(consumer_taxi)
                         print(taxi_data,'taxi data from kafka')
+                        hybrid_data=create_kafka_objects(consumer_hybrid)
+                        print(hybrid_data,'hybrid data from kafka')
                         
                         destination_name=request.form.get('destination')
                         print(destination_name,'destination selected in form')
@@ -285,17 +290,23 @@ def select_destination():
                         api_key = "AIzaSyA_JxBRmUKjcpPLWXwAagTX9k19tIWi2SQ"
 
                         url = f"https://maps.googleapis.com/maps/api/geocode/json?address={destination_name}&key={api_key}"
-                        response = requests.get(url)
-                        data = response.json()
-                        if data['status'] == 'OK':
-                                result = data['results'][0]
-                                location = result['geometry']['location']
-                                latitude = location['lat']
-                                longitude = location['lng']
-                                destination={'location':destination_name,'latitude':latitude,'longitude':longitude,'user':current_user.user_name}
-                                print(destination['location'],'destination after geocoding')
-                        else:
-                                error= "Unable to retrieve coordinates."
+                        try:
+                                response = requests.get(url)
+                                data = response.json()
+                                if data['status'] == 'OK':
+                                        result = data['results'][0]
+                                        location = result['geometry']['location']
+                                        latitude = location['lat']
+                                        longitude = location['lng']
+                                        destination={'location':destination_name,'latitude':latitude,'longitude':longitude,'user':current_user.user_name}
+                                        print(destination['location'],'destination after geocoding')
+                                else:
+                                        error= "Unable to retrieve coordinates."
+                        except (requests.exceptions.RequestException, requests.exceptions.ConnectionError) as e:
+                                print(f"Error: {e}")
+                                flash("No internet connection")
+                                return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message)
+                                
                         session['destination_coordinates']={'latitude':destination['latitude'],'longitude':destination['longitude']}
                         
                         
@@ -314,7 +325,7 @@ def select_destination():
                                 taxi_location_name=reverse_geocode(nearest_taxi[0]['latitude'], nearest_taxi[0]['longitude'])
                                 session['taxi_location_name']=taxi_location_name
                                 taxi_arrival_time=get_time(user_location_name, taxi_location_name,"driving", api_key)
-                                session['arrival_time']=taxi_arrival_time
+                                session['taxi_arrival_time']=taxi_arrival_time
                                 my_taxi=nearest_taxi[0]['vehicle']
                                 taxi_message='Click here to book your taxi'
                                 taxi_time=get_time(session.get('location_name'), destination_name,"driving", api_key)
@@ -351,22 +362,73 @@ def select_destination():
                         session['closest_bus']=a_bus
                         session['closest_taxi']=my_taxi
                         session['closest_stage']=nearest_stage[0]['stage_name']
-                        session['pickup_point']=user_location_name
-                
-                        return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location_name)
+                        session['taxi_pickup_point']=user_location_name
+                        session['taxi_message']=taxi_message
+                        session['bus_message']=bus_message
+
+                        nearest_hybrid_to_user=closest_taxi(user_location,hybrid_data)
+                        print(nearest_hybrid_to_user,'nearest hybrid to user')
+                        
+                        if nearest_hybrid_to_user is None:
+                                nearest_hybrid_to_stage=find_closest_hybrid_to_stage(nearest_stage[0]['latitude'],nearest_stage[0]['longitude'],hybrid_data)
+                                my_hybrid=nearest_hybrid_to_stage
+                                print(nearest_hybrid_to_stage,'nearest hybrid to stage')
+                                if my_hybrid is None or len(my_hybrid)==0:
+                                        print('no hybrid nearby')
+                                        hybrid_message='No hybrid nearby'
+                                        session['closest_hybrid']=None
+                                        
+                                else:
+                                        my_hybrid=nearest_hybrid_to_user
+                                        hybrid_location_name=reverse_geocode(my_hybrid[0]['latitude'], my_hybrid[0]['longitude'])
+                                        session['hybrid_location_name']=hybrid_location_name
+                                        hybrid_arrival_time=get_time(nearest_stage[0]['stage_name'], hybrid_location_name,"driving", api_key)
+                                        hybrid_time=get_time(nearest_stage[0]['stage_name'], destination_name,"driving", api_key)
+                                        session['hybrid_pickup_point']=nearest_stage[0]['stage_name']
+                                        my_hybrid_now=my_hybrid[0]['vehicle']
+                                        hybrid_message='Click here to book your ride'
+                                        session['hybrid_arrival_time']=hybrid_arrival_time
+                                        session['hybrid_travel_time']=hybrid_time
+                                        session['closest_hybrid']=my_hybrid_now
+                        else:
+                                my_hybrid=nearest_hybrid_to_user
+                                hybrid_location_name=reverse_geocode(my_hybrid[0]['latitude'], my_hybrid[0]['longitude'])
+                                session['hybrid_location_name']=hybrid_location_name
+                                hybrid_arrival_time=get_time(user_location_name, hybrid_location_name,"driving", api_key)
+                                hybrid_time=get_time(session.get('location_name'), destination_name,"driving", api_key)
+                                session['hybrid_pickup_point']=user_location_name
+                                session['hybrid_arrival_time']=hybrid_arrival_time
+                                my_hybrid_now=my_hybrid[0]['vehicle']
+                                session['hybrid_travel_time']=hybrid_time
+                        
+                                hybrid_message='Click here to book your ride'
+                                
+
+                                session['closest_hybrid']=my_hybrid_now
+                        session['hybrid_message']=hybrid_message
+                        return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message)
                 elif form_name == 'taxi-form':
+                        if session.get('closest_taxi') is None:
+                                return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message)
                         
                         session['vehicle_type']='taxi'
                         
                         return redirect(url_for('booking.select_taxi'))
                 elif form_name == 'bus-form':
+                        if session.get('closest_bus') is None:
+                                return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message)
                         
                         session['vehicle_type']='bus'
                         
                         return redirect(url_for('booking.bus_options'))
                 elif form_name == 'hybrid-form':
-                        pass
-        return render_template('booking_select_destination.html',user_location=user_location,user_location_name=user_location_name)
+                        if session.get('closest_hybrid') is None:
+                                return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message)
+                        
+                        session['vehicle_type']='hybrid'
+                        
+                        return redirect(url_for('booking.select_taxi'))
+        return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message)
 
 
 
@@ -376,22 +438,29 @@ notifications=[]
 @login_required
 def select_taxi():
         user_name=current_user.user_name
-        print(user_name,'user name in select taxi')
+        print(user_name,'user name in select ride')
         phone_number=current_user.phone
         date=datetime.now().strftime("%Y-%m-%d")
         time=datetime.now().strftime("%H:%M:%S")
         destination=session.get('destination')
-        vehicle_no=session.get('closest_taxi')
-        print(vehicle_no,'vehicle no in select vehicle')
         vehicle_type=session.get('vehicle_type')
-        travel_time=session.get('taxi_travel_time')
+        if vehicle_type=='taxi':
+                vehicle_no=session.get('closest_taxi')
+                travel_time=session.get('taxi_travel_time')
         
-        pickup_point=session.get('pickup_point')
-        arrival_time=session.get('arrival_time')
-       
-        vehicle=Vehicle.query.filter_by(no_plate=vehicle_no).first()
+                pickup_point=session.get('taxi_pickup_point')
+                arrival_time=session.get('taxi_arrival_time')
+        elif vehicle_type=='hybrid':
+                vehicle_no=session.get('closest_hybrid')
+                travel_time=session.get('hybrid_travel_time')
+        
+                pickup_point=session.get('hybrid_pickup_point')
+                arrival_time=session.get('hybrid_arrival_time')
+        
+        print(vehicle_no,'vehicle no in select vehicle')
         
         fare=10
+        
         
         if request.method=='POST':
                 booking=Booking(user_name, phone_number, date, time, pickup_point, destination, vehicle_no, fare)
@@ -437,6 +506,10 @@ def bus_options():
                 no_plate=no_plate.strip()
                 print(no_plate,'vehicle no in bus options')
                 vehicle=Vehicle.query.filter_by(no_plate=no_plate).first()
+                if vehicle is None:
+                        error='Vehicle not found'
+                        return render_template('booking_bus_options.html',buses=buses,pickup_point=pickup_point,destination=destination,travel_time=travel_time,error=error)
+                        
                 print(vehicle,'vehicle bus in bus options')
                 
                 
@@ -583,6 +656,8 @@ def wait_for_vehicle():
     destination=session.get('booking')['destination']
     pickup_point=session.get('booking')['pickup_point']
     wait_time=session.get('arrival_time')
+    if wait_time is None:
+           wait_time='Bus leaves in a few minutes'
     
     
     start_routing.delay()
@@ -598,3 +673,430 @@ def wait_for_vehicle():
 @is_driver
 def review():
         return render_template('booking_review.html')
+
+
+
+@bp.route('/booking/book_taxi',methods=['GET','POST'])
+@login_required
+def book_taxi():
+        user_location=session.get('current_location')
+        print(user_location,'user location in select destination')
+        
+        user_location_name=session.get('location_name')
+        print(user_location_name,'user location name in select destination')
+        if user_location is None:
+                user_location=None
+        print(user_location,'user location in post up')
+        print(jsonify(user_location),'user location in jsonify up')
+        if request.method=='POST':
+                token = request.form.get('csrf_token')
+                try:
+                        validate_csrf(token)
+                except ValidationError :
+                        error="Invalid CSRF token"
+                        return error,404
+                form_name = request.form.get('form-name')
+                print(form_name,'form name')
+                if form_name == 'destination-form':
+                        taxi_data=create_kafka_objects(consumer_taxi)
+                        print(taxi_data,'taxi data from kafka')
+                        
+                        destination_name=request.form.get('destination')
+                        print(destination_name,'destination selected in form')
+                        if destination_name=='':
+                                error='Please select Destination'
+                                return render_template('booking_select_destination.html',user_location=user_location,error=error)
+                        session['destination']=destination_name
+                        import requests
+
+                        api_key = "AIzaSyA_JxBRmUKjcpPLWXwAagTX9k19tIWi2SQ"
+
+                        url = f"https://maps.googleapis.com/maps/api/geocode/json?address={destination_name}&key={api_key}"
+                        response = requests.get(url)
+                        data = response.json()
+                        if data['status'] == 'OK':
+                                result = data['results'][0]
+                                location = result['geometry']['location']
+                                latitude = location['lat']
+                                longitude = location['lng']
+                                destination={'location':destination_name,'latitude':latitude,'longitude':longitude,'user':current_user.user_name}
+                                print(destination['location'],'destination after geocoding')
+                        else:
+                                error= "Unable to retrieve coordinates."
+                        session['destination_coordinates']={'latitude':destination['latitude'],'longitude':destination['longitude']}
+                        
+                        if user_location is None or user_location=='':
+                                error='Please select your location'
+                                return render_template('booking_select_destination.html',error=error)
+                        nearest_taxi=closest_taxi(user_location,taxi_data)
+                        print(nearest_taxi,'nearest taxi in post')
+                        if nearest_taxi is None:
+                                my_taxi=None
+                                taxi_message='No taxi nearby'
+                        else:
+                                print('we have a nearest taxi')
+                                taxi_location_name=reverse_geocode(nearest_taxi[0]['latitude'], nearest_taxi[0]['longitude'])
+                                session['taxi_location_name']=taxi_location_name
+                                taxi_arrival_time=get_time(user_location_name, taxi_location_name,"driving", api_key)
+                                session['arrival_time']=taxi_arrival_time
+                                my_taxi=nearest_taxi[0]['vehicle']
+                                taxi_message='Click here to book your taxi'
+                                taxi_time=get_time(session.get('location_name'), destination_name,"driving", api_key)
+                                print(taxi_time,'taxi time in post')
+                                session['taxi_travel_time']=get_time(destination_name,session.get('location_name'),'driving',api_key)
+                                print (session.get('taxi_travel_time'),'taxi travel time ')
+        
+
+                
+                        session['closest_taxi']=my_taxi
+                        
+                        session['pickup_point']=user_location_name
+                
+                        return render_template('book_taxi.html',closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name)
+                else :
+                        
+                        session['vehicle_type']='taxi'
+                        
+                        return redirect(url_for('booking.select_taxi'))
+                
+        return render_template('book_taxi.html',user_location=user_location,user_location_name=user_location_name)
+
+
+
+@bp.route('/booking/book_bus',methods=['GET','POST'])
+@login_required
+def book_bus():
+        user_location=session.get('current_location')
+        print(user_location,'user location in select destination')
+        
+        user_location_name=session.get('location_name')
+        print(user_location_name,'user location name in select destination')
+        if user_location is None:
+                user_location=None
+        print(user_location,'user location in post up')
+        print(jsonify(user_location),'user location in jsonify up')
+        if request.method=='POST':
+                token = request.form.get('csrf_token')
+                try:
+                        validate_csrf(token)
+                except ValidationError :
+                        error="Invalid CSRF token"
+                        return error,404
+                form_name = request.form.get('form-name')
+                print(form_name,'form name')
+                if form_name == 'destination-form':
+                        bus_data=create_kafka_objects(consumer_bus)
+                        old_bus_data=data = [
+    {
+        "vehicle": "EFG901",
+        "latitude": -1.28639,
+        "longitude": 36.8172,
+        "timestamp": "2023-06-30 21:30:00",
+        "bus_destination": "Nairobi CBD",
+        "docked": True,
+        "docking_stage": "Nairobi CBD"
+    },
+    {
+        "vehicle": "HIJ234",
+        "latitude": -1.28639,
+        "longitude": 36.8172,
+        "timestamp": "2023-06-30 22:45:00",
+        "bus_destination": "Ruiru",
+        "docked": True,
+        "docking_stage": "Nairobi CBD"
+    },
+    {
+        "vehicle": "KLM567",
+        "latitude": -1.28639,
+        "longitude": 36.8172,
+        "timestamp": "2023-06-30 23:59:00",
+        "bus_destination": "Ruiru",
+        "docked": True,
+        "docking_stage": "Nairobi CBD"
+    },
+    {
+        "vehicle": "NOP890",
+        "latitude": -1.28639,
+        "longitude": 36.8172,
+        "timestamp": "2023-07-01 01:15:00",
+        "bus_destination": "Juja ",
+        "docked": True,
+        "docking_stage": "Nairobi CBD"
+    },
+    {
+        "vehicle": "QRS123",
+        "latitude": -1.28639,
+        "longitude": 36.8172,
+        "timestamp": "2023-07-01 02:30:00",
+        "bus_destination": "Thika",
+        "docked": True,
+        "docking_stage": "Nairobi CBD"
+    },
+    {
+        "vehicle": "ABC123",
+        "latitude": -1.28639,
+        "longitude": 36.8172,
+        "timestamp": "2023-06-30 09:00:00",
+        "bus_destination": "Juja",
+        "docked": True,
+        "docking_stage": "Nairobi CBD"
+    },
+    {
+        "vehicle": "DEF456",
+        "latitude": -1.23488,
+        "longitude": 36.8892,
+        "timestamp": "2023-06-30 10:15:00",
+        "bus_destination": "Juja",
+        "docked": True,
+        "docking_stage": "Ruaraka (Getrude's Children's Hospital)"
+    },
+    {
+        "vehicle": "GHI789",
+        "latitude": -1.18699,
+        "longitude": 36.9199,
+        "timestamp": "2023-06-30 11:30:00",
+        "bus_destination": "Nairobi",
+        "docked": True,
+        "docking_stage": "Kahawa West"
+    },
+    {
+        "vehicle": "JKL012",
+        "latitude": -1.21418,
+        "longitude": 36.8907,
+        "timestamp": "2023-06-30 12:45:00",
+        "bus_destination": "Nairobi",
+        "docked": True,
+        "docking_stage": "Roysambu"
+    },
+    {
+        "vehicle": "MNO345",
+        "latitude": -1.09793,
+        "longitude": 37.0166,
+        "timestamp": "2023-06-30 14:00:00",
+        "docked": False,
+        
+    },
+    {
+        "vehicle": "PQR678",
+        "latitude": -1.17554,
+        "longitude": 36.9411,
+        "timestamp": "2023-06-30 15:15:00",
+        "bus_destination": "Nairobi",
+        "docked": True,
+        "docking_stage": "Kahawa Sukari"
+    },
+    {
+        "vehicle": "STU901",
+        "latitude": -1.22054,
+        "longitude": 36.9029,
+        "timestamp": "2023-06-30 16:30:00",
+        "bus_destination": "Nairobi",
+        "docked": True,
+        "docking_stage": "Kasarani Sports Complex"
+    },
+    {
+        "vehicle": "VWX234",
+        "latitude": -1.14406,
+        "longitude": 36.9608,
+        "timestamp": "2023-06-30 17:45:00",
+        "bus_destination": "Nairobi",
+        "docked": True,
+        "docking_stage": "Kenyatta University"
+    },
+    {
+        "vehicle": "YZA567",
+        "latitude": -1.18345,
+        "longitude": 36.9272,
+        "timestamp": "2023-06-30 19:00:00",
+        "bus_destination": "Nairobi",
+        "docked": True,
+        "docking_stage": "Kahawa Wendani"
+    },
+    {
+        "vehicle": "BCD890",
+        "latitude": -1.03867,
+        "longitude": 37.0768,
+        "timestamp": "2023-06-30 20:15:00",
+        "docked": False,
+        
+    }
+]
+
+                        print(old_bus_data,'bus data fro kafka')
+                        bus_data = [bus for bus in old_bus_data if bus['docked']]
+                        
+                        destination_name=request.form.get('destination')
+                        print(destination_name,'destination selected in form')
+                        if destination_name=='':
+                                error='Please select Destination'
+                                return render_template('booking_select_destination.html',user_location=user_location,error=error)
+                        session['destination']=destination_name
+                        import requests
+
+                        api_key = "AIzaSyA_JxBRmUKjcpPLWXwAagTX9k19tIWi2SQ"
+
+                        url = f"https://maps.googleapis.com/maps/api/geocode/json?address={destination_name}&key={api_key}"
+                        response = requests.get(url)
+                        data = response.json()
+                        if data['status'] == 'OK':
+                                result = data['results'][0]
+                                location = result['geometry']['location']
+                                latitude = location['lat']
+                                longitude = location['lng']
+                                destination={'location':destination_name,'latitude':latitude,'longitude':longitude,'user':current_user.user_name}
+                                print(destination['location'],'destination after geocoding')
+                        else:
+                                error= "Unable to retrieve coordinates."
+                        session['destination_coordinates']={'latitude':destination['latitude'],'longitude':destination['longitude']}
+                        
+                        
+                        nearest_stage=closest_stage(user_location)
+                        print(nearest_stage[0]['stage_name'],'nearest stage to user')
+                        if user_location is None or user_location=='':
+                                error='Please select your location'
+                                return render_template('booking_select_destination.html',error=error)
+                        
+                        user_time=get_time(session.get('location_name'), nearest_stage[0]['stage_name'],"walking", api_key)
+                        print(f"{user_time} Time needed for user to walk to stage {nearest_stage[0]['stage_name']}")
+                        bus_time=get_time(nearest_stage[0]['stage_name'], destination_name,"driving", api_key)
+                        print(f"{bus_time} Total time for user to get to destination on bus")
+                        session['travel_time']=bus_time
+
+                        routed_bus_data=find_route(bus_data)
+                        viable_buses=allow_passenger(routed_bus_data,destination_name,nearest_stage[0]['stage_name'])
+
+                        a_bus=bus(viable_buses)
+                        if a_bus is None:
+                                bus_message='No bus nearby'
+                                
+
+                        else:
+                                
+                                #bus_location_name=reverse_geocode(a_bus[0]['latitude'], a_bus[0]['longitude'])
+                                #bus_arrival_time=get_time(nearest_stage[0]['stage_name'], bus_location_name,"driving", api_key)
+                                #my_bus=a_bus[0]['vehicle']
+                                
+                                bus_message='Click here to select a bus'
+                                session['user_to_stage_time']=user_time
+                                session['bus_travel_time']=get_time(nearest_stage[0]['stage_name'],destination_name,'driving',api_key)
+                        print(a_bus,'a bus in post')
+                        session['closest_bus']=a_bus
+                        session['closest_stage']=nearest_stage[0]['stage_name']
+                        session['pickup_point']=user_location_name
+                
+                        return render_template('book_bus.html',closest_bus=bus_message,user_location=user_location,user_location_name=user_location_name)
+                
+        
+                else:
+                        
+                        session['vehicle_type']='bus'
+                        
+                        return redirect(url_for('booking.bus_options'))
+               
+        return render_template('book_bus.html',user_location=user_location,user_location_name=user_location_name)
+
+
+@bp.route('/booking/book_hybrid', methods=('GET', 'POST'))
+@login_required
+def book_hybrid():      
+        user_location=session.get('current_location')
+        print(user_location,'user location in select destination')
+        
+        user_location_name=session.get('location_name')
+        print(user_location_name,'user location name in select destination')
+        if user_location is None:
+                user_location=None
+        print(user_location,'user location in post up')
+        print(jsonify(user_location),'user location in jsonify up')
+        if request.method=='POST':
+                token = request.form.get('csrf_token')
+                try:
+                        validate_csrf(token)
+                except ValidationError :
+                        error="Invalid CSRF token"
+                        return error,404
+                form_name = request.form.get('form-name')
+                print(form_name,'form name')
+                if form_name == 'destination-form':
+                        hybrid_data=create_kafka_objects(consumer_hybrid)
+                        print(hybrid_data,'hybrid data from kafka')
+                        
+                        destination_name=request.form.get('destination')
+                        print(destination_name,'destination selected in form')
+                        if destination_name=='':
+                                error='Please select Destination'
+                                return render_template('booking_select_destination.html',user_location=user_location,error=error)
+                        session['destination']=destination_name
+                        import requests
+
+                        api_key = "AIzaSyA_JxBRmUKjcpPLWXwAagTX9k19tIWi2SQ"
+
+                        url = f"https://maps.googleapis.com/maps/api/geocode/json?address={destination_name}&key={api_key}"
+                        response = requests.get(url)
+                        data = response.json()
+                        if data['status'] == 'OK':
+                                result = data['results'][0]
+                                location = result['geometry']['location']
+                                latitude = location['lat']
+                                longitude = location['lng']
+                                destination={'location':destination_name,'latitude':latitude,'longitude':longitude,'user':current_user.user_name}
+                                print(destination['location'],'destination after geocoding')
+                        else:
+                                error= "Unable to retrieve coordinates."
+                        session['destination_coordinates']={'latitude':destination['latitude'],'longitude':destination['longitude']}
+                        
+                        
+                        nearest_stage=closest_stage(user_location)
+                        print(nearest_stage[0]['stage_name'],'nearest stage to user')
+                        if user_location is None or user_location=='':
+                                error='Please select your location'
+                                return render_template('booking_select_destination.html',error=error)
+                        nearest_hybrid_to_user=closest_taxi(user_location,hybrid_data)
+                        
+                        print(nearest_hybrid_to_user,'nearest hybrid to user')
+                        
+                        if nearest_hybrid_to_user is None:
+                                nearest_hybrid_to_stage=find_closest_hybrid_to_stage(nearest_stage[0]['latitude'],nearest_stage[0]['longitude'],hybrid_data)
+                                my_hybrid=nearest_hybrid_to_stage
+                                print(nearest_hybrid_to_stage,'nearest hybrid to stage')
+                                if my_hybrid is None or len(my_hybrid)==0:
+                                        print('no hybrid nearby')
+                                        closest_hybrid='No hybrid nearby'
+                                        return render_template('book_hybrid.html',user_location=user_location,user_location_name=user_location_name,closest_hybrid=closest_hybrid)
+                                else:
+                                        my_hybrid=nearest_hybrid_to_user
+                                        hybrid_location_name=reverse_geocode(my_hybrid[0]['latitude'], my_hybrid[0]['longitude'])
+                                        session['hybrid_location_name']=hybrid_location_name
+                                        hybrid_arrival_time=get_time(nearest_stage[0]['stage_name'], hybrid_location_name,"driving", api_key)
+                                        hybrid_time=get_time(nearest_stage[0]['stage_name'], destination_name,"driving", api_key)
+                                        session['pickup_point']=nearest_stage[0]['stage_name']
+                                        my_hybrid_now=my_hybrid[0]['vehicle']
+                                        closest_hybrid='Click here to book your taxi'
+                        else:
+                                my_hybrid=nearest_hybrid_to_user
+                                hybrid_location_name=reverse_geocode(my_hybrid[0]['latitude'], my_hybrid[0]['longitude'])
+                                session['hybrid_location_name']=hybrid_location_name
+                                hybrid_arrival_time=get_time(user_location_name, hybrid_location_name,"driving", api_key)
+                                hybrid_time=get_time(session.get('location_name'), destination_name,"driving", api_key)
+                                session['pickup_point']=user_location_name
+                                session['arrival_time']=hybrid_arrival_time
+                                my_hybrid_now=my_hybrid[0]['vehicle']
+                        
+                                closest_hybrid='Click here to book your ride'
+                        
+                                print(hybrid_time,'hybrid time in post')
+                        session['hybrid_travel_time']=hybrid_time
+                        print (session.get('hybrid_travel_time'),'hybrid travel time ')
+                        
+                        
+                        
+                        
+                        session['closest_hybrid']=my_hybrid_now
+                        session['closest_stage']=nearest_stage[0]['stage_name']
+                
+                        return render_template('book_hybrid.html',user_location=user_location,user_location_name=user_location_name,closest_hybrid=closest_hybrid)
+                
+                else:
+                        session['vehicle_type']='hybrid'
+                        return redirect(url_for('booking.select_taxi'))
+        return render_template('book_hybrid.html',user_location=user_location,user_location_name=user_location_name)

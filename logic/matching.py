@@ -10,16 +10,20 @@ def get_time(origin_location, destination_location, travel_mode, api_key):
     print(destination_location,'destination location')
     print(travel_mode,'travel mode')
     url = f"https://maps.googleapis.com/maps/api/directions/json?origin={origin_location}&destination={destination_location}&mode={travel_mode}&key={api_key}"
-    response = requests.get(url)
-    data = response.json()
-    if data['status'] == 'OK':
-        route = data['routes'][0]
-        leg = route['legs'][0]
-        duration = leg['duration']['text']
-        print(duration,'duration')
-        return duration
-    else:
-        return None
+    try:
+        response = requests.get(url)
+        data = response.json()
+        if data['status'] == 'OK':
+            route = data['routes'][0]
+            leg = route['legs'][0]
+            duration = leg['duration']['text']
+            print(duration,'duration')
+            return duration
+        else:
+            return None
+    except (requests.exceptions.RequestException, requests.exceptions.ConnectionError) as e:
+        print(f"Error: {e}")
+        flash("No internet connection")
 
 
 def calculate_distance(lat1,long1,lat2,long2):
@@ -248,3 +252,24 @@ def allow_passenger(bus_data,passenger_destination,nearest_stage):
                         viable_buses.append(bus)
                     
         return viable_buses
+    
+
+def find_closest_hybrid_to_stage(stage_lat, stage_lon,hybrids):
+    if hybrids is None or len(hybrids)==0:  # Check if bus_stops is None
+        return None
+    
+    closest_distance = float('inf')
+    closest_hybrid = None
+
+    
+    for hybrid in hybrids:
+        hybrid_lat = hybrid['latitude']
+        hybrid_lon = hybrid['longitude']
+        
+        distance = get_distance(stage_lat, stage_lon, hybrid_lat, hybrid_lon)
+        
+        if distance < closest_distance:
+            closest_distance = distance
+            closest_hybrid = hybrid
+
+    return closest_hybrid

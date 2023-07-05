@@ -13,7 +13,7 @@ Select your destination
 <div class="booking">
   <div id="map" class="column1"></div>
   <div class="column2">
-    <form id="select-destination-form" action="/booking/select_destination" method="post">
+    <form id="select-destination-form" action="/booking/book_hybrid" method="post">
       <input type="hidden" name="form-name" value="destination-form">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <label for="current_location">Current location</label>
@@ -27,34 +27,12 @@ Select your destination
       <button type="submit">Confirm</button>
     </form>
 
-    <form id="taxi-form" method="post" action="/booking/select_destination">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <input type="hidden" name="form-name" value="taxi-form">
-        <p>
-          
-        {{closest_taxi}}
-          
-        </p>
-      
-      <button type="submit"></button>
-    </form>
-
-    <form id="bus-form" method="post" action="/booking/select_destination">
-      <input type="hidden" name="form-name" value="bus-form">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <p>
-          {{closest_bus}}
-          
-        </p>
-      
-      <button type="submit"></button>
-    </form>
-
-    <form id="hybrid-form" method="post" action="/booking/select_destination">
+    
+    <form id="hybrid-form" method="post" action="/booking/book_hybrid">
       <input type="hidden" name="form-name" value="hybrid-form">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <p>
-       {{closest_hybrid}}
+        {{closest_hybrid}}
       </p>
     
     <button type="submit"></button>

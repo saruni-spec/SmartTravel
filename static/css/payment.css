@@ -1,0 +1,10 @@
+.intaSendPayButton {
+    background: var(--link-background-color);
+    border-radius: 3px;
+    border: 1px solid var(--primary-border-color);
+    color:var(--link-color);
+    height: 34px;
+  }
+  .intaSendPayButton:hover {
+    cursor: pointer;
+  }

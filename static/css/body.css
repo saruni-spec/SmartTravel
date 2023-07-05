@@ -43,3 +43,24 @@ a {
   font-family: 'Open Sans', Arial, sans-serif; 
   text-decoration: none; 
 }
+.output{
+  width: 70%;
+  height: auto;
+   border: 2px solid var(--primary-border-color);
+   border-radius: 2px;
+   color: var(--primary-text-color);
+   background-color: var(--primary-background-color);
+}
+input{
+  width: 70%;
+}
+.alert
+  {
+    width:auto;
+    padding: 2px;
+    height: auto;
+     border: 2px solid var(--primary-border-color);
+     border-radius: 2px;
+     color: var(--primary-text-color);
+     background-color: var(--alert-color);
+  }

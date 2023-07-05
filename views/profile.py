@@ -59,8 +59,18 @@ def profile():
 @login_required
 def rider():
     user_name=current_user.user_name
+    user=User.query.filter_by(user_name=user_name).first()
+    email=user.email
+    phone_number=user.phone
+    address=user.address
+    if email is None:
+        email='---'
+    if phone_number is None:
+        phone_number='---'
+    if address is None:
+        address='---'
    
-    return render_template('profile_rider.html',user_name=user_name)
+    return render_template('profile_rider.html',user_name=user_name,email=email,phone_number=phone_number,address=address)
             
 
 @bp.route('/profile/owner', methods=['GET', 'POST'])
@@ -68,9 +78,19 @@ def rider():
 @is_owner
 def profile_owner():
     user_name=current_user.user_name
+    user=User.query.filter_by(user_name=user_name).first()
+    email=user.email
+    if email is None:
+        email='---'
+    phone_number=user.phone
+    if phone_number is None:
+        phone_number='---'
+    address=user.address
+    if address is None:
+        address='---'
     
 
-    return render_template('profile_owner.html',user_name=user_name)
+    return render_template('profile_owner.html',user_name=user_name,phone_number=phone_number,address=address,email=email)
 
 
 from models.kafka import create_kafka_notifications,remove_duplicate_notifications
@@ -88,6 +108,14 @@ def profile_driver():
     print(docked,'docked in profile nnnn')
     user_name=current_user.user_name
     vehicle=Vehicle.query.filter_by(driver_username=user_name).first()
+    user=User.query.filter_by(user_name=user_name).first()
+    email=user.email
+    phone_number=user.phone
+    if email is None:
+        email='---'
+    if phone_number is None:
+        phone_number='---'
+    vehicle_no=vehicle.no_plate
     
     session['my_vehicle']=vehicle.no_plate
     stages=Stages.query.all()
@@ -126,7 +154,7 @@ def profile_driver():
             session['docked']=False
             
             
-    return render_template('profile_driver.html',user_name=user_name,docked=docked)
+    return render_template('profile_driver.html',user_name=user_name,docked=docked,email=email,phone_number=phone_number,vehicle_no=vehicle_no)
 
 
 @bp.route('/profile/driver/select_destination',methods=['GET','POST'])
@@ -152,7 +180,7 @@ def edit_profile():
     username=current_user.user_name
     user=User.query.filter_by(user_name=username).first()
     if request.method == 'POST':
-
+        error=None
         token = request.form.get('csrf_token')
         try:
             validate_csrf(token)
@@ -163,34 +191,47 @@ def edit_profile():
 
         user_name=request.form.get('user_name')
         if user_name !='':
+            print('user_name here')
             if current_user.user_name!=user_name:
+                print('changing username')
                 user.change_user_name(user_name)
         email=request.form.get('email')
         if email !='':
-            if current_user.email!=email:
+            print('email here')
+            
+            if user.email!=email:
+                print('changing email')
+                
                 error=validate_email(email)
                 if not error:
                     user.add_email(email)
 
-        phone_number=request.form.get('phone_number')
+        phone_number=request.form.get('phone')
         if phone_number !='':
-            if current_user.phone!=phone_number:
+            print('phone_number here')
+            print(user.phone)
+            print(phone_number)
+            if user.phone != phone_number:
+                print('changing phone')
+                    
                 user.add_phone(phone_number)
         
 
         
         address=request.form.get('address')
         if address !='':
-            if current_user.address!=address:
+            print('address here')
+            if user.address!=address:
+                print('changing address')
                 user.add_address(address)
         
         
         if error is None:
             db.session.commit()
-            return redirect(url_for('profile.profile_driver'))
+            return redirect(url_for('profile.profile'))
         else:
             return render_template('profile_edit.html',error=error)
-    return render_template('profile_edit.html',user_name=current_user.user_name,email=current_user.email,phone=current_user.phone,address=current_user.address)
+    return render_template('profile_edit.html',user_name=current_user.user_name,email=user.email,phone=user.phone,address=user.address)
 
 
 
