@@ -15,6 +15,8 @@ from views.profile import bp as profile_bp
 from views.payment import bp as payment_bp
 from views.booking import bp as booking_bp
 from views.reg_stages import bp as reg_stages_bp
+from views.hire import bp as hire_bp
+
 from extensions.tasks import bp as tracking_bp
 from views.admin import bp as admin_bp
 
@@ -41,7 +43,7 @@ app.register_blueprint(index_bp)
 app.register_blueprint(reg_stages_bp)
 app.register_blueprint(tracking_bp)
 app.register_blueprint(admin_bp)
-
+app.register_blueprint(hire_bp)
 
 app.config['SECRET_KEY']=os.environ.get('mysecretkey')
 

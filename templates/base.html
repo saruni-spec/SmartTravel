@@ -26,7 +26,10 @@
     <a href="{{url_for('booking.select_destination')}}">Get a ride</a>
     <a href="{{url_for('profile.profile')}}">Profile</a>
     <a href="{{url_for('map.user_location')}}">Map</a>
+    <a href="{{url_for('hire.hire_car')}}">Hire Vehicle</a>
     <a href="{{url_for('login.logout')}}">Log Out</a>
+    
+
     
     
     {% if current_user.check_if_driver() %}

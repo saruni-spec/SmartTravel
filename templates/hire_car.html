@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Notifications</h2>
+{% endblock %}
+{% block content %}
+{% if cars is none %}
+
+<p>no vehicles for hire</p>
+
+{% elif cars is iterable and cars|length >0 %}
+{% for car in cars %} 
+<form action="">
+<label for="no_plate">NO PLATE</label>
+<p class="output">{{car.no_plate}}</p>
+<label for="capacity">Capacity</label>
+
+<p class="output">{{car.capacity}}</p>
+<label for="type">VEhicle Type</label>
+<p class="output">{{car.type}}</p>
+<label for="color">Color</label>
+<p class="output">{{car.color}}</p>
+<label for="price">Pricing</label>
+<p class="output">{{car.price}}</p>
+
+</form>
+
+
+{% endfor %}
+{% else %}
+<p>no cars for hire</p>
+{% endif %}
+
+
+
+
+
+{% endblock %}

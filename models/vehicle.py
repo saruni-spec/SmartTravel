@@ -17,6 +17,8 @@ class Vehicle(db.Model):
     color=db.Column(db.String(50))
     is_active=db.Column(db.Boolean,default=False)
     verification_code=db.Column(db.String(50))
+    for_hire=db.Column(db.Boolean,default=False)
+    build_type=db.Column(db.String(50))
 
     booking_details = relationship("Booking", backref="bookings" )
     
@@ -65,6 +67,8 @@ class Vehicle(db.Model):
         db.session.commit()
         
         
-        
+    def allow_hiring(self):
+        self.allow_hiring=True
+        db.session.commit()
 
         

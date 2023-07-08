@@ -19,7 +19,7 @@ from wtforms.validators import ValidationError
 
 from models.kafka import *
 from flask_login import login_required
-from .profile import is_driver
+from logic.restrictions import *
 
 
 

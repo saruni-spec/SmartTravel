@@ -1,7 +1,6 @@
 from extensions.extensions import db
 from sqlalchemy import Table, Column, Integer, ForeignKey
 from sqlalchemy.orm import relationship
-from models.stages import Stages
 
 
 
@@ -11,7 +10,6 @@ route_stage_table = Table(
     Column('route_id', Integer, ForeignKey('route.id')),
     Column('stage_no', Integer, ForeignKey('stage.stage_no'))
 )
-
 
 class Route(db.Model):
     __tablename__ = 'route'
@@ -36,3 +34,7 @@ class Route(db.Model):
     def stage(self,stages):
         self.stages = stages
         db.session.commit()
+
+
+
+
