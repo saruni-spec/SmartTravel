@@ -1,6 +1,6 @@
 from extensions.extensions import db
 from sqlalchemy import ForeignKey
-
+from sqlalchemy.orm import relationship
 
 
 class Booking(db.Model):
@@ -13,13 +13,14 @@ class Booking(db.Model):
     pickup_point = db.Column(db.String(100), nullable=False)
     destination = db.Column(db.String(100), nullable=False)
     vehicle_plate=db.Column(db.String(50),ForeignKey("vehicle.no_plate"),nullable=False)
-    Fare=db.Column(db.Integer, nullable=False)
     Status=db.Column(db.String(100), nullable=False)
-    payment_type=db.Column(db.String(20),nullable=True)
-    card_number=db.Column(db.String(20),nullable=True)
+    
+    booking_type=db.Column(db.String(20),nullable=True)
 
 
-    def __init__(self, user_name, phone, date, time, pickup_point, destination, vehicle, Fare):
+    payment_details = relationship("Transaction", backref="payment_details" )
+
+    def __init__(self, user_name, phone, date, time, pickup_point, destination, vehicle,booking_type):
         self.user_name = user_name
         self.phone = phone
         self.date = date
@@ -27,7 +28,8 @@ class Booking(db.Model):
         self.pickup_point = pickup_point
         self.destination = destination
         self.vehicle_plate = vehicle
-        self.Fare = Fare
+        
+        self.booking_type=booking_type
         self.Status = "Pending"
 
     def save(self):
@@ -38,15 +40,13 @@ class Booking(db.Model):
         self.Status="confirmed"
         db.session.commit()
     
-    def payment(self, payment_type, card_number):
-
-            self.payment_type = payment_type
-            self.card_number = card_number
-            self.Status="Paid"
-            db.session.commit()
+    
 
     def cancel(self):
         self.Status="Cancelled"
+        db.session.commit()
+
+    def commit():
         db.session.commit()
         
     

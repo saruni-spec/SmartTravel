@@ -2,6 +2,8 @@ from functools import wraps
 from models.owner import Owner
 from models.driver import Driver
 from flask_login import current_user
+from models.user import User
+
 
 
 def is_driver(func):
@@ -23,3 +25,14 @@ def is_owner(func):
             return "Unauthorized: Access denied for non owners"
         return func(*args, **kwargs)
     return wrapper
+
+
+def is_admin(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            admin = User.query.filter_by(user_name=current_user.user_name).first()
+            if not admin.is_admin():
+                # Redirect or return an error message if user is not a driver
+                return "Unauthorized: Access denied for non-admins"
+            return func(*args, **kwargs)
+        return wrapper

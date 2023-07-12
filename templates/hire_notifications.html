@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Notifications</h2>
+{% endblock %}
+{% block content %}
+{% if status %}
+<form action="/hire/confirm" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="form-name" value="disable">
+<button type="submit" >Disable Hiring</button>
+</form>
+{% if details is none %}
+
+<p>no booking requests</p>
+
+{% elif details is iterable and details|length >0 %}
+{% for detail in details %} 
+{% if not detail.seen %}
+<form action="/booking/confirm" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <p>Destination:{{detail.destination}}  <br></p>  
+  <p>Pickup_point:{{detail.pickup_point}}</p>
+  <input type="hidden" name="id" id="id" value="{{detail.booking_id}}">
+  <button type="submit" name="confirmation" value="yes">Accept</button>
+  <button type="submit" name="confirmation" value="no">Reject</button>    
+  
+  </form>
+  {% else  %}
+
+  <form action="/booking/confirm" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <p>Destination:{{detail.destination}}  <br></p>  
+    <p>Pickup_point:{{detail.pickup_point}}</p>
+    <input type="hidden" name="id" id="id" value="{{detail.booking_id}}">
+      
+    <p>{{confirmed_message}}</p>
+{% endif %}
+
+{% endfor %}
+{% else %}
+<p>no booking requests</p>
+{% endif %}
+{% else %}
+
+<p class="output"> Please allow hiring for veicle</p>
+<form action="/hire/confirm" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="form-name" value="enable">
+    <button type="submit" >Enable Hiring</button>
+    </form>
+{% endif %}
+
+
+
+
+
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'admin.html' %}
+{% block title %}
+<h2>Route Details</h2>
+{% endblock %}
+{% block content %}
+
+<form class="sidebar" method="post" action="/admin/routes">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <button name="button_name" value="all">All Details</button>
+    <button name="button_name" value="id">Route No</button>
+    <button name="button_name" value="route_distane">Route Distance</button>
+    <button name="button_name" value="stages">Stages</button>
+    
+   
+    
+                                                       
+          
+</form>
+{% if data is none %}
+<p>No routes are registered</p>
+{% elif data is iterable and data|length >0 %}
+{% if query=='all' %}
+
+{% for entry in data %}
+
+<form action="/admin/routes" method="post">
+    <label for="">Route No</label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">Route Distance</label>
+    <p class="output">{{entry.route_distane}}</p>
+    <label for="">Stages</label>
+    {% for stage in entry.stages %}
+    <p class="output">{{stage.stage_name}},{{stage.latitude}}:{{stage.longitude}}</p>
+    {% endfor %}
+    
+    
+    </form>
+    
+  
+{% endfor %}
+
+{% elif query=='role' %}
+{% for entry in data %}
+<form action="/admin/routes"method="post">
+    <label for="id"></label>
+    <p class="output">{{entry.id}}</p>
+    <label for=""></label>
+    <p class="output">{{entry.role}}</p>
+  </form>
+{% endfor %}
+{% elif query=='route_distane' %}
+{% for entry in data %}
+<form action="/admin/routes" method="post">
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for="route_distane">Route Distance</label>
+    <p class="output">{{entry.route_distane}}</p>
+  </form>
+{% endfor %}
+{% elif query=='stages' %}
+{% for entry in data %}
+<form action="/admin/routes" method="post">
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for="stages">Stages</label>
+    {% for stage in entry.stages %}
+    <p class="output">{{stage.stage_name}},{{stage.latitude}}:{{stage.longitude}}</p>
+    {% endfor %}
+  </form>
+{% endfor %}
+
+
+{% else %}
+{% for entry in data %}
+<form action="/admin/routes" method="post">
+    <label for="">Route No</label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">Route Distance</label>
+    <p class="output">{{entry.route_distane}}</p>
+    <label for="">Stages</label>
+    {% for stage in entry.stages %}
+    <p class="output">{{stage.stage_name}},{{stage.latitude}}:{{stage.longitude}}</p>
+    {% endfor %}
+   
+    
+ 
+    </form>
+{% endfor %}
+{% endif %}
+{% else %}
+<p>no routes registered</p>
+{% endif %}
+
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/sidebar.css')}}">
+{% endblock %}

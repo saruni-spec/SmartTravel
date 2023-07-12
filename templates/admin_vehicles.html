@@ -1,11 +1,69 @@
-{% extends 'base.html' %}
+{% extends 'admin.html' %}
 {% block title %}
 <h2>payment</h2>
 {% endblock %}
 {% block content %}
+
+<form class="date_filter" action="/admin/vehicles" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div>
+  <label for="date">Date</label>
+  <input type="date" name="date" id="date">
+  <button name="button_name" value="date_filter">Filter By date</button>
+</div>
+  <div>
+  <label for="date">Month</label>
+  <select name="month" id="month">
+    <option value="January">January</option>
+    <option value="February">February</option>
+    <option value="March">March</option>
+    <option value="April">April</option>
+    <option value="May">May</option>
+    <option value="June">June</option>
+    <option value="July">July</option>
+    <option value="August">August</option>
+    <option value="September">September</option>
+    <option value="October">October</option>
+    <option value="November">November</option>
+    <option value="December">December</option>
+  </select>
+  
+  <button name="button_name" value="month_filter">Filter By Month</button>
+</div>
+  <div>
+  <label for="year">Enter Year</label>
+  <input type="number" name="year" id="year">
+  <button name="button_name" value="year_filter" onclick="validateYear()">Filter By Year</button>
+</div>
+
+<div>
+  <button name="button_name" value="week_filter">Last 1 week</button>
+</div>
+</form>
+
+
+
+<form class="sidebar" method="post" action="/admin/vehicles">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <button name="button_name" value="all">All Details</button>
+    <button name="button_name" value="no_plate">Number Plate</button>
+    <button name="button_name" value="capacity">Capacity</button>
+    <button name="button_name" value="owner_username">Owner</button>
+    <button name="button_name" value="driver_username">Driver</button>
+    <button name="button_name" value="color">Color</button>
+    <button name="button_name" value="is_active">Active Vehicles</button>
+    <button name="button_name" value="for_hire">Vehicles For hire</button>
+    <button name="button_name" value="build_type">Build Type</button>
+    <button name="button_name" value="date_registered">Date registered</button>
+    <button name="button_name" value="ratings">Ratings</button>
+                                                       
+          
+</form>
 {% if vehicles is none %}
 <p>No vehicles are registered</p>
 {% elif vehicles is iterable and vehicles|length >0 %}
+{% if query=='all' %}
+
 {% for vehicle in vehicles %}
 
 <form action="/admin/vehicles" method="post">
@@ -21,9 +79,203 @@
     {{vehicle.color}}
     <label for="vehicle_type">Type</label>
     {{vehicle.vehicle_type}}
+    <label for="date_registered">Date Registered</label>
+  <p class="output"> {{vehicle.date_registered}}</p>
     </form>
+    
+  
 {% endfor %}
+
+{% elif query=='no_plate' %}
+{% for vehicle in vehicles %}
+<form action="/admin/vehicles" method="post">
+  <label for="no_plate">No Plate</label>
+  {{vehicle.no_plate}}
+  <label for="type">Vehicle Type</label>
+ <p class="output"> {{vehicle.vehicle_type}}</p>
+  </form>
+{% endfor %}
+{% elif query=='capacity' %}
+{% for vehicle in vehicles %}
+<form action="/admin/vehicles" method="post">
+  <label for="no_plate">No Plate</label>
+  {{vehicle.no_plate}}
+  <label for="capacity">Capacity</label>
+  <p class="output"> {{vehicle.capacity}}</p>
+  </form>
+{% endfor %}
+{% elif query=='owner_username' %}
+{% for vehicle in vehicles %}
+<form action="/admin/vehicles" method="post">
+  <label for="no_plate">No Plate</label>
+
+  {{vehicle.no_plate}}
+  <label for="owner_username">Owner</label>
+  <p class="output"> {{vehicle.owner_username}}</p>
+  </form>
+{% endfor %}
+{% elif query=='driver_username' %}
+{% for vehicle in vehicles %}
+<form action="/admin/vehicles" method="post">
+  <label for="no_plate">No Plate</label>
+  {{vehicle.no_plate}}
+  <label for="driver_username">Driver</label>
+  <p class="output"> {{vehicle.driver_username}}</p>
+  </form>
+{% endfor %}
+{% elif query=='color' %}
+{% for vehicle in vehicles %}
+<form action="/admin/vehicles" method="post">
+  <label for="no_plate">No Plate</label>
+  {{vehicle.no_plate}}
+  <label for="color">Color</label>
+  <p class="output"> {{vehicle.color}}</p>
+  </form>
+{% endfor %}
+{% elif query=='is_active' %}
+{% for vehicle in vehicles %}
+<form action="/admin/vehicles" method="post">
+  <label for="no_plate">No Plate</label>
+  {{vehicle.no_plate}}
+  <label for="is_active"></label>
+  <p class="output"> {{vehicle.is_active}}</p>
+  </form>
+{% endfor %}
+{% elif query=='for_hire' %}
+{% for vehicle in vehicles %}
+<form action="/admin/vehicles" method="post">
+  <label for="no_plate">No Plate</label>
+  {{vehicle.no_plate}}
+  <label for="for_hire"></label>
+  <p class="output"> {{vehicle.for_hire}}</p>
+  </form>
+{% endfor %}
+{% elif query=='build_type' %}
+{% for vehicle in vehicles %}
+<form action="/admin/vehicles" method="post">
+  <label for="no_plate">No Plate</label>
+  {{vehicle.no_plate}}
+  <label for="build_type"></label>
+  <p class="output"> {{vehicle.build_type}}</p>
+  </form>
+{% endfor %}
+{% elif query=='date_registered' %}
+{% for vehicle in vehicles %}
+<form action="/admin/vehicles" method="post">
+  <label for="no_plate">No Plate</label>
+  {{vehicle.no_plate}}
+  <label for="date_registered">Date Registered</label>
+  <p class="output"> {{vehicle.date_registered}}</p>
+  </form>
+{% endfor %}
+{% elif query=='ratings' %}
+{% for vehicle in vehicles %}
+<form action="/admin/vehicles" method="post">
+  <label for="no_plate">No Plate</label>
+  {{vehicle.no_plate}}
+  <label for="ratings"></label>
+  <p class="output"> {{vehicle.ratings}}</p>
+  </form>
+{% endfor %}
+{% elif query=='date_filter' %}
+{% for vehicle in vehicles %}
+<form action="/admin/vehicles" method="post">
+  <label for="no_plate">No Plate</label>
+  {{vehicle.no_plate}}
+  <label for="driver">Driver</label>
+  {{vehicle.driver_username}}
+  <label for="owner">Owner</label>
+  {{vehicle.owner_username}}
+  <label for="capacity">Capacity</label>
+  {{vehicle.capacity}}
+  <label for="color">Color</label>
+  {{vehicle.color}}
+  <label for="vehicle_type">Type</label>
+  {{vehicle.vehicle_type}}
+  <label for="date_registered">Date Registered</label>
+  <p class="output"> {{vehicle.date_registered}}</p>
+  </form>
+{% endfor %}
+{% elif query=='week_filter' %}
+{% for vehicle in vehicles %}
+<form action="/admin/vehicles" method="post">
+  <label for="no_plate">No Plate</label>
+  {{vehicle.no_plate}}
+  <label for="driver">Driver</label>
+  {{vehicle.driver_username}}
+  <label for="owner">Owner</label>
+  {{vehicle.owner_username}}
+  <label for="capacity">Capacity</label>
+  {{vehicle.capacity}}
+  <label for="color">Color</label>
+  {{vehicle.color}}
+  <label for="vehicle_type">Type</label>
+  {{vehicle.vehicle_type}}
+  <label for="date_registered">Date Registered</label>
+  <p class="output"> {{vehicle.date_registered}}</p>
+  </form>
+{% endfor %}
+{% elif query=='month_filter' %}
+{% for vehicle in vehicles %}
+<form action="/admin/vehicles" method="post">
+  <label for="no_plate">No Plate</label>
+  {{vehicle.no_plate}}
+  <label for="driver">Driver</label>
+  {{vehicle.driver_username}}
+  <label for="owner">Owner</label>
+  {{vehicle.owner_username}}
+  <label for="capacity">Capacity</label>
+  {{vehicle.capacity}}
+  <label for="color">Color</label>
+  {{vehicle.color}}
+  <label for="vehicle_type">Type</label>
+  {{vehicle.vehicle_type}}
+  <label for="date_registered">Date Registered</label>
+  <p class="output"> {{vehicle.date_registered}}</p>
+  </form>
+{% endfor %}
+{% elif query=='year_filter' %}
+{% for vehicle in vehicles %}
+<form action="/admin/vehicles" method="post">
+  <label for="no_plate">No Plate</label>
+  {{vehicle.no_plate}}
+  <label for="driver">Driver</label>
+  {{vehicle.driver_username}}
+  <label for="owner">Owner</label>
+  {{vehicle.owner_username}}
+  <label for="capacity">Capacity</label>
+  {{vehicle.capacity}}
+  <label for="color">Color</label>
+  {{vehicle.color}}
+  <label for="vehicle_type">Type</label>
+  {{vehicle.vehicle_type}}
+  <label for="date_registered">Date Registered</label>
+  <p class="output"> {{vehicle.date_registered}}</p>
+  </form>
+{% endfor %}
+{% else %}
+{% for vehicle in vehicles %}
+<form action="/admin/vehicles" method="post">
+  <label for="no_plate">No Plate</label>
+  {{vehicle.no_plate}}
+  <label for="driver">Driver</label>
+  {{vehicle.driver_username}}
+  <label for="owner">Owner</label>
+  {{vehicle.owner_username}}
+  <label for="capacity">Capacity</label>
+  {{vehicle.capacity}}
+  <label for="color">Color</label>
+  {{vehicle.color}}
+  <label for="vehicle_type">Type</label>
+  {{vehicle.vehicle_type}}
+  <label for="date_registered">Date Registered</label>
+  <p class="output"> {{vehicle.date_registered}}</p>
+  </form>
+{% endfor %}
+{% endif %}
 {% else %}
 <p>no vehicles registered</p>
 {% endif %}
+
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/sidebar.css')}}">
 {% endblock %}

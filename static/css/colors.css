@@ -2,12 +2,12 @@
 
 :root {
   /* Primary Colors */
-  --secondary-background-color:#b0b0fa ;
-  --primary-background-color:#6161b1;
+  --secondary-background-color:#b0b0fa;
+  --primary-background-color:#131212;
 
   --neutral-color:rgb(190, 187, 187);
 
-  --primary-text-color: #131212;
+  --primary-text-color: #520394 ;
   --secondary-text-color:rgb(252, 248, 248);
 
   --primary-form-color:#b0b0fa;

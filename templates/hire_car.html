@@ -9,8 +9,10 @@
 
 {% elif cars is iterable and cars|length >0 %}
 {% for car in cars %} 
-<form action="">
+<form action="/hire/car" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 <label for="no_plate">NO PLATE</label>
+<input type="hidden" name="no_plate" id="no_pate" value="car.no_plate">
 <p class="output">{{car.no_plate}}</p>
 <label for="capacity">Capacity</label>
 

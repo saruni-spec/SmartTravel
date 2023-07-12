@@ -5,6 +5,12 @@ from sqlalchemy.orm import relationship
 from .driver import Driver
 from .owner import Owner
 from .booking import Booking
+from .transaction import Transaction
+
+
+from datetime import datetime
+
+
 
 
 
@@ -20,10 +26,14 @@ class User(db.Model):
     password=db.Column(db.String(100),nullable=False)
     phone=db.Column(db.String(100),nullable=True)
     address=db.Column(db.String(100),nullable=True)
+    role=db.Column(db.String(50))
+    date_registered=db.Column(db.String(50))
 
     driver_details = relationship("Driver", backref="user_is_driver", uselist=False )
     owner_details = relationship("Owner", backref="user_is_owner", uselist=False )
     booking_details = relationship("Booking", backref="booking" )
+    transaction_details = relationship("Transaction", backref="transaction" )
+    
 
     def __init__(self,username):
         self.user_name=username
@@ -48,6 +58,7 @@ class User(db.Model):
 
     def save(self,password):
         self.password=bcrypt.generate_password_hash(password)
+        self.date_registered=datetime.now().strftime("%Y-%m-%d")
         self.is_driver=False
         self.is_owner=False
         db.session.add(self)
@@ -81,7 +92,12 @@ class User(db.Model):
         self.address=address
         db.session.commit()
 
+    def make_admin(self):
+        self.role="admin"
+        db.session.commit()
 
+    def is_admin(self):
+        return self.role=="admin"
 
     def delete(self):
         db.session.delete(self)

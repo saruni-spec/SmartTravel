@@ -273,3 +273,21 @@ def find_closest_hybrid_to_stage(stage_lat, stage_lon,hybrids):
             closest_hybrid = hybrid
 
     return closest_hybrid
+
+
+
+notifications=[]
+from datetime import datetime, timedelta
+def receive_notification(notifications ,current_vehicle):
+        current_notifiations=[]
+        current_time = datetime.now()
+        for notification in notifications:
+            if notification['vehicle']==current_vehicle:
+                timestamp = datetime.strptime(notification['timestamp'], "%H:%M:%S")
+                time_difference = current_time - timestamp
+                if time_difference > timedelta(minutes=3):
+                    print(notification,'sent to driver')
+                    current_notifiations.append(notification)
+            
+                
+        return current_notifiations 

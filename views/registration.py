@@ -57,6 +57,7 @@ def register_vehicle():
             vehicle_type = request.form.get('vehicle_type')
             capacity = request.form.get('capacity')
             color=request.form.get('color')
+            build_type=request.form.get('build_type')
 
             
             session['id_no']=id_no
@@ -64,6 +65,7 @@ def register_vehicle():
             session['vehicle_type']=vehicle_type
             session['capacity']=capacity
             session['color']=color
+            session['build_type']=build_type
 
             return redirect('/registration/vehicle/driver')
 
@@ -104,7 +106,7 @@ def register_vehicle_driver():
                     owner.save()
                     vehicle=Vehicle(session.get('no_plate'))
                     print(session.get('vehicle_type'),current_user.user_name,None,session.get('capacity'),session.get('color'),verification_code)
-                    vehicle.save(session.get('vehicle_type'),current_user.user_name,None,session.get('capacity'),session.get('color'),verification_code)
+                    vehicle.save(session.get('vehicle_type'),current_user.user_name,None,session.get('capacity'),session.get('color'),verification_code,session.get('build_type'))
                     
                     return redirect('/profile/owner')
                 else:

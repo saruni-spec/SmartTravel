@@ -35,6 +35,8 @@ class Route(db.Model):
         self.stages = stages
         db.session.commit()
 
+from .stages import Stages
+
 
 
 

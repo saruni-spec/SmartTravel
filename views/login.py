@@ -33,18 +33,21 @@ def login():
             if user and user.verify_password(password):
                 login_user(user)
                 session['current_user']=current_user.user_name
-                if current_user.check_if_driver():
-                    vehicle=Vehicle.query.filter_by(driver_username=current_user.user_name).first()
-                    session['vehicle']=vehicle.no_plate
-                elif current_user.check_if_owner():
-                    vehicle=Vehicle.query.filter_by(owner_username=current_user.user_name).first()
-                    session['vehicle']=vehicle.no_plate
-                next_url=session.get('next_url',url_for('index.index'))
-                if next_url == url_for('login.login') :
-                    next_url = url_for('index.index')
-                response = make_response(redirect(next_url))
-                response.set_cookie('username', username, max_age=timedelta(days=1))
-                return response
+                if current_user.is_admin():
+                    return redirect('/admin')
+                else:
+                    if current_user.check_if_driver():
+                        vehicle=Vehicle.query.filter_by(driver_username=current_user.user_name).first()
+                        session['vehicle']=vehicle.no_plate
+                    elif current_user.check_if_owner():
+                        vehicle=Vehicle.query.filter_by(owner_username=current_user.user_name).first()
+                        session['vehicle']=vehicle.no_plate
+                    next_url=session.get('next_url',url_for('index.index'))
+                    if next_url == url_for('login.login') :
+                        next_url = url_for('index.index')
+                    response = make_response(redirect(next_url))
+                    response.set_cookie('username', username, max_age=timedelta(days=1))
+                    return response
             elif  user and not user.verify_password(password):
                 error='Invaid Password'
                 return render_template('login.html',error=error)

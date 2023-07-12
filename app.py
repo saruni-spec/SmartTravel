@@ -30,6 +30,7 @@ import os
 
 from models.user import User
 from flask import request
+from flask import url_for
 
 app = Flask(__name__)
 
@@ -95,10 +96,9 @@ def unauthorized():
 
 
 
+from flask_login import current_user
 
-@app.route('/')
-def index():
-    return redirect('/index')
+
 
 @app.route('/favicon.ico')
 def favicon():

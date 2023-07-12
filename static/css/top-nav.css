@@ -1,6 +1,6 @@
 /* Add a black background color to the top navigation */
 .topnav {
-  background-color: var(--secondary-background-color);
+  background-color: var(--primary-form-color);
   overflow: hidden;
 }
 

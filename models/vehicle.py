@@ -2,6 +2,11 @@ from extensions.extensions import db
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from .booking import Booking
+from .transaction import Transaction
+
+from datetime import datetime
+
+
 
 
 
@@ -19,8 +24,11 @@ class Vehicle(db.Model):
     verification_code=db.Column(db.String(50))
     for_hire=db.Column(db.Boolean,default=False)
     build_type=db.Column(db.String(50))
+    date_registered=db.Column(db.String(50))
 
     booking_details = relationship("Booking", backref="bookings" )
+    ratings=relationship("Transaction",backref="transactions")
+   
     
     def __init__(self,no_plate):
         self.no_plate=no_plate
@@ -35,13 +43,15 @@ class Vehicle(db.Model):
         self.driver_username=driver_username
         db.session.commit()
         
-    def save(self,vehicle_type,owner,driver,capacity,color,verification_code):
+    def save(self,vehicle_type,owner,driver,capacity,color,verification_code,build_type):
         self.vehicle_type=vehicle_type
         self.owner_username=owner
         self.driver_username=driver
         self.capacity=capacity
         self.color=color
         self.verification_code=verification_code
+        self.build_type=build_type
+        self.date_registered=datetime.now().strftime("%Y-%m-%d")
         
         db.session.add(self)
         db.session.commit()
@@ -68,7 +78,14 @@ class Vehicle(db.Model):
         
         
     def allow_hiring(self):
-        self.allow_hiring=True
+        self.for_hire=True
         db.session.commit()
+
+    def disallow_hiring(self):
+        self.for_hire=False
+        db.session.commit()
+
+    def commit(self):
+        db.session.commit() 
 
         

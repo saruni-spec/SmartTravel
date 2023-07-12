@@ -1,0 +1,187 @@
+{% extends 'admin.html' %}
+{% block title %}
+<h2>Transaction Details</h2>
+{% endblock %}
+{% block content %}
+
+
+<form class="sidebar" method="post" action="/admin/transactions">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <button name="button_name" value="all">All Details</button>
+    <button name="button_name" value="id">Transaction ID</button>
+    <button name="button_name" value="user_name">User Name</button>
+    <button name="button_name" value="amount">Amount </button>
+    <button name="button_name" value="rating">Rating </button>
+    <button name="button_name" value="date">Date </button>
+    <button name="button_name" value="paid_at">Time </button>
+    <button name="button_name" value="payment_type">Paid With </button>
+    <button name="button_name" value="vehicle_id">Vehicle No Plate </button>
+    <button name="button_name" value="status">Transaction Status </button>
+    <button name="button_name" value="card_number">Card/Phone Number </button>
+  
+    
+                                                       
+          
+</form>
+{% if data is none %}
+<p>No transactions have been made</p>
+{% elif data is iterable and data|length >0 %}
+{% if query=='all' %}
+
+{% for entry in data %}
+
+<form action="/admin/transactions" method="post">
+    <label for="">Booking ID</label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">User Name</label>
+    <p class="output">{{entry.user_name}}</p>
+    <label for="">Amount </label>
+    <p class="output">{{entry.amount}}</p>
+    <label for="">Address</label>
+    <p class="output">{{entry.rating}}</p>
+    <label for="">Date</label>
+    <p class="output">{{entry.date}}</p>
+    <label for="">Date</label>
+    <p class="output">{{entry.paid_at}}</p>
+    <label for="">Paid With</label>
+    <p class="output">{{entry.payment_type}}</p>
+    <label for="">Vehicle No Plate </label>
+    <p class="output">{{entry.vehicle_id}}</p>
+    <label for="">Transaction Status </label>
+    <p class="output">{{entry.status}}</p>
+    <label for="">Booking Type </label>
+    <p class="output">{{entry.card_number}}</p>
+    
+
+    
+    </form>
+    
+  
+{% endfor %}
+
+{% elif query=='id' %}
+{% for entry in data %}
+<form action="/admin/transactions"method="post">
+    <label for="id"></label>
+    <p class="output">{{entry.id}}</p>
+    <label for=""></label>
+    <p class="output">{{entry.status}}</p>
+  </form>
+{% endfor %}
+{% elif query=='user_name' %}
+{% for entry in data %}
+<form action="/admin/transactions" method="post">
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for="user_name">User Name</label>
+    <p class="output">{{entry.user_name}}</p>
+  </form>
+{% endfor %}
+{% elif query=='amount' %}
+{% for entry in data %}
+<form action="/admin/transactions" method="post">
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for="amount">Amount </label>
+    <p class="output">{{entry.amount}}</p>
+  </form>
+{% endfor %}
+{% elif query=='rating' %}
+{% for entry in data %}
+<form action="/admin/transactions" method="post">
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for=""></label>
+    <p class="output">{{entry.rating}}</p>
+  </form>
+{% endfor %}
+{% elif query=='date' %}
+{% for entry in data %}
+<form action="/admin/transactions" method="post">
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">Date</label>
+    <p class="output">{{entry.date}}</p>
+  </form>
+{% endfor %}
+{% elif query=='paid_at' %}
+{% for entry in data %}
+<form action="/admin/transactions" method="post">
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">Date</label>
+    <p class="output">{{entry.paid_at}}</p>
+  </form>
+{% endfor %}
+{% elif query=='payment_type' %}
+{% for entry in data %}
+<form action="/admin/transactions" method="post">
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">Paid With</label>
+    <p class="output">{{entry.payment_type}}</p>
+  </form>
+{% endfor %}
+{% elif query=='vehicle_id' %}
+{% for entry in data %}
+<form action="/admin/transactions" method="post">
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">Vehicle No Plate </label>
+    <p class="output">{{entry.vehicle_id}}</p>
+  </form>
+{% endfor %}
+{% elif query=='status' %}
+{% for entry in data %}
+<form action="/admin/transactions" method="post">
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">Transaction Status </label>
+    <p class="output">{{entry.status}}</p>
+  </form>
+{% endfor %}
+{% elif query=='card_number' %}
+{% for entry in data %}
+<form action="/admin/transactions" method="post">
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">Booking Type </label>
+    <p class="output">{{entry.card_number}}</p>
+  </form>
+{% endfor %}
+
+{% else %}
+{% for entry in data %}
+<form action="/admin/transactions" method="post">
+    <label for="">Booking ID</label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">User Name</label>
+    <p class="output">{{entry.user_name}}</p>
+    <label for="">Amount </label>
+    <p class="output">{{entry.amount}}</p>
+    <label for="">Address</label>
+    <p class="output">{{entry.rating}}</p>
+    <label for="">Date</label>
+    <p class="output">{{entry.date}}</p>
+    <label for="">Date</label>
+    <p class="output">{{entry.paid_at}}</p>
+    <label for="">Paid With</label>
+    <p class="output">{{entry.payment_type}}</p>
+    <label for="">Vehicle No Plate </label>
+    <p class="output">{{entry.vehicle_id}}</p>
+    <label for="">Transaction Status </label>
+    <p class="output">{{entry.status}}</p>
+    <label for="">Booking Type </label>
+    <p class="output">{{entry.card_number}}</p>
+   
+    
+ 
+    </form>
+{% endfor %}
+{% endif %}
+{% else %}
+<p>No transactions have been made</p>
+{% endif %}
+
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/sidebar.css')}}">
+{% endblock %}

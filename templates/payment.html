@@ -3,7 +3,9 @@
 <h2>Payment</h2>
 {% endblock %}
 {% block content %}
-<form action="">
+<script src="https://unpkg.com/intasend-inlinejs-sdk@3.0.4/build/intasend-inline.js"></script>
+
+<form action="/payment" >
 <label for="pickup_point">From:</label>
 <p class="output">{{pickup_point}}</p>
 <label for="destination">To:</label>
@@ -15,24 +17,27 @@
 <label for="amount">Amount to be Paid</label>
 <p class="output">{{amount}}</p>
 
-<p class="ouput">{{response}}</p>
+<p class="ouput"></p>
 
-<button class="intaSendPayButton" data-amount="{{amount}}" data-currency="KES" data-phone_number="{{phone_number}}">Pay Now</button>
+
+<button ><a href="{{response}}">Pay</a></button>
+
+
 </form>
+<button class="intaSendPayButton" data-amount="10" data-currency="KES">Pay Now</button>
+<script>
+new window.IntaSend({
+    publicAPIKey: "ISPubKey_test_9f29c616-c01a-4cc3-b46f-6cb00a5b84c2",
+    live: false //set to true when going live
+})
+.on("COMPLETE", (results) => "{{ url_for('payment.verify') }}")
+.on("FAILED", (results) => "{{ url_for('payment.payment') }}")
+.on("IN-PROGRESS", (results) => console.log("Payment in progress status", results))
 
 
+</script>
 
 
 <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/payment.css')}}">
-<script src="https://unpkg.com/intasend-inlinejs-sdk@3.0.4/build/intasend-inline.js"></script>
-<script>
-new window.IntaSend({
-    // Replace with your Publishable Key
-    publicAPIKey: "ISPubKey_test_813b4dcb-fb5e-46b6-b244-5f9f2cc742c0",
-    live: false //set to true when going live
-  })
-  .on("COMPLETE", (results) => console.log("Do something on success", results))
-  .on("FAILED", (results) => console.log("Do something on failure", results))
-  .on("IN-PROGRESS", (results) => console.log("Payment in progress status", results))
-</script>
+
 {% endblock %}

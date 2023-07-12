@@ -125,6 +125,7 @@ def select_destination():
         hybrid_message=session.get('hybrid_message',None)
         taxi_message=session.get('taxi_message',None)
         bus_message=session.get('bus_message',None)
+        destination_name=session.get('destination',None)
         if request.method=='POST':
                 token = request.form.get('csrf_token')
                 try:
@@ -304,8 +305,8 @@ def select_destination():
                                         error= "Unable to retrieve coordinates."
                         except (requests.exceptions.RequestException, requests.exceptions.ConnectionError) as e:
                                 print(f"Error: {e}")
-                                flash("No internet connection")
-                                return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message)
+                                error="No internet connection"
+                                return render_template('booking_select_destination.html',error=error,closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message)
                                 
                         session['destination_coordinates']={'latitude':destination['latitude'],'longitude':destination['longitude']}
                         
@@ -406,33 +407,33 @@ def select_destination():
 
                                 session['closest_hybrid']=my_hybrid_now
                         session['hybrid_message']=hybrid_message
-                        return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message)
+                        return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message,destination=destination_name)
                 elif form_name == 'taxi-form':
                         if session.get('closest_taxi') is None:
-                                return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message)
+                                return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message,destination=destination_name)
                         
                         session['vehicle_type']='taxi'
                         
                         return redirect(url_for('booking.select_taxi'))
                 elif form_name == 'bus-form':
                         if session.get('closest_bus') is None:
-                                return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message)
+                                return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message,destination=destination_name)
                         
                         session['vehicle_type']='bus'
                         
                         return redirect(url_for('booking.bus_options'))
                 elif form_name == 'hybrid-form':
                         if session.get('closest_hybrid') is None:
-                                return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message)
+                                return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message,destination=destination_name)
                         
                         session['vehicle_type']='hybrid'
                         
                         return redirect(url_for('booking.select_taxi'))
-        return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message)
+        return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message,destination=destination_name)
 
 
 
-notifications=[]
+
 
 @bp.route('/booking/select_taxi',methods=['GET','POST'])
 @login_required
@@ -463,7 +464,7 @@ def select_taxi():
         
         
         if request.method=='POST':
-                booking=Booking(user_name, phone_number, date, time, pickup_point, destination, vehicle_no, fare)
+                booking=Booking(user_name, phone_number, date, time, pickup_point, destination, vehicle_no, booking_type='taxi_ride')
                 booking.save()
                 booking_notification={'vehicle':vehicle_no,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'booking_id':booking.id,'seen':False}
                 session['booking']=booking_notification
@@ -501,7 +502,10 @@ def bus_options():
         print(pickup_point,'pickup point in bus options')
         print(buses,'buses in bus options')
         if request.method=='POST':
-                booked_seats=int(request.form.get('no_of_seats'))
+                seats=(request.form.get('no_of_seats'))
+                if seats is None or seats:
+                        seats=1
+                booked_seats=int(seats)
                 no_plate=request.form.get('vehicle')
                 no_plate=no_plate.strip()
                 print(no_plate,'vehicle no in bus options')
@@ -513,7 +517,7 @@ def bus_options():
                 print(vehicle,'vehicle bus in bus options')
                 
                 
-                booking=Booking(user_name, phone_number, date, time, pickup_point, destination, no_plate, fare)
+                booking=Booking(user_name, phone_number, date, time, pickup_point, destination, no_plate, booking_type='bus_ride')
                 booking.save()
                 booking_notification={'vehicle':no_plate,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'date':date,'booking_id':booking.id,'no_of_seats':booked_seats,'seen':False}
                 session['booking']=booking_notification
@@ -526,27 +530,6 @@ def bus_options():
                 
 
         return render_template('booking_bus_options.html',buses=buses,pickup_point=pickup_point,destination=destination,travel_time=travel_time)
-
-
-from datetime import datetime, timedelta
-def receive_notification(notifications ,current_vehicle):
-        current_notifiations=[]
-        current_time = datetime.now()
-        for notification in notifications:
-            if notification['vehicle']==current_vehicle:
-                timestamp = datetime.strptime(notification['timestamp'], "%H:%M:%S")
-                time_difference = current_time - timestamp
-                if time_difference > timedelta(minutes=3):
-                    print(notification,'sent to driver')
-                    current_notifiations.append(notification)
-            
-                
-        return current_notifiations 
-
-
-
-
-
 
 
 
@@ -607,6 +590,7 @@ def confirm_booking():
 @bp.route('/booking/wait_confirmation',methods=['GET','POST'])
 @login_required
 def wait_confirmation():
+       import time
        waiting_message='Your booking is in process. Please wait for confirmation.'
        booking_notification=session.get('booking')
        vehicle_no=session.get('booking')['vehicle']
@@ -629,10 +613,25 @@ def wait_confirmation():
                         print(booking.Status,'booking in check here')
                         if booking.Status=='confirmed':
                                         waiting_message='Booking confirmed'
-                                        break
+                                        return redirect(url_for('payment.payment')) 
                         elif booking.Status=='Cancelled':
                                         waiting_message='Booking cancelled'
-                                        break
+                                        vehicle_type=session.get('booking_type')
+                                        if vehicle_type=='hire_car':
+                                                return redirect(url_for('hire.hire_car'))
+                                        elif vehicle_type=='hire_bus':
+                                                return redirect(url_for('hire.hire_bus'))
+                                        elif vehicle_type=='bus':
+                                                return redirect(url_for('booking.bus_options'))
+                                        elif vehicle_type=='taxi':
+                                                return redirect(url_for('booking.book_taxi'))
+                                        else:
+                                                return redirect(url_for('booking.book_hybrid'))
+                                        
+                        if booking.type=='hire':
+                                time.sleep(6000)
+                        else:
+                                time.sleep(10)
                                 
         
                 if waiting_message=='Booking confirmed':
