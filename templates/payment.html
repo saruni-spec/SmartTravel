@@ -4,38 +4,34 @@
 {% endblock %}
 {% block content %}
 <script src="https://unpkg.com/intasend-inlinejs-sdk@3.0.4/build/intasend-inline.js"></script>
-
+<div>
 <form action="/payment" >
-<label for="pickup_point">From:</label>
-<p class="output">{{pickup_point}}</p>
-<label for="destination">To:</label>
-<p class="output">{{destination}}</p>
-<label for="date">On Date:</label>
-<p class="date">{{date}}</p>
-<label for="time">At:</label>
-<p class="output">{{time}}</p>
+    <label for="name">Name</label>
+    <p class="ouput">{{name}}</p> 
+
 <label for="amount">Amount to be Paid</label>
 <p class="output">{{amount}}</p>
 
-<p class="ouput"></p>
-
-
-<button ><a href="{{response}}">Pay</a></button>
-
 
 </form>
-<button class="intaSendPayButton" data-amount="10" data-currency="KES">Pay Now</button>
+<button class="intaSendPayButton" data-amount="{{amount}}" data-currency="KES">Pay Now</button>
+</div>
 <script>
-new window.IntaSend({
-    publicAPIKey: "ISPubKey_test_9f29c616-c01a-4cc3-b46f-6cb00a5b84c2",
-    live: false //set to true when going live
-})
-.on("COMPLETE", (results) => "{{ url_for('payment.verify') }}")
-.on("FAILED", (results) => "{{ url_for('payment.payment') }}")
-.on("IN-PROGRESS", (results) => console.log("Payment in progress status", results))
-
-
-</script>
+    new window.IntaSend({
+        publicAPIKey: "ISPubKey_test_9f29c616-c01a-4cc3-b46f-6cb00a5b84c2",
+        live: false // set to true when going live
+    })
+    .on("COMPLETE", (results) => {
+        window.location.href = "{{ url_for('payment.rating') }}";
+    })
+    .on("FAILED", (results) => {
+        window.location.href = "{{ url_for('payment.payment') }}";
+    })
+    .on("IN-PROGRESS", (results) => {
+        console.log("Payment in progress status", results);
+    })
+    </script>
+    
 
 
 <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/payment.css')}}">

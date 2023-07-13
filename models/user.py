@@ -28,6 +28,7 @@ class User(db.Model):
     address=db.Column(db.String(100),nullable=True)
     role=db.Column(db.String(50))
     date_registered=db.Column(db.String(50))
+    card_number=db.Column(db.String(100))
 
     driver_details = relationship("Driver", backref="user_is_driver", uselist=False )
     owner_details = relationship("Owner", backref="user_is_owner", uselist=False )
@@ -92,6 +93,10 @@ class User(db.Model):
         self.address=address
         db.session.commit()
 
+    def add_card_number(self,card_number):
+        self.card_number=card_number
+        db.session.commit()
+
     def make_admin(self):
         self.role="admin"
         db.session.commit()
@@ -102,4 +107,6 @@ class User(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
-   
+    
+    def commit(self):
+        db.session.commit()

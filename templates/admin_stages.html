@@ -25,7 +25,7 @@
 
 {% for entry in data %}
 
-<form action="/admin/stages" method="post">
+<form action="/admin/stages" method="post" class='data'>
     <label for="">Stage No</label>
     <p class="output">{{entry.stage_no}}</p>
     <label for="">Latitude</label>
@@ -45,7 +45,7 @@
 
 {% elif query=='stage_name' %}
 {% for entry in data %}
-<form action="/admin/stages"method="post">
+<form action="/admin/stages"method="post" class='data'>
     <label for="stage_no"></label>
     <p class="output">{{entry.stage_no}}</p>
     <label for="">Stage Name</label>
@@ -54,7 +54,7 @@
 {% endfor %}
 {% elif query=='latitude' %}
 {% for entry in data %}
-<form action="/admin/stages" method="post">
+<form action="/admin/stages" method="post" class='data'>
     <label for=""></label>
     <p class="output">{{entry.stage_no}}</p>
     <label for="latitude">Latitude</label>
@@ -63,7 +63,7 @@
 {% endfor %}
 {% elif query=='longitude' %}
 {% for entry in data %}
-<form action="/admin/stages" method="post">
+<form action="/admin/stages" method="post" class='data'>
     <label for=""></label>
     <p class="output">{{entry.stage_no}}</p>
     <label for="stage_name">Longitude</label>
@@ -76,7 +76,7 @@
 
 {% else %}
 {% for entry in data %}
-<form action="/admin/stages" method="post">
+<form action="/admin/stages" method="post" class='data'>
     <label for="">Stage No</label>
     <p class="output">{{entry.stage_no}}</p>
     <label for="">Latitude</label>

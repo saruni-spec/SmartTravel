@@ -5,6 +5,7 @@
 {% block content %}
 <form action="/booking/wait_for_vehicle" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="b_type" id="b_type" value="{{b_type}}">
     <label for="vehicle">Vehicle</label>
     <p class="output">{{ vehicle_no }}</p>
     
@@ -15,13 +16,19 @@
     <label for="wait_time">Wait time</label>
     <p class="output">{{ wait_time}}</p>
 
-    <button type="submit">Cancel booking</button>
+    <button name='button' value="cancel" type="submit">Cancel booking</button>
+
+    <button name="button" value="proceed" type="submit">Proceed to Payment</button>
 
     
 </form>
 
 <script>
+
+
   function checkDestination() {
+    var b_type=document.getElementById('b_type');
+    if(b_type.value=='1'){
       fetch('/tracker/destination')
           .then(response => response.text())
           .then(data => {
@@ -29,6 +36,7 @@
                   window.location.href = '/booking/review';
               }
           });
+        }
   }
 
   setInterval(checkDestination, 60000); // Check every 5 seconds

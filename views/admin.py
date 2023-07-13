@@ -42,11 +42,11 @@ def vehicles():
                     vehicle.commit()
                 date2 = vehicle.date_registered
                 
-                dt2 = datetime.strptime(date2, "%m / %d / %Y")
+                dt2 = datetime.strptime(date2, "%Y-%m-%d")
                 print(dt1,dt2)
                 if dt1==dt2:
                     filtered_data.append(vehicle)
-        if button=='month_filter':
+        elif button=='month_filter':
             query='month_filter'
             month_name=request.form.get('month')
             month_no=month(month_name)
@@ -60,7 +60,7 @@ def vehicles():
                 print(month_reg,month_no)
                 if int(month_reg)==int(month_no):
                     filtered_data.append(vehicle)
-        if button=='year_filter':
+        elif button=='year_filter':
             query='year_filter'
             year=request.form.get('year')
             for vehicle in vehicles:
@@ -73,7 +73,7 @@ def vehicles():
                 print(year_reg,year)
                 if int(year_reg)==int(year):
                     filtered_data.append(vehicle)
-        if button=='week_filter':
+        elif button=='week_filter':
             query='week_filter'
             today=datetime.now().strftime("%Y-%m-%d")
             dt_today = datetime.strptime(today, "%Y-%m-%d")
@@ -88,7 +88,7 @@ def vehicles():
                 if dt_date >= dt_week_ago and dt_date <= dt_today:
                     filtered_data.append(vehicle)
 
-        if button=='no_plate':
+        elif button=='no_plate':
             query='no_plate'
             for vehicle in vehicles:
                 data={'no_plate':vehicle.no_plate,'type':vehicle.vehicle_type}
@@ -151,7 +151,7 @@ def vehicles():
         else:
             query='all'
             filtered_data=vehicles
-            return render_template('admin_vehicles.html',vehicles=vehicles,query=query)
+            
 
         return render_template('admin_vehicles.html',vehicles=filtered_data,query=query)
 
@@ -177,7 +177,7 @@ def bookings():
                     booking.commit()
                 date2 = booking.date
                 
-                dt2 = datetime.strptime(date2, "%m / %d / %Y")
+                dt2 = datetime.strptime(date2, "%Y-%m-%d")
                 print(dt1,dt2,'date')
                 if dt1==dt2:
                     filtered_data.append(booking)
@@ -194,8 +194,8 @@ def bookings():
                 month_reg = dt.strftime("%m")
                 print(month_reg,month_no,'month')
                 if int(month_reg)==int(month_no):
-                    entry={'id':booking.id,'user_name':booking.user_name}
-                    filtered_data.append(entry)
+                    
+                    filtered_data.append(booking)
         elif button=='year_filter':
             query='year_filter'
             year=request.form.get('year')
@@ -303,8 +303,9 @@ def bookings():
         else:
             query='all'
             print('running else')
-            return render_template('admin_bookings.html',data=data,query=query)
+            filtered_data=data
         print(filtered_data,'filtered_data')
+        print(query,'query')
         return render_template('admin_bookings.html',data=filtered_data,query=query)
 
     return render_template('admin_bookings.html',data=data)
@@ -318,7 +319,63 @@ def users():
     filtered_data=[]
     if request.method=='POST':
         button=request.form.get('button_name')
-        if button=='user_name':
+        if button=='date_filter':
+            query='date_filter'
+            date=request.form.get('date')
+            dt1 = datetime.strptime(date, "%Y-%m-%d")
+            for user in users:
+                if user.date_registered is None:
+                    user.date_registered=datetime.now().strftime("%Y-%m-%d")
+                    user.commit()
+                date2 = user.date_registered
+                print(dt1,'gg',date2,'date')
+                dt2 = datetime.strptime(date2, "%Y-%m-%d")
+                print(dt1,dt2,'date')
+                if dt1==dt2:
+                    filtered_data.append(user)
+        elif button=='month_filter':
+            query='month_filter'
+            month_name=request.form.get('month')
+            month_no=month(month_name)
+            for user in users:
+                if user.date_registered is None:
+                    user.date_registered=datetime.now().strftime("%Y-%m-%d")
+                    user.commit()
+                dt = datetime.strptime(user.date_registered, "%Y-%m-%d")
+
+                month_reg = dt.strftime("%m")
+                print(month_reg,month_no,'month')
+                if int(month_reg)==int(month_no):
+                    
+                    filtered_data.append(user)
+        elif button=='year_filter':
+            query='year_filter'
+            year=request.form.get('year')
+            for user in users:
+                if user.date_registered is None:
+                    user.date_registered=datetime.now().strftime("%Y-%m-%d")
+                    user.commit()
+                dt = datetime.strptime(user.date_registered, "%Y-%m-%d")
+
+                year_reg = dt.strftime("%Y")
+                print(year_reg,year,'year')
+                if int(year_reg)==int(year):
+                    filtered_data.append(user)
+        elif button=='week_filter':
+            query='week_filter'
+            today=datetime.now().strftime("%Y-%m-%d")
+            dt_today = datetime.strptime(today, "%Y-%m-%d")
+            dt_week_ago = dt_today - timedelta(days=7)
+            for user in users:
+                if user.date_registered is None:
+                    user.date_registered=datetime.now().strftime("%Y-%m-%d")
+                    user.commit()
+                dt_date = datetime.strptime(user.date_registered, "%Y-%m-%d")
+
+
+                if dt_date >= dt_week_ago and dt_date <= dt_today:
+                    filtered_data.append(user)
+        elif button=='user_name':
             query='user_name'
             for user in users:
                 data={'user_name':user.user_name,'role':'None'}
@@ -374,7 +431,7 @@ def users():
         else:
             query='all'
             filtered_data=users
-            return render_template('admin_users.html',users=users,query=query)
+    
 
         return render_template('admin_users.html',users=filtered_data,query=query)
 
@@ -395,7 +452,63 @@ def drivers():
     filtered_data=[]
     if request.method=='POST':
         button=request.form.get('button_name')
-        if button=='user_name':
+        if button=='date_filter':
+            query='date_filter'
+            date=request.form.get('date')
+            dt1 = datetime.strptime(date, "%Y-%m-%d")
+            for user in users:
+                if user.date_registered is None:
+                    user.date_registered=datetime.now().strftime("%Y-%m-%d")
+                    user.commit()
+                date2 = user.date_registered
+                print(dt1,'gg',date2,'date')
+                dt2 = datetime.strptime(date2, "%Y-%m-%d")
+                print(dt1,dt2,'date')
+                if dt1==dt2:
+                    filtered_data.append(user)
+        elif button=='month_filter':
+            query='month_filter'
+            month_name=request.form.get('month')
+            month_no=month(month_name)
+            for user in users:
+                if user.date_registered is None:
+                    user.date_registered=datetime.now().strftime("%Y-%m-%d")
+                    user.commit()
+                dt = datetime.strptime(user.date_registered, "%Y-%m-%d")
+
+                month_reg = dt.strftime("%m")
+                print(month_reg,month_no,'month')
+                if int(month_reg)==int(month_no):
+                    
+                    filtered_data.append(user)
+        elif button=='year_filter':
+            query='year_filter'
+            year=request.form.get('year')
+            for user in users:
+                if user.date_registered is None:
+                    user.date_registered=datetime.now().strftime("%Y-%m-%d")
+                    user.commit()
+                dt = datetime.strptime(user.date_registered, "%Y-%m-%d")
+
+                year_reg = dt.strftime("%Y")
+                print(year_reg,year,'year')
+                if int(year_reg)==int(year):
+                    filtered_data.append(user)
+        elif button=='week_filter':
+            query='week_filter'
+            today=datetime.now().strftime("%Y-%m-%d")
+            dt_today = datetime.strptime(today, "%Y-%m-%d")
+            dt_week_ago = dt_today - timedelta(days=7)
+            for user in users:
+                if user.date_registered is None:
+                    user.date_registered=datetime.now().strftime("%Y-%m-%d")
+                    user.commit()
+                dt_date = datetime.strptime(user.date_registered, "%Y-%m-%d")
+
+
+                if dt_date >= dt_week_ago and dt_date <= dt_today:
+                    filtered_data.append(user)
+        elif button=='user_name':
             query='user_name'
             for user in users:
                 data={'user_name':user.user_name,'role':'None'}
@@ -440,7 +553,7 @@ def drivers():
         else:
             query='all'
             filtered_data=users
-            return render_template('admin_drivers.html',users=users,query=query)
+            
 
         return render_template('admin_drivers.html',users=filtered_data,query=query)
     return render_template('admin_drivers.html',users=users)
@@ -462,7 +575,63 @@ def riders():
     filtered_data=[]
     if request.method=='POST':
         button=request.form.get('button_name')
-        if button=='user_name':
+        if button=='date_filter':
+            query='date_filter'
+            date=request.form.get('date')
+            dt1 = datetime.strptime(date, "%Y-%m-%d")
+            for user in users:
+                if user.date_registered is None:
+                    user.date_registered=datetime.now().strftime("%Y-%m-%d")
+                    user.commit()
+                date2 = user.date_registered
+                print(dt1,'gg',date2,'date')
+                dt2 = datetime.strptime(date2, "%Y-%m-%d")
+                print(dt1,dt2,'date')
+                if dt1==dt2:
+                    filtered_data.append(user)
+        elif button=='month_filter':
+            query='month_filter'
+            month_name=request.form.get('month')
+            month_no=month(month_name)
+            for user in users:
+                if user.date_registered is None:
+                    user.date_registered=datetime.now().strftime("%Y-%m-%d")
+                    user.commit()
+                dt = datetime.strptime(user.date_registered, "%Y-%m-%d")
+
+                month_reg = dt.strftime("%m")
+                print(month_reg,month_no,'month')
+                if int(month_reg)==int(month_no):
+                    
+                    filtered_data.append(user)
+        elif button=='year_filter':
+            query='year_filter'
+            year=request.form.get('year')
+            for user in users:
+                if user.date_registered is None:
+                    user.date_registered=datetime.now().strftime("%Y-%m-%d")
+                    user.commit()
+                dt = datetime.strptime(user.date_registered, "%Y-%m-%d")
+
+                year_reg = dt.strftime("%Y")
+                print(year_reg,year,'year')
+                if int(year_reg)==int(year):
+                    filtered_data.append(user)
+        elif button=='week_filter':
+            query='week_filter'
+            today=datetime.now().strftime("%Y-%m-%d")
+            dt_today = datetime.strptime(today, "%Y-%m-%d")
+            dt_week_ago = dt_today - timedelta(days=7)
+            for user in users:
+                if user.date_registered is None:
+                    user.date_registered=datetime.now().strftime("%Y-%m-%d")
+                    user.commit()
+                dt_date = datetime.strptime(user.date_registered, "%Y-%m-%d")
+
+
+                if dt_date >= dt_week_ago and dt_date <= dt_today:
+                    filtered_data.append(user)
+        elif button=='user_name':
             query='user_name'
             for user in users:
                 data={'user_name':user.user_name,'role':'None'}
@@ -495,7 +664,7 @@ def riders():
         else:
             query='all'
             filtered_data=users
-            return render_template('admin_riders.html',users=users,query=query)
+            
 
         return render_template('admin_riders.html',users=filtered_data,query=query)
 
@@ -517,7 +686,63 @@ def owners():
     filtered_data=[]
     if request.method=='POST':
         button=request.form.get('button_name')
-        if button=='user_name':
+        if button=='date_filter':
+            query='date_filter'
+            date=request.form.get('date')
+            dt1 = datetime.strptime(date, "%Y-%m-%d")
+            for user in users:
+                if user.date_registered is None:
+                    user.date_registered=datetime.now().strftime("%Y-%m-%d")
+                    user.commit()
+                date2 = user.date_registered
+                print(dt1,'gg',date2,'date')
+                dt2 = datetime.strptime(date2, "%Y-%m-%d")
+                print(dt1,dt2,'date')
+                if dt1==dt2:
+                    filtered_data.append(user)
+        elif button=='month_filter':
+            query='month_filter'
+            month_name=request.form.get('month')
+            month_no=month(month_name)
+            for user in users:
+                if user.date_registered is None:
+                    user.date_registered=datetime.now().strftime("%Y-%m-%d")
+                    user.commit()
+                dt = datetime.strptime(user.date_registered, "%Y-%m-%d")
+
+                month_reg = dt.strftime("%m")
+                print(month_reg,month_no,'month')
+                if int(month_reg)==int(month_no):
+                    
+                    filtered_data.append(user)
+        elif button=='year_filter':
+            query='year_filter'
+            year=request.form.get('year')
+            for user in users:
+                if user.date_registered is None:
+                    user.date_registered=datetime.now().strftime("%Y-%m-%d")
+                    user.commit()
+                dt = datetime.strptime(user.date_registered, "%Y-%m-%d")
+
+                year_reg = dt.strftime("%Y")
+                print(year_reg,year,'year')
+                if int(year_reg)==int(year):
+                    filtered_data.append(user)
+        elif button=='week_filter':
+            query='week_filter'
+            today=datetime.now().strftime("%Y-%m-%d")
+            dt_today = datetime.strptime(today, "%Y-%m-%d")
+            dt_week_ago = dt_today - timedelta(days=7)
+            for user in users:
+                if user.date_registered is None:
+                    user.date_registered=datetime.now().strftime("%Y-%m-%d")
+                    user.commit()
+                dt_date = datetime.strptime(user.date_registered, "%Y-%m-%d")
+
+
+                if dt_date >= dt_week_ago and dt_date <= dt_today:
+                    filtered_data.append(user)
+        elif button=='user_name':
             query='user_name'
             for user in users:
                 data={'user_name':user.user_name,'role':'None'}
@@ -562,7 +787,7 @@ def owners():
         else:
             query='all'
             filtered_data=users
-            return render_template('admin_owners.html',users=users,query=query)
+            
 
         return render_template('admin_owners.html',users=filtered_data,query=query)
     return render_template('admin_owners.html',users=users)
@@ -576,7 +801,63 @@ def transactions():
     filtered_data=[]
     if request.method=='POST':
         button=request.form.get('button_name')
-        if button=='id':
+        if button=='date_filter':
+            query='date_filter'
+            date=request.form.get('date')
+            dt1 = datetime.strptime(date, "%Y-%m-%d")
+            for transaction in data:
+                if transaction.date is None:
+                    transaction.date=datetime.now().strftime("%Y-%m-%d")
+                    transaction.commit()
+                date2 = transaction.date
+                print(dt1,'gg',date2,'date')
+                dt2 = datetime.strptime(date2, "%Y-%m-%d")
+                print(dt1,dt2,'date')
+                if dt1==dt2:
+                    filtered_data.append(transaction)
+        elif button=='month_filter':
+            query='month_filter'
+            month_name=request.form.get('month')
+            month_no=month(month_name)
+            for transaction in data:
+                if transaction.date is None:
+                    transaction.date=datetime.now().strftime("%Y-%m-%d")
+                    transaction.commit()
+                dt = datetime.strptime(transaction.date, "%Y-%m-%d")
+
+                month_reg = dt.strftime("%m")
+                print(month_reg,month_no,'month')
+                if int(month_reg)==int(month_no):
+                    
+                    filtered_data.append(transaction)
+        elif button=='year_filter':
+            query='year_filter'
+            year=request.form.get('year')
+            for transaction in data:
+                if transaction.date is None:
+                    transaction.date=datetime.now().strftime("%Y-%m-%d")
+                    transaction.commit()
+                dt = datetime.strptime(transaction.date, "%Y-%m-%d")
+
+                year_reg = dt.strftime("%Y")
+                print(year_reg,year,'year')
+                if int(year_reg)==int(year):
+                    filtered_data.append(transaction)
+        elif button=='week_filter':
+            query='week_filter'
+            today=datetime.now().strftime("%Y-%m-%d")
+            dt_today = datetime.strptime(today, "%Y-%m-%d")
+            dt_week_ago = dt_today - timedelta(days=7)
+            for transaction in data:
+                if transaction.date is None:
+                    transaction.date=datetime.now().strftime("%Y-%m-%d")
+                    transaction.commit()
+                dt_date = datetime.strptime(transaction.date, "%Y-%m-%d")
+
+
+                if dt_date >= dt_week_ago and dt_date <= dt_today:
+                    filtered_data.append(transaction)
+        elif button=='id':
             query='id'
             for transaction in data:
                 entry={'id':transaction.id,'status':transaction.status}
@@ -645,7 +926,7 @@ def transactions():
 
         else:
             query='all'
-            return render_template('admin_transactions.html',data=data,query=query)
+            filtered_data=data
 
         return render_template('admin_transactions.html',data=filtered_data,query=query)
 
@@ -678,7 +959,7 @@ def routes():
                 filtered_data.append(entry)
         else:
             query='all'
-            return render_template('admin_routes.html',data=data,query=query)
+            filtered_data=data
         return render_template('admin_routes.html',data=filtered_data,query=query)
 
     return render_template('admin_routes.html',data=data)
@@ -715,7 +996,7 @@ def stages():
         else:
             query='all'
             print(query)
-            return render_template('admin_stages.html',data=data,query=query)
+            filtered_data=data
         
         return render_template('admin_stages.html',data=filtered_data,query=query)
 

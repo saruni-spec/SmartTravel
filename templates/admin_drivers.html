@@ -3,6 +3,53 @@
 <h2>User Details</h2>
 {% endblock %}
 {% block content %}
+<form class="date_filter" action="/admin/users" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div>
+  <label for="date">Date</label>
+  <input type="date" name="date" id="date">
+  <button name="button_name" value="date_filter">Filter By date</button>
+</div>
+  <div>
+  <label for="date">Month</label>
+  <select name="month" id="month">
+    <option value="January">January</option>
+    <option value="February">February</option>
+    <option value="March">March</option>
+    <option value="April">April</option>
+    <option value="May">May</option>
+    <option value="June">June</option>
+    <option value="July">July</option>
+    <option value="August">August</option>
+    <option value="September">September</option>
+    <option value="October">October</option>
+    <option value="November">November</option>
+    <option value="December">December</option>
+  </select>
+  
+  <button name="button_name" value="month_filter">Filter By Month</button>
+</div>
+  <div>
+  <label for="year">Enter Year</label>
+  <select name="year" id="year" type="number">
+    <option value="2021">2021</option>
+    <option value="2022">2022</option>
+    <option value="2023">2023</option>
+    <option value="2024">2024</option>
+    
+  </select>
+  <button name="button_name" value="year_filter" >Filter By Year</button>
+</div>
+
+<div>
+  <button name="button_name" value="week_filter">Last 1 week</button>
+</div>
+</form>
+
+
+
+
+
 
 <form class="sidebar" method="post" action="/admin/drivers">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -26,7 +73,7 @@
 
 {% for user in users %}
 
-<form action="/admin/drivers" method="post">
+<form action="/admin/drivers" method="post" class='data'>
     <label for="">User Name</label>
     <p class="output">{{user.user_name}}</p>
     <label for="">Email</label>
@@ -49,7 +96,7 @@
 
 {% elif query=='role' %}
 {% for user in users %}
-<form action="/admin/drivers"method="post">
+<form action="/admin/drivers"method="post" class='data'>
     <label for="user_name"></label>
     <p class="output">{{user.user_name}}</p>
     <label for=""></label>
@@ -58,7 +105,7 @@
 {% endfor %}
 {% elif query=='email' %}
 {% for user in users %}
-<form action="/admin/drivers" method="post">
+<form action="/admin/drivers" method="post" class='data'>
     <label for=""></label>
     <p class="output">{{user.user_name}}</p>
     <label for="email">Email</label>
@@ -67,7 +114,7 @@
 {% endfor %}
 {% elif query=='phone' %}
 {% for user in users %}
-<form action="/admin/drivers" method="post">
+<form action="/admin/drivers" method="post" class='data'>
     <label for=""></label>
     <p class="output">{{user.user_name}}</p>
     <label for="phone">Phone Number</label>
@@ -76,7 +123,7 @@
 {% endfor %}
 {% elif query=='address' %}
 {% for user in users %}
-<form action="/admin/drivers" method="post">
+<form action="/admin/drivers" method="post" class='data'>
     <label for=""></label>
     <p class="output">{{user.user_name}}</p>
     <label for=""></label>
@@ -85,7 +132,7 @@
 {% endfor %}
 {% elif query=='date_registered' %}
 {% for user in users %}
-<form action="/admin/drivers" method="post">
+<form action="/admin/drivers" method="post" class='data'>
     <label for=""></label>
     <p class="output">{{user.user_name}}</p>
     <label for="">Date registered</label>
@@ -94,7 +141,7 @@
 {% endfor %}
 {% elif query=='licence_no' %}
 {% for user in users %}
-<form action="/admin/drivers" method="post">
+<form action="/admin/drivers" method="post" class='data'>
     <label for=""></label>
     <p class="output">{{user.user_name}}</p>
     <label for="">Licence No</label>
@@ -103,17 +150,105 @@
 {% endfor %}
 {% elif query=='vehicle_no' %}
 {% for user in users %}
-<form action="/admin/drivers" method="post">
+<form action="/admin/drivers" method="post" class='data'>
     <label for=""></label>
     <p class="output">{{user.user_name}}</p>
     <label for="">Vehicle No Plate </label>
     <p class="output">{{user.vehicle_no}}</p>
   </form>
 {% endfor %}
+{% elif query=='month_filter' %}
+{% for user in users %}
+
+<form action="/admin/drivers" method="post" class='data'>
+    <label for="">User Name</label>
+    <p class="output">{{user.user_name}}</p>
+    <label for="">Email</label>
+    <p class="output">{{user.email}}</p>
+    <label for="">Phone Number</label>
+    <p class="output">{{user.phone}}</p>
+    <label for="">Address</label>
+    <p class="output">{{user.address}}</p>
+    <label for="">Date registered</label>
+    <p class="output">{{user.date_registered}}</p>
+    <label for="">Licence No</label>
+    <p class="output">{{user.licence_no}}</p>
+    <label for="">Vehicle No Plate </label>
+    <p class="output">{{user.vehicle_no}}</p>
+    
+    </form>
+    
+{% endfor %}
+{% elif query=='date_filter' %}
+{% for user in users %}
+
+<form action="/admin/drivers" method="post" class='data'>
+    <label for="">User Name</label>
+    <p class="output">{{user.user_name}}</p>
+    <label for="">Email</label>
+    <p class="output">{{user.email}}</p>
+    <label for="">Phone Number</label>
+    <p class="output">{{user.phone}}</p>
+    <label for="">Address</label>
+    <p class="output">{{user.address}}</p>
+    <label for="">Date registered</label>
+    <p class="output">{{user.date_registered}}</p>
+    <label for="">Licence No</label>
+    <p class="output">{{user.licence_no}}</p>
+    <label for="">Vehicle No Plate </label>
+    <p class="output">{{user.vehicle_no}}</p>
+    
+    </form>
+    
+{% endfor %}
+{% elif query=='year_filter' %}
+{% for user in users %}
+
+<form action="/admin/drivers" method="post" class='data'>
+    <label for="">User Name</label>
+    <p class="output">{{user.user_name}}</p>
+    <label for="">Email</label>
+    <p class="output">{{user.email}}</p>
+    <label for="">Phone Number</label>
+    <p class="output">{{user.phone}}</p>
+    <label for="">Address</label>
+    <p class="output">{{user.address}}</p>
+    <label for="">Date registered</label>
+    <p class="output">{{user.date_registered}}</p>
+    <label for="">Licence No</label>
+    <p class="output">{{user.licence_no}}</p>
+    <label for="">Vehicle No Plate </label>
+    <p class="output">{{user.vehicle_no}}</p>
+    
+    </form>
+    
+{% endfor %}
+{% elif query=='week_filter' %}
+{% for user in users %}
+
+<form action="/admin/drivers" method="post" class='data'>
+    <label for="">User Name</label>
+    <p class="output">{{user.user_name}}</p>
+    <label for="">Email</label>
+    <p class="output">{{user.email}}</p>
+    <label for="">Phone Number</label>
+    <p class="output">{{user.phone}}</p>
+    <label for="">Address</label>
+    <p class="output">{{user.address}}</p>
+    <label for="">Date registered</label>
+    <p class="output">{{user.date_registered}}</p>
+    <label for="">Licence No</label>
+    <p class="output">{{user.licence_no}}</p>
+    <label for="">Vehicle No Plate </label>
+    <p class="output">{{user.vehicle_no}}</p>
+    
+    </form>
+    
+{% endfor %}
 
 {% else %}
 {% for user in users %}
-<form action="/admin/drivers" method="post">
+<form action="/admin/drivers" method="post" class='data'>
     <label for="">User Name</label>
     <p class="output">{{user.user_name}}</p>
     <label for="">Email</label>

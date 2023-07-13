@@ -24,7 +24,7 @@ def get_distance(origin_lat, origin_lng, destination_lat, destination_lng):
 
     except (requests.exceptions.RequestException, requests.exceptions.ConnectionError) as e:
         print(f"Error: {e}")
-        flash("No internet connection")
+        return None
 
 
 
@@ -70,6 +70,29 @@ def reverse_geocode(latitude, longitude):
         return None
     except (requests.exceptions.RequestException, requests.exceptions.ConnectionError) as e:
         print(f"Error: {e}")
-        flash("No internet connection")
+        return None
 
 
+def geocode(api_key,destination_name,current_user):
+    import requests
+
+    
+
+    url = f"https://maps.googleapis.com/maps/api/geocode/json?address={destination_name}&key={api_key}"
+    try:
+            response = requests.get(url)
+            data = response.json()
+            if data['status'] == 'OK':
+                    result = data['results'][0]
+                    location = result['geometry']['location']
+                    latitude = location['lat']
+                    longitude = location['lng']
+                    destination={'location':destination_name,'latitude':latitude,'longitude':longitude,'user':current_user.user_name}
+                    return destination
+            else:
+                    
+                    return None
+    except (requests.exceptions.RequestException, requests.exceptions.ConnectionError) as e:
+            print(f"Error: {e}")
+            
+            return None

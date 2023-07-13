@@ -5,6 +5,7 @@
 {% block content %}
 <form action="/booking/wait_confirmation" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="booking_id" id="booking_id" value="{{booking_id}}">
     <label for="vehicle">Vehicle</label>
     <p>{{ vehicle_no }}</p>
     <label for="driver">Driver</label>
@@ -16,8 +17,17 @@
 
     <p>{{ waiting_message }}</p>
     <button type="submit" name="confirm" value="check">Check</button>
-    <button type="submit" name="confirm" value="proceed">Proceed</button>
+    
 </form>
 
+
+<script>
+
+window.setTimeout(function(){
+    window.location.reload();
+}, 30000);
+
+
+</script>
 
 {% endblock %}

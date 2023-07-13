@@ -32,8 +32,14 @@
 </div>
   <div>
   <label for="year">Enter Year</label>
-  <input type="number" name="year" id="year">
-  <button name="button_name" value="year_filter" onclick="validateYear()">Filter By Year</button>
+  <select name="year" id="year" type="number">
+    <option value="2021">2021</option>
+    <option value="2022">2022</option>
+    <option value="2023">2023</option>
+    <option value="2024">2024</option>
+    
+  </select>
+  <button name="button_name" value="year_filter" >Filter By Year</button>
 </div>
 
 <div>
@@ -66,7 +72,7 @@
 
 {% for vehicle in vehicles %}
 
-<form action="/admin/vehicles" method="post">
+<form action="/admin/vehicles" method="post" class='data'>
     <label for="no_plate">No Plate</label>
     {{vehicle.no_plate}}
     <label for="driver">Driver</label>
@@ -88,7 +94,7 @@
 
 {% elif query=='no_plate' %}
 {% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post">
+<form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
   {{vehicle.no_plate}}
   <label for="type">Vehicle Type</label>
@@ -97,7 +103,7 @@
 {% endfor %}
 {% elif query=='capacity' %}
 {% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post">
+<form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
   {{vehicle.no_plate}}
   <label for="capacity">Capacity</label>
@@ -106,7 +112,7 @@
 {% endfor %}
 {% elif query=='owner_username' %}
 {% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post">
+<form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
 
   {{vehicle.no_plate}}
@@ -116,7 +122,7 @@
 {% endfor %}
 {% elif query=='driver_username' %}
 {% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post">
+<form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
   {{vehicle.no_plate}}
   <label for="driver_username">Driver</label>
@@ -125,7 +131,7 @@
 {% endfor %}
 {% elif query=='color' %}
 {% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post">
+<form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
   {{vehicle.no_plate}}
   <label for="color">Color</label>
@@ -134,7 +140,7 @@
 {% endfor %}
 {% elif query=='is_active' %}
 {% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post">
+<form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
   {{vehicle.no_plate}}
   <label for="is_active"></label>
@@ -143,7 +149,7 @@
 {% endfor %}
 {% elif query=='for_hire' %}
 {% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post">
+<form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
   {{vehicle.no_plate}}
   <label for="for_hire"></label>
@@ -152,7 +158,7 @@
 {% endfor %}
 {% elif query=='build_type' %}
 {% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post">
+<form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
   {{vehicle.no_plate}}
   <label for="build_type"></label>
@@ -161,7 +167,7 @@
 {% endfor %}
 {% elif query=='date_registered' %}
 {% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post">
+<form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
   {{vehicle.no_plate}}
   <label for="date_registered">Date Registered</label>
@@ -170,7 +176,7 @@
 {% endfor %}
 {% elif query=='ratings' %}
 {% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post">
+<form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
   {{vehicle.no_plate}}
   <label for="ratings"></label>
@@ -179,7 +185,7 @@
 {% endfor %}
 {% elif query=='date_filter' %}
 {% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post">
+<form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
   {{vehicle.no_plate}}
   <label for="driver">Driver</label>
@@ -198,7 +204,7 @@
 {% endfor %}
 {% elif query=='week_filter' %}
 {% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post">
+<form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
   {{vehicle.no_plate}}
   <label for="driver">Driver</label>
@@ -217,7 +223,7 @@
 {% endfor %}
 {% elif query=='month_filter' %}
 {% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post">
+<form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
   {{vehicle.no_plate}}
   <label for="driver">Driver</label>
@@ -236,7 +242,7 @@
 {% endfor %}
 {% elif query=='year_filter' %}
 {% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post">
+<form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
   {{vehicle.no_plate}}
   <label for="driver">Driver</label>
@@ -255,7 +261,7 @@
 {% endfor %}
 {% else %}
 {% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post">
+<form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
   {{vehicle.no_plate}}
   <label for="driver">Driver</label>

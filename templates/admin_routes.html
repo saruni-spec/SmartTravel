@@ -1,5 +1,7 @@
 {% extends 'admin.html' %}
 {% block title %}
+
+
 <h2>Route Details</h2>
 {% endblock %}
 {% block content %}
@@ -19,11 +21,12 @@
 {% if data is none %}
 <p>No routes are registered</p>
 {% elif data is iterable and data|length >0 %}
+
 {% if query=='all' %}
 
 {% for entry in data %}
 
-<form action="/admin/routes" method="post">
+<form action="/admin/routes" method="post" class='data'>
     <label for="">Route No</label>
     <p class="output">{{entry.id}}</p>
     <label for="">Route Distance</label>
@@ -41,7 +44,7 @@
 
 {% elif query=='role' %}
 {% for entry in data %}
-<form action="/admin/routes"method="post">
+<form action="/admin/routes"method="post" class='data'>
     <label for="id"></label>
     <p class="output">{{entry.id}}</p>
     <label for=""></label>
@@ -50,7 +53,7 @@
 {% endfor %}
 {% elif query=='route_distane' %}
 {% for entry in data %}
-<form action="/admin/routes" method="post">
+<form action="/admin/routes" method="post" class='data'>
     <label for=""></label>
     <p class="output">{{entry.id}}</p>
     <label for="route_distane">Route Distance</label>
@@ -59,7 +62,7 @@
 {% endfor %}
 {% elif query=='stages' %}
 {% for entry in data %}
-<form action="/admin/routes" method="post">
+<form action="/admin/routes" method="post" class='data'>
     <label for=""></label>
     <p class="output">{{entry.id}}</p>
     <label for="stages">Stages</label>
@@ -72,7 +75,7 @@
 
 {% else %}
 {% for entry in data %}
-<form action="/admin/routes" method="post">
+<form action="/admin/routes" method="post" class='data'>
     <label for="">Route No</label>
     <p class="output">{{entry.id}}</p>
     <label for="">Route Distance</label>
@@ -92,4 +95,7 @@
 {% endif %}
 
 <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/sidebar.css')}}">
+
+
+
 {% endblock %}
