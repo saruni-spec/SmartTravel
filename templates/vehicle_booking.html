@@ -1,0 +1,375 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Booking History</h2>
+{% endblock %}
+{% block content %}
+
+
+<button onclick="downloadPDF()">Download</button>
+
+<form class="date_filter" action="/report/vehicle_bookings" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div>
+  <label for="date">Date</label>
+  <input type="date" name="date" id="date">
+  <button name="button_name" value="date_filter">Filter By date</button>
+</div>
+  <div>
+  <label for="date">Month</label>
+  <select name="month" id="month">
+    <option value="January">January</option>
+    <option value="February">February</option>
+    <option value="March">March</option>
+    <option value="April">April</option>
+    <option value="May">May</option>
+    <option value="June">June</option>
+    <option value="July">July</option>
+    <option value="August">August</option>
+    <option value="September">September</option>
+    <option value="October">October</option>
+    <option value="November">November</option>
+    <option value="December">December</option>
+  </select>
+  
+  <button name="button_name" value="month_filter">Filter By Month</button>
+</div>
+  <div>
+  <label for="year">Enter Year</label>
+  <select name="year" id="year" type="number">
+    <option value="2021">2021</option>
+    <option value="2022">2022</option>
+    <option value="2023">2023</option>
+    <option value="2024">2024</option>
+    
+  </select>
+  <button name="button_name" value="year_filter" >Filter By Year</button>
+</div>
+
+<div>
+  <button name="button_name" value="week_filter">Last 1 week</button>
+</div>
+</form>
+
+
+
+
+
+
+<form class="sidebar" method="post" action="/report/vehicle_bookings">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <button name="button_name" value="all">All Details</button>
+    <button name="button_name" value="id">Booking ID</button>
+    <button name="button_name" value="user_name">User Name</button>
+    <button name="button_name" value="phone">Phone Number</button>
+    <button name="button_name" value="pickup_point">Pickup Point </button>
+    <button name="button_name" value="date">Date </button>
+    <button name="button_name" value="time">Time </button>
+    <button name="button_name" value="destination">Destination </button>
+    <button name="button_name" value="status">Booking Status </button>
+    <button name="button_name" value="booking_type">Booking Type </button>
+    <button name="button_name" value="payment_details">Payment Status </button>
+    
+                                                       
+          
+</form>
+{% if data is none %}
+<p>No riders are registered</p>
+{% elif data is iterable and data|length >0 %}
+{% if query=='all' %}
+
+{% for entry in data %}
+
+<form action="/report/vehicle_bookings" method="post" class='data'>
+    <label for="">Booking ID</label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">User Name</label>
+    <p class="output">{{entry.user_name}}</p>
+    <label for="">Phone Number</label>
+    <p class="output">{{entry.phone}}</p>
+    <label for="">Address</label>
+    <p class="output">{{entry.pickup_point}}</p>
+    <label for="">Date</label>
+    <p class="output">{{entry.date}}</p>
+    <label for="">Time</label>
+    <p class="output">{{entry.time}}</p>
+    <label for="">Destination</label>
+    <p class="output">{{entry.destination}}</p>
+    <label for="">Vehicle No Plate </label>
+    <p class="output">{{entry.entry_plate}}</p>
+    <label for="">Booking Status </label>
+    <p class="output">{{entry.status}}</p>
+    <label for="">Booking Type </label>
+    <p class="output">{{entry.booking_type}}</p>
+    <label for="">Payment Status </label>
+    <p class="output">{{entry.payment_details}}</p>
+
+    
+    </form>
+    
+  
+{% endfor %}
+
+{% elif query=='id' %}
+{% for entry in data %}
+<form action="/report/vehicle_bookings"method="post" class='data'>
+    <label for="id"></label>
+    <p class="output">{{entry.id}}</p>
+    <label for=""></label>
+    <p class="output">{{entry.status}}</p>
+  </form>
+{% endfor %}
+{% elif query=='user_name' %}
+{% for entry in data %}
+<form action="/report/vehicle_bookings" method="post" class='data'>
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for="user_name">User Name</label>
+    <p class="output">{{entry.user_name}}</p>
+  </form>
+{% endfor %}
+{% elif query=='phone' %}
+{% for entry in data %}
+<form action="/report/vehicle_bookings" method="post" class='data'>
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for="phone">Phone Number</label>
+    <p class="output">{{entry.phone}}</p>
+  </form>
+{% endfor %}
+{% elif query=='pickup_point' %}
+{% for entry in data %}
+<form action="/report/vehicle_bookings" method="post" class='data'>
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for=""></label>
+    <p class="output">{{entry.pickup_point}}</p>
+  </form>
+{% endfor %}
+{% elif query=='date' %}
+{% for entry in data %}
+<form action="/report/vehicle_bookings" method="post" class='data'>
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">Date</label>
+    <p class="output">{{entry.date}}</p>
+  </form>
+{% endfor %}
+{% elif query=='time' %}
+{% for entry in data %}
+<form action="/report/vehicle_bookings" method="post" class='data'>
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">Date</label>
+    <p class="output">{{entry.time}}</p>
+  </form>
+{% endfor %}
+{% elif query=='destination' %}
+{% for entry in data %}
+<form action="/report/vehicle_bookings" method="post" class='data'>
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">Destination</label>
+    <p class="output">{{entry.destination}}</p>
+  </form>
+{% endfor %}
+
+{% elif query=='status' %}
+{% for entry in data %}
+<form action="/report/vehicle_bookings" method="post" class='data'>
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">Booking Status </label>
+    <p class="output">{{entry.status}}</p>
+  </form>
+{% endfor %}
+{% elif query=='booking_type' %}
+{% for entry in data %}
+<form action="/report/vehicle_bookings" method="post" class='data'>
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">Booking Type </label>
+    <p class="output">{{entry.booking_type}}</p>
+  </form>
+{% endfor %}
+{% elif query=='payment_details' %}
+{% for entry in data %}
+<form action="/report/vehicle_bookings" method="post" class='data'>
+    <label for=""></label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">Payment Status </label>
+    <p class="output">{{entry.payment_details}}</p>
+  </form>
+{% endfor %}    
+{% elif query=='month_filter' %}
+{% for entry in data %}
+<form action="/report/vehicle_bookings" method="post" class='data'>
+  <label for="">Booking ID</label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">User Name</label>
+    <p class="output">{{entry.user_name}}</p>
+    <label for="">Phone Number</label>
+    <p class="output">{{entry.phone}}</p>
+    <label for="">Address</label>
+    <p class="output">{{entry.pickup_point}}</p>
+    <label for="">Date</label>
+    <p class="output">{{entry.date}}</p>
+    <label for="">Time</label>
+    <p class="output">{{entry.time}}</p>
+    <label for="">Destination</label>
+    <p class="output">{{entry.destination}}</p>
+    <label for="">Vehicle No Plate </label>
+    <p class="output">{{entry.entry_plate}}</p>
+    <label for="">Booking Status </label>
+    <p class="output">{{entry.status}}</p>
+    <label for="">Booking Type </label>
+    <p class="output">{{entry.booking_type}}</p>
+    <label for="">Payment Status </label>
+    <p class="output">{{entry.payment_details}}</p>
+  
+
+  </form>
+{% endfor %}
+{% elif query=='year_filter' %}
+{% for entry in data %}
+<form action="/report/vehicle_bookings" method="post" class='data'>
+  <label for="">Booking ID</label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">User Name</label>
+    <p class="output">{{entry.user_name}}</p>
+    <label for="">Phone Number</label>
+    <p class="output">{{entry.phone}}</p>
+    <label for="">Address</label>
+    <p class="output">{{entry.pickup_point}}</p>
+    <label for="">Date</label>
+    <p class="output">{{entry.date}}</p>
+    <label for="">Time</label>
+    <p class="output">{{entry.time}}</p>
+    <label for="">Destination</label>
+    <p class="output">{{entry.destination}}</p>
+    <label for="">Vehicle No Plate </label>
+    <p class="output">{{entry.entry_plate}}</p>
+    <label for="">Booking Status </label>
+    <p class="output">{{entry.status}}</p>
+    <label for="">Booking Type </label>
+    <p class="output">{{entry.booking_type}}</p>
+    <label for="">Payment Status </label>
+    <p class="output">{{entry.payment_details}}</p>
+  
+
+  </form>
+{% endfor %}
+{% elif query=='date_filter' %}
+{% for entry in data %}
+<form action="/report/vehicle_bookings" method="post" class='data'>
+  <label for="">Booking ID</label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">User Name</label>
+    <p class="output">{{entry.user_name}}</p>
+    <label for="">Phone Number</label>
+    <p class="output">{{entry.phone}}</p>
+    <label for="">Address</label>
+    <p class="output">{{entry.pickup_point}}</p>
+    <label for="">Date</label>
+    <p class="output">{{entry.date}}</p>
+    <label for="">Time</label>
+    <p class="output">{{entry.time}}</p>
+    <label for="">Destination</label>
+    <p class="output">{{entry.destination}}</p>
+    <label for="">Vehicle No Plate </label>
+    <p class="output">{{entry.entry_plate}}</p>
+    <label for="">Booking Status </label>
+    <p class="output">{{entry.status}}</p>
+    <label for="">Booking Type </label>
+    <p class="output">{{entry.booking_type}}</p>
+    <label for="">Payment Status </label>
+    <p class="output">{{entry.payment_details}}</p>
+  
+
+  </form>
+{% endfor %}
+{% elif query=='week_filter' %}
+{% for entry in data %}
+<form action="/report/vehicle_bookings" method="post" class='data'>
+  <label for="">Booking ID</label>
+  <p class="output">{{entry.id}}</p>
+  <label for="">User Name</label>
+  <p class="output">{{entry.user_name}}</p>
+  <label for="">Phone Number</label>
+  <p class="output">{{entry.phone}}</p>
+  <label for="">Address</label>
+  <p class="output">{{entry.pickup_point}}</p>
+  <label for="">Date</label>
+  <p class="output">{{entry.date}}</p>
+  <label for="">Time</label>
+  <p class="output">{{entry.time}}</p>
+  <label for="">Destination</label>
+  <p class="output">{{entry.destination}}</p>
+  <label for="">Vehicle No Plate </label>
+  <p class="output">{{entry.entry_plate}}</p>
+  <label for="">Booking Status </label>
+  <p class="output">{{entry.status}}</p>
+  <label for="">Booking Type </label>
+  <p class="output">{{entry.booking_type}}</p>
+  <label for="">Payment Status </label>
+  <p class="output">{{entry.payment_details}}</p>
+  
+
+  </form>
+{% endfor %}
+
+{% else %}
+{% for entry in data %}
+<form action="/report/vehicle_bookings" method="post" class='data'>
+  <label for="">Booking ID</label>
+  <p class="output">{{entry.id}}</p>
+  <label for="">User Name</label>
+  <p class="output">{{entry.user_name}}</p>
+  <label for="">Phone Number</label>
+  <p class="output">{{entry.phone}}</p>
+  <label for="">Address</label>
+  <p class="output">{{entry.pickup_point}}</p>
+  <label for="">Date</label>
+  <p class="output">{{entry.date}}</p>
+  <label for="">Time</label>
+  <p class="output">{{entry.time}}</p>
+  <label for="">Destination</label>
+  <p class="output">{{entry.destination}}</p>
+  <label for="">Vehicle No Plate </label>
+  <p class="output">{{entry.entry_plate}}</p>
+  <label for="">Booking Status </label>
+  <p class="output">{{entry.status}}</p>
+  <label for="">Booking Type </label>
+  <p class="output">{{entry.booking_type}}</p>
+  <label for="">Payment Status </label>
+  <p class="output">{{entry.payment_details}}</p>
+    
+ 
+    </form>
+{% endfor %}
+{% endif %}
+{% else %}
+<p>no riders registered</p>
+{% endif %}
+
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/sidebar.css')}}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
+
+<script>
+    function downloadPDF() {
+var data = document.getElementsByClassName('data'); // get all elements with class='data'
+var doc = new jsPDF();
+for (var i = 0; i < data.length; i++) { // loop through each element
+  if (i > 0) {
+    doc.addPage(); // add a new page for each element after the first one
+  }
+  doc.fromHTML(data[i].innerHTML, 15, 15); // add the element's content to the PDF
+}
+var currentURL = window.location.href; // get the current URL
+  var title = currentURL.split('/').pop(); // extract the last part of the URL as the title
+  var otherTitle='SmartTravel'
+  var user_name='{{user_title}}'
+  doc.save(otherTitle +'-' +user_name +'-'+ title + '.pdf');
+}
+
+</script>
+{% endblock %}

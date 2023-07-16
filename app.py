@@ -16,7 +16,7 @@ from views.payment import bp as payment_bp
 from views.booking import bp as booking_bp
 from views.reg_stages import bp as reg_stages_bp
 from views.hire import bp as hire_bp
-
+from views.reports import bp as reports_bp
 from extensions.tasks import bp as tracking_bp
 from views.admin import bp as admin_bp
 
@@ -45,12 +45,14 @@ app.register_blueprint(reg_stages_bp)
 app.register_blueprint(tracking_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(hire_bp)
+app.register_blueprint(reports_bp)
+
 
 app.config['SECRET_KEY']=os.environ.get('mysecretkey')
 
 app.config['GOOGLEMAPS_KEY'] = os.environ.get('google_api_key')
 
-app.config['MAIL_SERVER'] = 'smtp-relay.sendinblue.com' 
+app.config['MAIL_SERVER'] = 'smtp-relay.brevo.com' 
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'oddsthingshere@gmail.com'  

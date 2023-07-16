@@ -7,12 +7,18 @@
     <form action="">
         <label for="username">Username</label>
         <p class="output">{{user_name}}</p>
+        <label for="">Names</label>
+        <p class="output">{{first_name}}  {{other_name}}</p>
         <label for="email">Email</label>
         <p class="output">{{email}}</p>
         <label for="phone_number">Phone Number</label>
         <p class="output">{{phone_number}}</p>
-        <label for="address"><Address></Address></label>
+        <label for="address">Adress</label>
         <p class="output">{{address}}</p>
+        <label for="">Card</label>
+        <p class="output">{{card}}</p>
+        <label for="vehicle">Vehicle</label>
+    <p class="output">{{vehicle_no}}</p>
         <a href="{{url_for('profile.edit_profile')}}" class="a-form"> edit profile</a>
     
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

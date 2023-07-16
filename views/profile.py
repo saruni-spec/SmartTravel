@@ -20,16 +20,27 @@ producer = KafkaProducer(bootstrap_servers='localhost:9092')
 bp = Blueprint('profile', __name__) 
 
 @bp.route('/profile', methods=['GET', 'POST'])
+@login_required
 def profile():
-    if current_user.is_authenticated:
-        if current_user.check_if_driver():
-            return redirect(url_for('profile.profile_driver'))
-        elif current_user.check_if_owner:
-            return redirect(url_for('profile.profile_owner'))
-        else:
-            return redirect(url_for('profile.rider'))
-    else:
-        return redirect(url_for('login.login'))
+    
+    if current_user.check_if_driver() and current_user.check_if_owner():
+        print('driver and owner')
+        return redirect(url_for('profile.profile_driver'))
+    elif current_user.check_if_owner() and not current_user.check_if_driver():
+        print('owner and not driver')
+        
+        return redirect(url_for('profile.profile_owner'))
+    elif current_user.check_if_driver() and not current_user.check_if_owner():
+        print('driver and not owner')
+        
+        return redirect(url_for('profile.profile_driver'))
+
+    elif not current_user.check_if_driver() and not current_user.check_if_owner():
+        print('not driver and not owner')
+        
+        
+        return redirect(url_for('profile.rider'))
+    
 
 
 
@@ -42,14 +53,12 @@ def rider():
     email=user.email
     phone_number=user.phone
     address=user.address
-    if email is None:
-        email='---'
-    if phone_number is None:
-        phone_number='---'
-    if address is None:
-        address='---'
+    first_name=user.first_name
+    other_name=user.other_name
+    card=user.card_number
+    
    
-    return render_template('profile_rider.html',user_name=user_name,email=email,phone_number=phone_number,address=address)
+    return render_template('profile_rider.html',first_name=first_name,other_name=other_name,card=card,user_name=user_name,email=email,phone_number=phone_number,address=address)
             
 
 @bp.route('/profile/owner', methods=['GET', 'POST'])
@@ -59,17 +68,19 @@ def profile_owner():
     user_name=current_user.user_name
     user=User.query.filter_by(user_name=user_name).first()
     email=user.email
-    if email is None:
-        email='---'
     phone_number=user.phone
-    if phone_number is None:
-        phone_number='---'
     address=user.address
-    if address is None:
-        address='---'
+    first_name=user.first_name
+    other_name=user.other_name
+    card=user.card_number
+    vehicles=Vehicle.query.filter_by(owner_username=user_name).first()
+    vehicle_no=vehicles.no_plate
+
+
+   
     
 
-    return render_template('profile_owner.html',user_name=user_name,phone_number=phone_number,address=address,email=email)
+    return render_template('profile_owner.html',vehicle_no=vehicle_no,first_name=first_name,other_name=other_name,card=card,user_name=user_name,email=email,phone_number=phone_number,address=address)
 
 
 from models.kafka import create_kafka_notifications,remove_duplicate_notifications
@@ -90,10 +101,10 @@ def profile_driver():
     user=User.query.filter_by(user_name=user_name).first()
     email=user.email
     phone_number=user.phone
-    if email is None:
-        email='---'
-    if phone_number is None:
-        phone_number='---'
+    address=user.address
+    first_name=user.first_name
+    other_name=user.other_name
+    
     vehicle_no=vehicle.no_plate
     
     session['my_vehicle']=vehicle.no_plate
@@ -122,18 +133,19 @@ def profile_driver():
                 session['docking_stage']=docking_stage.stage_name
             else:
                 error="Please turn on GPS"
+            
             session['is_docked'] = True
             session['bus_destination'] = destination
             print(destination,'destination in proifle')
             session['docked']=True
             if error:
-                return render_template('profile_driver.html',user_name=user_name,error=error,docked=docked)
+                return render_template('profile_driver.html',error=error,vehicle_no=vehicle_no,docked=docked,first_name=first_name,other_name=other_name,user_name=user_name,email=email,phone_number=phone_number,address=address)
         else:
             session['is_docked'] = False
             session['docked']=False
             
             
-    return render_template('profile_driver.html',user_name=user_name,docked=docked,email=email,phone_number=phone_number,vehicle_no=vehicle_no)
+    return render_template('profile_driver.html',vehicle_no=vehicle_no,docked=docked,first_name=first_name,other_name=other_name,user_name=user_name,email=email,phone_number=phone_number,address=address)
 
 
 @bp.route('/profile/driver/select_destination',methods=['GET','POST'])
@@ -160,58 +172,164 @@ def edit_profile():
     user=User.query.filter_by(user_name=username).first()
     if request.method == 'POST':
         error=None
-        token = request.form.get('csrf_token')
-        try:
-            validate_csrf(token)
-        except ValidationError :
-            error="Invalid CSRF token"
         
-        
+        form_name=request.form.get('form-name')
+        if form_name=='delete':
+            return redirect(url_for('profile.delete_profile'))
 
-        user_name=request.form.get('user_name')
-        if user_name !='':
-            print('user_name here')
-            if current_user.user_name!=user_name:
-                print('changing username')
-                user.change_user_name(user_name)
-        email=request.form.get('email')
-        if email !='':
-            print('email here')
-            
-            if user.email!=email:
-                print('changing email')
-                
-                error=validate_email(email)
-                if not error:
-                    user.add_email(email)
-
-        phone_number=request.form.get('phone')
-        if phone_number !='':
-            print('phone_number here')
-            print(user.phone)
-            print(phone_number)
-            if user.phone != phone_number:
-                print('changing phone')
-                    
-                user.add_phone(phone_number)
-        
-
-        
-        address=request.form.get('address')
-        if address !='':
-            print('address here')
-            if user.address!=address:
-                print('changing address')
-                user.add_address(address)
-        
-        
-        if error is None:
-            db.session.commit()
-            return redirect(url_for('profile.profile'))
         else:
-            return render_template('profile_edit.html',error=error)
-    return render_template('profile_edit.html',user_name=current_user.user_name,email=user.email,phone=user.phone,address=user.address)
+            user_name=request.form.get('user_name')
+            if user_name !='':
+                print('user_name here')
+                if current_user.user_name!=user_name:
+                    print('changing username')
+                    user_check=User.query.filter_by(user_name=user_name).first()
+                    if user_check is None:
+                        user.change_user_name(user_name)
+                    else:
+                        error='Username already taken'
+            email=request.form.get('email')
+            if email !='':
+                print('email here')
+                
+                if user.email!=email:
+                    print('changing email')
+                    
+                    error=validate_email(email)
+                    if not error:
+                        user.add_email(email)
+
+            phone_number=request.form.get('phone')
+            if phone_number !='':
+                print('phone_number here')
+                print(user.phone)
+                print(phone_number)
+                if user.phone != phone_number:
+                    print('changing phone')
+                        
+                    user.add_phone(phone_number)
+            
+
+            
+            address=request.form.get('address')
+            if address !='':
+                print('address here')
+                if user.address!=address:
+                    print('changing address')
+                    user.add_address(address)
+            
+            card_number=request.form.get('card')
+            if card_number !='':
+                print('card_number here')
+                if user.card_number!=card_number:
+                    print('changing card')
+                    user.add_card_number(card_number)
+
+            if error is None:
+                db.session.commit()
+                return redirect(url_for('profile.profile'))
+            else:
+                return render_template('profile_edit.html',error=error)
+    return render_template('profile_edit.html',user_name=current_user.user_name,email=user.email,phone=user.phone,address=user.address,card=user.card_number)
 
 
 
+@bp.route('/profile/vehicle',methods=['GET','POST'])
+@login_required
+def vehicle():
+    user_name=current_user.user_name
+    vehicle=Vehicle.query.filter_by(driver_username=user_name).first()
+    if vehicle is None:
+        vehicle=Vehicle.query.filter_by(owner_username=user_name).first()
+    color=vehicle.color
+    no_plate=vehicle.no_plate
+    capacity=vehicle.capacity
+    model=vehicle.build_type
+    service_type=vehicle.vehicle_type
+    for_hire=vehicle.for_hire
+    return render_template('profile_vehicle.html',color=color,no_plate=no_plate,capacity=capacity,model=model,service_type=service_type,for_hire=for_hire)
 
+
+@bp.route('/profile/vehicle/edit',methods=['GET','POST'])
+@login_required
+def vehicle_edit():
+    user_name=current_user.user_name
+    vehicle=Vehicle.query.filter_by(owner_username=user_name).first()
+    color=vehicle.color
+    capacity=vehicle.capacity
+    service_type=vehicle.vehicle_type
+    if request.method == 'POST':
+        color=request.form.get('color')
+        capacity=request.form.get('capacity')
+        service_type=request.form.get('service_type')
+       
+        if color !='':
+            vehicle.change_color(color)
+        if capacity !='':
+            vehicle.change_capacity(capacity)
+        if service_type !='':
+            vehicle.change_type(service_type)
+        
+        
+        
+        return redirect(url_for('profile.vehicle'))
+    return render_template('profile_vehicle_edit.html',color=color,capacity=capacity,service_type=service_type)
+
+
+@bp.route('/profile/delete',methods=['GET','POST'])
+@login_required
+def delete_profile():
+    user_name=current_user.user_name
+    user=User.query.filter_by(user_name=user_name).first()
+    if user.check_if_owner and not user.check_if_driver():
+        status='level4'
+        message='As an owner. Deleting this profile will delete your vehicle,suspend its driver and change your status to rider'
+    elif user.check_if_driver() and user.check_if_owner():
+        status='level3'
+        message=' Deleting this profile will delete your vehicle and change your status to rider'
+    elif user.check_if_driver() and not user.check_if_owner():
+        status='level2'
+        message=' Deleting this profile will change your status to rider'
+    else:
+        status='level1'
+        
+        message=' Deleting this profile will delete your profile'
+    
+    if request.method == 'POST':
+        if status=='level1':
+            
+
+            user.delete()
+            return redirect(url_for('index.index'))
+        elif status=='level2':
+            driver=Driver.query.filter_by(user_name=user_name).first()
+            
+            driver.delete()
+            user.role='user'
+        elif status=='level3':
+            
+            vehicle=Vehicle.query.filter_by(driver_username=user_name).first()
+            vehicle.delete()
+            driver=Driver.query.filter_by(user_name=user_name).first()
+            driver.delete()
+            owner=Owner.query.filter_by(user_name=user_name).first()
+            owner.delete()
+            user.role='user'
+        elif status=='level4':
+            
+            vehicle=Vehicle.query.filter_by(driver_username=user_name).first()
+            other_driver=vehicle.driver_username
+            other_driver_user=Driver.query.filter_by(user_name=other_driver).first()
+            other_driver_user.delete()
+            other_driver_user.role='user'
+            vehicle.delete()
+            driver=Driver.query.filter_by(user_name=user_name).first()
+            driver.delete()
+            owner=Owner.query.filter_by(user_name=user_name).first()
+            owner.delete()
+            user.role='user'
+        return redirect(url_for('login.logout'))
+        
+            
+            
+    return render_template('profile_delete.html',message=message)

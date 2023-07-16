@@ -148,6 +148,14 @@ def vehicles():
             for vehicle in vehicles:
                 data={'no_plate':vehicle.no_plate,'ratings':vehicle.ratings}
                 filtered_data.append(data)
+
+        elif button=='search':
+            query=='search'
+            entity=request.form.get('entity')
+            user=Vehicle.query.filter_by(driver_username=entity).first()
+            if user is None:
+                user=Vehicle.query.filter_by(no_plate=entity).first()
+            filtered_data.append(user)
         else:
             query='all'
             filtered_data=vehicles
@@ -267,6 +275,13 @@ def bookings():
                 
                 entry={'id':booking.id,'vehicle_plate':booking.vehicle_plate}
                 filtered_data.append(entry)
+        elif button=='search':
+            query=='search'
+            entity=request.form.get('entity')
+            user=Booking.query.filter_by(user_name=entity).first()
+            if user is None:
+                user=Transaction.query.filter_by(vehicle_plate=entity).first()
+            filtered_data.append(user)
                 
         elif button=='date':
             query='date'
@@ -333,6 +348,11 @@ def users():
                 print(dt1,dt2,'date')
                 if dt1==dt2:
                     filtered_data.append(user)
+        elif button=='search':
+            query=='search'
+            entity=request.form.get('entity')
+            user=User.query.filter_by(user_name=entity).first()
+            filtered_data.append(user)     
         elif button=='month_filter':
             query='month_filter'
             month_name=request.form.get('month')
@@ -481,6 +501,15 @@ def drivers():
                 if int(month_reg)==int(month_no):
                     
                     filtered_data.append(user)
+        elif button=='search':
+            query=='search'
+            entity=request.form.get('entity')
+            user=User.query.filter_by(user_name=entity).first()
+            if user.driver_details:
+                
+                filtered_data.append(user)  
+            else:
+                filtered_data=None
         elif button=='year_filter':
             query='year_filter'
             year=request.form.get('year')
@@ -549,7 +578,7 @@ def drivers():
             for user in users:
                 data={'user_name':user.user_name,'vehicle_no':user.driver_details.drives.no_plate}
                 filtered_data.append(data)
-                
+                   
         else:
             query='all'
             filtered_data=users
@@ -660,7 +689,15 @@ def riders():
             for user in users:
                 data={'user_name':user.user_name,'date_registered':user.date_registered}
                 filtered_data.append(data)
-
+        elif button=='search':
+            query=='search'
+            entity=request.form.get('entity')
+            user=User.query.filter_by(user_name=entity).first()
+            if not user.driver_details or not user.owner_details:
+                
+                filtered_data.append(user)  
+            else:
+                filtered_data=None
         else:
             query='all'
             filtered_data=users
@@ -783,6 +820,15 @@ def owners():
             for user in users:
                 data={'user_name':user.user_name,'vehicle_no':user.driver_details.drives.no_plate}
                 filtered_data.append(data)
+        elif button=='search':
+            query=='search'
+            entity=request.form.get('entity')
+            user=User.query.filter_by(user_name=entity).first()
+            if user.owner_details:
+                
+                filtered_data.append(user)  
+            else:
+                filtered_data=None
                 
         else:
             query='all'
@@ -806,10 +852,10 @@ def transactions():
             date=request.form.get('date')
             dt1 = datetime.strptime(date, "%Y-%m-%d")
             for transaction in data:
-                if transaction.date is None:
-                    transaction.date=datetime.now().strftime("%Y-%m-%d")
+                if transaction.paid_at is None:
+                    transaction.paid_at=datetime.now().strftime("%Y-%m-%d")
                     transaction.commit()
-                date2 = transaction.date
+                date2 = transaction.paid_at
                 print(dt1,'gg',date2,'date')
                 dt2 = datetime.strptime(date2, "%Y-%m-%d")
                 print(dt1,dt2,'date')
@@ -820,10 +866,11 @@ def transactions():
             month_name=request.form.get('month')
             month_no=month(month_name)
             for transaction in data:
-                if transaction.date is None:
-                    transaction.date=datetime.now().strftime("%Y-%m-%d")
+                if transaction.paid_at is None:
+                    transaction.paid_at=datetime.now().strftime("%Y-%m-%d")
                     transaction.commit()
-                dt = datetime.strptime(transaction.date, "%Y-%m-%d")
+                
+                dt = datetime.strptime(transaction.paid_at, "%Y-%m-%d")
 
                 month_reg = dt.strftime("%m")
                 print(month_reg,month_no,'month')
@@ -834,10 +881,10 @@ def transactions():
             query='year_filter'
             year=request.form.get('year')
             for transaction in data:
-                if transaction.date is None:
-                    transaction.date=datetime.now().strftime("%Y-%m-%d")
+                if transaction.paid_at is None:
+                    transaction.paid_at=datetime.now().strftime("%Y-%m-%d")
                     transaction.commit()
-                dt = datetime.strptime(transaction.date, "%Y-%m-%d")
+                dt = datetime.strptime(transaction.paid_at, "%Y-%m-%d")
 
                 year_reg = dt.strftime("%Y")
                 print(year_reg,year,'year')
@@ -849,14 +896,21 @@ def transactions():
             dt_today = datetime.strptime(today, "%Y-%m-%d")
             dt_week_ago = dt_today - timedelta(days=7)
             for transaction in data:
-                if transaction.date is None:
-                    transaction.date=datetime.now().strftime("%Y-%m-%d")
+                if transaction.paid_at is None:
+                    transaction.paid_at=datetime.now().strftime("%Y-%m-%d")
                     transaction.commit()
-                dt_date = datetime.strptime(transaction.date, "%Y-%m-%d")
+                dt_date = datetime.strptime(transaction.paid_at, "%Y-%m-%d")
 
 
                 if dt_date >= dt_week_ago and dt_date <= dt_today:
                     filtered_data.append(transaction)
+        elif button=='search':
+            query=='search'
+            entity=request.form.get('entity')
+            user=Transaction.query.filter_by(user_name=entity).first()
+            if user is None:
+                user=Transaction.query.filter_by(vehicle_id=entity).first()
+            filtered_data.append(user) 
         elif button=='id':
             query='id'
             for transaction in data:
@@ -883,7 +937,7 @@ def transactions():
             query='paid_at'
             
             for transaction in data:
-                entry={'id':transaction.id,'paid_at':transaction.paid_at}
+                entry={'id':transaction.id,'paid_at':transaction.time}
                 filtered_data.append(entry)
         elif button=='payment_type':
             query='payment_type'
@@ -906,7 +960,7 @@ def transactions():
             query='date'
             
             for transaction in data:
-                entry={'id':transaction.id,'date':transaction.date}
+                entry={'id':transaction.id,'date':transaction.paid_at}
                 filtered_data.append(entry)
 
         elif button=='status':
@@ -993,6 +1047,11 @@ def stages():
             for stage in data:
                 entry={'stage_no':stage.stage_no,'longitude':stage.longitude}
                 filtered_data.append(entry)
+        elif button=='search':
+            query=='search'
+            entity=request.form.get('entity')
+            user=Stages.query.filter_by(stage_name=entity).first()
+            filtered_data.append(user)
         else:
             query='all'
             print(query)

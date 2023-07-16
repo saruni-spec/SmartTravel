@@ -26,6 +26,9 @@ class Vehicle(db.Model):
     build_type=db.Column(db.String(50))
     date_registered=db.Column(db.String(50))
 
+    hiring_cost=db.Column(db.Float,nullable=True)
+    fare=db.Column(db.Float,nullable=True)
+
     booking_details = relationship("Booking", backref="bookings" )
     ratings=relationship("Transaction",backref="transactions")
    
@@ -42,26 +45,25 @@ class Vehicle(db.Model):
     def add_driver(self,driver_username):
         self.driver_username=driver_username
         db.session.commit()
-        
-    def save(self,vehicle_type,owner,driver,capacity,color,verification_code,build_type):
+            
+    def save(self,vehicle_type,owner,capacity,color,build_type):
         self.vehicle_type=vehicle_type
         self.owner_username=owner
-        self.driver_username=driver
         self.capacity=capacity
         self.color=color
-        self.verification_code=verification_code
+        
         self.build_type=build_type
         self.date_registered=datetime.now().strftime("%Y-%m-%d")
         
         db.session.add(self)
         db.session.commit()
 
-    def change_driver(self,driver_contact):
-        self.driver_email=driver_contact
+    def change_driver(self,driver):
+        self.driver_username=driver
         db.session.commit()
 
-    def change_owner(self,owner_contact):
-        self.owner_email=owner_contact
+    def change_owner(self,owner):
+        self.owner_username=owner
         db.session.commit()
 
     def change_capacity(self,capacity):
@@ -88,4 +90,22 @@ class Vehicle(db.Model):
     def commit(self):
         db.session.commit() 
 
+    def set_fare(self,fare):
+        self.fare=fare
+        db.session.commit()
+
+    def set_hiring_cost(self,hiring_cost):
+        self.hiring_cost=hiring_cost
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
         
+    def add_verification_code(self,code):
+        self.verification_code=code
+        db.session.commit()
+
+    def chang_type(self,type):
+        self.vehicle_type=type
+        db.session.commit()

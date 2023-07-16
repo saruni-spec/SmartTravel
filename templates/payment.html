@@ -4,7 +4,7 @@
 {% endblock %}
 {% block content %}
 <script src="https://unpkg.com/intasend-inlinejs-sdk@3.0.4/build/intasend-inline.js"></script>
-<div>
+<div class="payment">
 <form action="/payment" >
     <label for="name">Name</label>
     <p class="ouput">{{name}}</p> 
@@ -23,9 +23,11 @@
     })
     .on("COMPLETE", (results) => {
         window.location.href = "{{ url_for('payment.rating') }}";
+        localStorage.setItem('results', JSON.stringify(results));
     })
     .on("FAILED", (results) => {
         window.location.href = "{{ url_for('payment.payment') }}";
+        
     })
     .on("IN-PROGRESS", (results) => {
         console.log("Payment in progress status", results);

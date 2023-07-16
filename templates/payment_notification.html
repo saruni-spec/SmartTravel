@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Transaction Notifications</h2>
+{% endblock %}
+{% block content %}
+{% if details is none %}
+
+<p>no new notifications</p>
+
+{% elif details is iterable and details|length >0 %}
+{% for detail in details %} 
+
+{% if detail.status=='pending' %}
+<form action="/booking/confirm" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <p class="output">Passenger:{{detail.user_name}}  <br></p>  
+  <p class="output">Amount Paid:{{detail.status}}</p>
+  
+  <input type="hidden" name="id" id="id" value="{{detail.id}}">
+  
+  </form>
+  
+
+  
+{% endif %}
+
+{% endfor %}
+{% for detail in details %} 
+
+{% if detail.status=="completed" %}
+<form action="/booking/confirm" >
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="id" id="id" value="{{detail.id}}">
+  <p class="output">Passenger:{{detail.user_name}}  <br></p>  
+  <p class="output">Amount Paid:{{detail.amount}}</p>
+  <p class="output">At: {{detail.time}}</p>
+  <input type="hidden" name="id" id="id" value="{{detail.booking_id}}">
+    
+  <p class="success">Payment Complete</p>
+  </form>
+  {% endif %}
+
+{% endfor %}
+
+{% else %}
+<p>no notifications</p>
+{% endif %}
+
+
+
+<script>
+
+  window.setTimeout(function(){
+      window.location.reload();
+  }, 10000);
+  
+  
+  </script>
+
+{% endblock %}

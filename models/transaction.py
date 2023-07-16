@@ -12,9 +12,9 @@ class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_name=db.Column(db.String(100),ForeignKey('user.user_name'),nullable=False)
     vehicle_id=db.Column(db.String(100),ForeignKey('vehicle.no_plate'),nullable=False)
-    paid_at=db.Column(db.DateTime,nullable=False)
+    paid_at=db.Column(db.String(50),nullable=False)
     time=db.Column(db.String(50))
-    booking_id=db.Column(db.Integer,ForeignKey('booking.id'),nullable=False)
+    booking_id = db.Column(db.Integer, ForeignKey('booking.id'), unique=True, nullable=False)
     amount=db.Column(db.Integer,nullable=False)
     rating=db.Column(db.Integer,nullable=True,default=0)
     payment_type=db.Column(db.String(20),nullable=True)
@@ -45,7 +45,7 @@ class Transaction(db.Model):
         self.status="completed"
         db.session.commit()
     
-    def rating(self,rating):
+    def make_rating(self,rating):
         self.rating=rating
         db.session.commit()
 
@@ -53,6 +53,11 @@ class Transaction(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def change_date(self):
+        dt = datetime.strptime(self.paid_at, "%Y-%m-%d %H:%M:%S")
+        new_date_string = dt.strftime("%Y-%m-%d")
+        self.paid_at=new_date_string
+        db.session.commit()
     
 
     

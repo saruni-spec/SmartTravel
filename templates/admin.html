@@ -52,12 +52,19 @@
     
       <header>
         
-      Admin
-
-      <button onclick="downloadPDF()">Download</button>
+          
+<p>
+      Admin</p>
+      
+    
+      
+      
            </header>
            <main>
-            
+            <button onclick="hideDates()" id="date_hide">Date Options</button>
+            <button class="view" onclick="switchView()"  id="switch">Switch View</button>
+            <button onclick="downloadPDF()" id="download">Download</button>
+            <button onclick="hideThis()" id="hide">Filter Options</button>
             {% block content %}
             
             {% endblock %}
@@ -89,9 +96,86 @@
       }
       doc.fromHTML(data[i].innerHTML, 15, 15); // add the element's content to the PDF
     }
-    doc.save('routes.pdf'); // save the PDF file
+    var currentURL = window.location.href; // get the current URL
+  var title = currentURL.split('/').pop(); // extract the last part of the URL as the title
+  var otherTitle='SmartTravel'
+  doc.save(otherTitle +'-'+ title + '.pdf');
 }
 
         </script>
+        <script>
+
+function switchView(){
+  var form_data=document.getElementsByClassName('data');
+  console.log('here')
+
+  for (var i = 0; i < form_data.length; i++) {
+    if (form_data[i].style.flexDirection=='column'){
+  form_data[i].style.flexDirection='row';
+  form_data[i].style.width='90vw';
+  form_data[i].style.padding='0.5%';
+  form_data[i].style.position='relative';
+  form_data[i].style.marginLeft='1%';
+  form_data[i].style.left='2%';
+  form_data[i].style.marginTop='0.5%';
+  form_data[i].style.margin='0.5%';
+  form_data[i].style.zIndex='2';
+  form_data[i].style.fontSize='0.6rem';
+  
+
+
+ } 
+ else{
+  form_data[i].style.flexDirection='column';
+  form_data[i].style.position= 'relative';
+  form_data[i].style.display= 'flex';
+  form_data[i].style.flexDirection= 'column'; 
+  
+
+  
+  form_data[i].style.left= '35%';
+  form_data[i].style.width='40vh';
+  form_data[i].style.padding= '5%';
+  form_data[i].style.marginTop= '5%';
+  
+  
+ }
+}
+
+ 
+}
+console.log('failed')
+
+        </script>
+
+        <script>
+
+function hideThis() {
+  var elem = document.getElementById("filter_options");
+  if (elem.classList.contains("sidebar")) {
+    elem.classList.remove("sidebar");
+    elem.classList.add("hidden_bar");
+  } else {
+    elem.classList.remove("hidden_bar");
+    elem.classList.add("sidebar");
+  }
+}
+
+        </script>
+        <script>
+
+          function hideDates() {
+            var elem = document.getElementById("date_options");
+            if (elem.classList.contains("date_filter")) {
+              elem.classList.remove("date_filter");
+              elem.classList.add("date_hide");
+            } else {
+              elem.classList.remove("date_hide");
+              elem.classList.add("date_filter");
+            }
+          }
+          
+                  </script>
+        
 </body>
 </html>

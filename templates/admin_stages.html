@@ -6,8 +6,11 @@
 
 
 
-<form class="sidebar" method="post" action="/admin/stages">
+<form class="sidebar" method="post" action="/admin/stages" id="filter_options">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="text" name="entity" id="entity">
+  <button name="button_name" value="search">Search</button>
+
   <button name="button_name" value="all">All Details</button>
     <button name="button_name" value="latitude">Latitude</button>
     <button name="button_name" value="longitude">Longitude</button>
@@ -42,6 +45,24 @@
     
   
 {% endfor %}
+{% elif query=='search' %}
+
+
+
+<form action="/admin/stages" method="post" class='data'>
+    <label for="">Stage No</label>
+    <p class="output">{{entry.stage_no}}</p>
+    <label for="">Latitude</label>
+    <p class="output">{{entry.latitude}}</p>
+    <label for="">Longitude</label>
+    <p class="output">{{entry.longitude}}</p>
+    <label for="">Stage Name</label>
+    
+    <p class="output">{{entry.stage_name}}</p>
+    
+    
+    
+    </form>
 
 {% elif query=='stage_name' %}
 {% for entry in data %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Profile</h2>
+{% endblock %}
+{% block content %}
+
+
+
+
+
+<form action="/profile/vehicle" method="get">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+
+    <label for="email">No Plate</label>
+    <p class="output">{{no_plate}}</p>
+    
+    <label for="username">Color</label>
+    <p class="output">{{color}}</p>
+    <label for="">Driver Name</label>
+    <p class="output">{{first_name}}  {{other_name}}</p>
+    <label for="">Owner Name</label>
+    <p class="output">{{first_name_o}}  {{other_name_o}}</p>
+    
+    <label for="phone_number">Type</label>
+    <p class="output">{{model}}</p>
+    <label for="address">Service</label>
+    <p class="output">{{service_type}}</p>
+    <label for="">Capacity</label>
+    <p class="output">{{capacity}}</p>
+
+    <a href="{{url_for('profile.vehicle_edit')}}" class="a-form"> edit profile</a>
+
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+   
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/profile.css')}}">
+
+{% endblock %}

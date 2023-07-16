@@ -3,7 +3,9 @@
 <h2>User Details</h2>
 {% endblock %}
 {% block content %}
-<form class="date_filter" action="/admin/users" method="post">
+
+
+<form class="date_filter" action="/admin/users" method="post" id="date_options">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <div>
   <label for="date">Date</label>
@@ -48,8 +50,10 @@
 
 
 
-<form class="sidebar" method="post" action="/admin/users">
+<form class="sidebar" method="post" action="/admin/users" id="filter_options">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="text" name="entity" id="entity">
+  <button name="button_name" value="search">Search</button>
   <button name="button_name" value="all">All Details</button>
     <button name="button_name" value="user_name">User Name</button>
     <button name="button_name" value="email">Email</button>
@@ -70,30 +74,49 @@
 {% for user in users %}
 
 <form action="/admin/users" method="post" class='data'>
-    <label for=""></label>
+    <label for="">Name</label>
     <p class="output">{{user.user_name}}</p>
     <label for="">Email</label>
     <p class="output">{{user.email}}</p>
-    <label for=""></label>
+    <label for="">Phone</label>
     <p class="output">{{user.phone}}</p>
-    <label for=""></label>
+    <label for="">Address</label>
     <p class="output">{{user.address}}</p>
-    <label for=""></label>
+    <label for="">If owner</label>
     <p class="output">{{user.is_driver}}</p>
-    <label for=""></label>
+    <label for="">If Driver</label>
     <p class="output">{{user.is_owner}}</p>
  
     </form>
     
   
 {% endfor %}
+{% elif query=='search' %}
+
+
+<form action="/admin/users" method="post" class='data'>
+  <label for="">Name</label>
+  <p class="output">{{user.user_name}}</p>
+  <label for="">Email</label>
+  <p class="output">{{user.email}}</p>
+  <label for="">Phone</label>
+  <p class="output">{{user.phone}}</p>
+  <label for="">Address</label>
+  <p class="output">{{user.address}}</p>
+  <label for="">If owner</label>
+  <p class="output">{{user.is_driver}}</p>
+  <label for="">If Driver</label>
+  <p class="output">{{user.is_owner}}</p>
+ 
+    </form>
+    
 
 {% elif query=='role' %}
 {% for user in users %}
 <form action="/admin/users"method="post" class='data'>
     <label for="user_name"></label>
     <p class="output">{{user.user_name}}</p>
-    <label for=""></label>
+    <label for="">Role</label>
     <p class="output">{{user.role}}</p>
   </form>
 {% endfor %}
@@ -120,7 +143,7 @@
 <form action="/admin/users" method="post" class='data'>
     <label for=""></label>
     <p class="output">{{user.user_name}}</p>
-    <label for=""></label>
+    <label for="">Adress</label>
     <p class="output">{{user.address}}</p>
   </form>
 {% endfor %}
@@ -155,18 +178,18 @@
 {% for user in users %}
 
 <form action="/admin/users" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{user.user_name}}</p>
-    <label for="">Email</label>
-    <p class="output">{{user.email}}</p>
-    <label for=""></label>
-    <p class="output">{{user.phone}}</p>
-    <label for=""></label>
-    <p class="output">{{user.address}}</p>
-    <label for=""></label>
-    <p class="output">{{user.is_driver}}</p>
-    <label for=""></label>
-    <p class="output">{{user.is_owner}}</p>
+  <label for="">Name</label>
+  <p class="output">{{user.user_name}}</p>
+  <label for="">Email</label>
+  <p class="output">{{user.email}}</p>
+  <label for="">Phone</label>
+  <p class="output">{{user.phone}}</p>
+  <label for="">Address</label>
+  <p class="output">{{user.address}}</p>
+  <label for="">If owner</label>
+  <p class="output">{{user.is_driver}}</p>
+  <label for="">If Driver</label>
+  <p class="output">{{user.is_owner}}</p>
  
     </form>
     
@@ -175,18 +198,18 @@
 {% for user in users %}
 
 <form action="/admin/users" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{user.user_name}}</p>
-    <label for="">Email</label>
-    <p class="output">{{user.email}}</p>
-    <label for=""></label>
-    <p class="output">{{user.phone}}</p>
-    <label for=""></label>
-    <p class="output">{{user.address}}</p>
-    <label for=""></label>
-    <p class="output">{{user.is_driver}}</p>
-    <label for=""></label>
-    <p class="output">{{user.is_owner}}</p>
+  <label for="">Name</label>
+  <p class="output">{{user.user_name}}</p>
+  <label for="">Email</label>
+  <p class="output">{{user.email}}</p>
+  <label for="">Phone</label>
+  <p class="output">{{user.phone}}</p>
+  <label for="">Address</label>
+  <p class="output">{{user.address}}</p>
+  <label for="">If owner</label>
+  <p class="output">{{user.is_driver}}</p>
+  <label for="">If Driver</label>
+  <p class="output">{{user.is_owner}}</p>
  
     </form>
     
@@ -195,18 +218,18 @@
 {% for user in users %}
 
 <form action="/admin/users" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{user.user_name}}</p>
-    <label for="">Email</label>
-    <p class="output">{{user.email}}</p>
-    <label for=""></label>
-    <p class="output">{{user.phone}}</p>
-    <label for=""></label>
-    <p class="output">{{user.address}}</p>
-    <label for=""></label>
-    <p class="output">{{user.is_driver}}</p>
-    <label for=""></label>
-    <p class="output">{{user.is_owner}}</p>
+  <label for="">Name</label>
+  <p class="output">{{user.user_name}}</p>
+  <label for="">Email</label>
+  <p class="output">{{user.email}}</p>
+  <label for="">Phone</label>
+  <p class="output">{{user.phone}}</p>
+  <label for="">Address</label>
+  <p class="output">{{user.address}}</p>
+  <label for="">If owner</label>
+  <p class="output">{{user.is_driver}}</p>
+  <label for="">If Driver</label>
+  <p class="output">{{user.is_owner}}</p>
  
     </form>
     
@@ -215,19 +238,18 @@
 {% for user in users %}
 
 <form action="/admin/users" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{user.user_name}}</p>
-    <label for="">Email</label>
-    <p class="output">{{user.email}}</p>
-    <label for=""></label>
-    <p class="output">{{user.phone}}</p>
-    <label for=""></label>
-    <p class="output">{{user.address}}</p>
-    <label for=""></label>
-    <p class="output">{{user.is_driver}}</p>
-    <label for=""></label>
-    <p class="output">{{user.is_owner}}</p>
- 
+  <label for="">Name</label>
+  <p class="output">{{user.user_name}}</p>
+  <label for="">Email</label>
+  <p class="output">{{user.email}}</p>
+  <label for="">Phone</label>
+  <p class="output">{{user.phone}}</p>
+  <label for="">Address</label>
+  <p class="output">{{user.address}}</p>
+  <label for="">If owner</label>
+  <p class="output">{{user.is_driver}}</p>
+  <label for="">If Driver</label>
+  <p class="output">{{user.is_owner}}</p>
     </form>
     
 {% endfor %}
@@ -235,18 +257,18 @@
 {% else %}
 {% for user in users %}
 <form action="/admin/users" method="post" class='data'>
-    <label for="">User Name</label>
-    <p class="output">{{user.user_name}}</p>
-    <label for="">Email</label>
-    <p class="output">{{user.email}}</p>
-    <label for="">Phone Number</label>
-    <p class="output">{{user.phone}}</p>
-    <label for="">Address</label>
-    <p class="output">{{user.address}}</p>
-    <label for="">Driver</label>
-    <p class="output">{{user.is_driver}}</p>
-    <label for="">Owner</label>
-    <p class="output">{{user.is_owner}}</p>
+  <label for="">Name</label>
+  <p class="output">{{user.user_name}}</p>
+  <label for="">Email</label>
+  <p class="output">{{user.email}}</p>
+  <label for="">Phone</label>
+  <p class="output">{{user.phone}}</p>
+  <label for="">Address</label>
+  <p class="output">{{user.address}}</p>
+  <label for="">If owner</label>
+  <p class="output">{{user.is_driver}}</p>
+  <label for="">If Driver</label>
+  <p class="output">{{user.is_owner}}</p>
  
     </form>
 {% endfor %}

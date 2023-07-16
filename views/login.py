@@ -28,7 +28,12 @@ def login():
             username=request.form.get('username')
             password=request.form.get('password')
             user = User.query.filter_by(user_name=username).first()
-            print(user,'user here')
+            if not user:
+                user=User.query.filter_by(email=username).first()
+                if not user:
+                    error='Invalid User'
+                    return render_template('login.html',error=error)
+            
             
             if user and user.verify_password(password):
                 login_user(user)
@@ -36,16 +41,7 @@ def login():
                 if current_user.is_admin():
                     return redirect('/admin')
                 else:
-                    if current_user.check_if_driver():
-                        vehicle=Vehicle.query.filter_by(driver_username=current_user.user_name).first()
-                        session['vehicle']=vehicle.no_plate
-                    elif current_user.check_if_owner():
-                        vehicle=Vehicle.query.filter_by(owner_username=current_user.user_name).first()
-                        session['vehicle']=vehicle.no_plate
-                    next_url=session.get('next_url',url_for('index.index'))
-                    if next_url == url_for('login.login') :
-                        next_url = url_for('index.index')
-                    response = make_response(redirect(next_url))
+                    response = make_response(redirect(url_for('index.index')))
                     response.set_cookie('username', username, max_age=timedelta(days=1))
                     return response
             elif  user and not user.verify_password(password):
@@ -61,5 +57,8 @@ def login():
 @login_required
 def logout():
     with current_app.app_context():
+        session.clear()
         logout_user()
-        return redirect('/login')
+        return redirect(url_for('index.index'))
+    
+  

@@ -3,7 +3,7 @@
 <h2>Transaction Details</h2>
 {% endblock %}
 {% block content %}
-<form class="date_filter" action="/admin/transactions" method="post">
+<form class="date_filter" action="/admin/transactions" method="post" id="date_options">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <div>
   <label for="date">Date</label>
@@ -49,8 +49,10 @@
 
 
 
-<form class="sidebar" method="post" action="/admin/transactions" >
+<form class="sidebar" method="post" action="/admin/transactions" id="filter_options">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="text" name="entity" id="entity">
+  <button name="button_name" value="search">Search</button>
   <button name="button_name" value="all">All Details</button>
     <button name="button_name" value="id">Transaction ID</button>
     <button name="button_name" value="user_name">User Name</button>
@@ -84,9 +86,9 @@
     <label for="">Address</label>
     <p class="output">{{entry.rating}}</p>
     <label for="">Date</label>
-    <p class="output">{{entry.date}}</p>
-    <label for="">Date</label>
     <p class="output">{{entry.paid_at}}</p>
+    <label for="">Time</label>
+    <p class="output">{{entry.time}}</p>
     <label for="">Paid With</label>
     <p class="output">{{entry.payment_type}}</p>
     <label for="">Vehicle No Plate </label>
@@ -102,6 +104,37 @@
     
   
 {% endfor %}
+{% elif query=='search' %}
+
+
+<form action="/admin/transactions" method="post" class='data'>
+    <label for="">Booking ID</label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">User Name</label>
+    <p class="output">{{entry.user_name}}</p>
+    <label for="">Amount </label>
+    <p class="output">{{entry.amount}}</p>
+    <label for="">Address</label>
+    <p class="output">{{entry.rating}}</p>
+    <label for="">Date</label>
+    <p class="output">{{entry.paid_at}}</p>
+    <label for="">Time</label>
+    <p class="output">{{entry.time}}</p>
+    <label for="">Paid With</label>
+    <p class="output">{{entry.payment_type}}</p>
+    <label for="">Vehicle No Plate </label>
+    <p class="output">{{entry.vehicle_id}}</p>
+    <label for="">Transaction Status </label>
+    <p class="output">{{entry.status}}</p>
+    <label for="">Booking Type </label>
+    <p class="output">{{entry.card_number}}</p>
+    
+
+    
+    </form>
+    
+  
+
 
 {% elif query=='id' %}
 {% for entry in data %}
@@ -145,7 +178,7 @@
     <label for=""></label>
     <p class="output">{{entry.id}}</p>
     <label for="">Date</label>
-    <p class="output">{{entry.date}}</p>
+    <p class="output">{{entry.paid_at}}</p>
   </form>
 {% endfor %}
 {% elif query=='paid_at' %}
@@ -153,8 +186,8 @@
 <form action="/admin/transactions" method="post" class='data'>
     <label for=""></label>
     <p class="output">{{entry.id}}</p>
-    <label for="">Date</label>
-    <p class="output">{{entry.paid_at}}</p>
+    <label for="">Time</label>
+    <p class="output">{{entry.time}}</p>
   </form>
 {% endfor %}
 {% elif query=='payment_type' %}
@@ -205,9 +238,9 @@
     <label for="">Address</label>
     <p class="output">{{entry.rating}}</p>
     <label for="">Date</label>
-    <p class="output">{{entry.date}}</p>
-    <label for="">Date</label>
     <p class="output">{{entry.paid_at}}</p>
+    <label for="">Time</label>
+    <p class="output">{{entry.time}}</p>
     <label for="">Paid With</label>
     <p class="output">{{entry.payment_type}}</p>
     <label for="">Vehicle No Plate </label>
@@ -233,9 +266,9 @@
     <label for="">Address</label>
     <p class="output">{{entry.rating}}</p>
     <label for="">Date</label>
-    <p class="output">{{entry.date}}</p>
-    <label for="">Date</label>
     <p class="output">{{entry.paid_at}}</p>
+    <label for="">Time</label>
+    <p class="output">{{entry.time}}</p>
     <label for="">Paid With</label>
     <p class="output">{{entry.payment_type}}</p>
     <label for="">Vehicle No Plate </label>
@@ -261,9 +294,9 @@
     <label for="">Address</label>
     <p class="output">{{entry.rating}}</p>
     <label for="">Date</label>
-    <p class="output">{{entry.date}}</p>
-    <label for="">Date</label>
     <p class="output">{{entry.paid_at}}</p>
+    <label for="">Time</label>
+    <p class="output">{{entry.time}}</p>
     <label for="">Paid With</label>
     <p class="output">{{entry.payment_type}}</p>
     <label for="">Vehicle No Plate </label>
@@ -289,9 +322,9 @@
     <label for="">Address</label>
     <p class="output">{{entry.rating}}</p>
     <label for="">Date</label>
-    <p class="output">{{entry.date}}</p>
-    <label for="">Date</label>
     <p class="output">{{entry.paid_at}}</p>
+    <label for="">Time</label>
+    <p class="output">{{entry.time}}</p>
     <label for="">Paid With</label>
     <p class="output">{{entry.payment_type}}</p>
     <label for="">Vehicle No Plate </label>
@@ -318,9 +351,9 @@
     <label for="">Address</label>
     <p class="output">{{entry.rating}}</p>
     <label for="">Date</label>
-    <p class="output">{{entry.date}}</p>
-    <label for="">Date</label>
     <p class="output">{{entry.paid_at}}</p>
+    <label for="">Time</label>
+    <p class="output">{{entry.time}}</p>
     <label for="">Paid With</label>
     <p class="output">{{entry.payment_type}}</p>
     <label for="">Vehicle No Plate </label>

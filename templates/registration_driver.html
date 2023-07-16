@@ -1,24 +1,25 @@
 {% extends 'base.html' %}
 {% block title %}
-
+<h2>Driver Registration</h2>
 {% endblock %}
 {% block content %}
 <div class="home">
-<h2>Driver Registration</h2>
+
 <form action="/registration/driver" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <label for="email">Email</label>
-    <input type="email" name="email" id="email">
+    <input type="hidden" name="form-name" value="user">
+    
     <label for="phone_no">Phone no</label>
     <input type="text" name="phone_no" id="">
     <label for="license">License or Id No</label>
     <input type="text" name="license_no" id="license_no">
-    <label for="verification_code">Verification code</label>
-    <input type="text" name="verification_code" id="verification_code">
-
-    <button type="submit">Register</button>
     
 
+    <button type="submit">Proceed</button>
+    
+{% if error %}
+<p class="alert">{{error}}</p>
+{% endif %}
 </form>
 </div>
 {% endblock %}

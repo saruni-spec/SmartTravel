@@ -304,6 +304,7 @@ def select_destination():
                         else:
                                 print('we have a nearest taxi')
                                 taxi_location_name=reverse_geocode(nearest_taxi[0]['latitude'], nearest_taxi[0]['longitude'])
+                                session['taxi_location']={'latitude':nearest_taxi[0]['latitude'],'longitude':nearest_taxi[0]['longitude']}
                                 session['taxi_location_name']=taxi_location_name
                                 taxi_arrival_time=get_time(user_location_name, taxi_location_name,"driving", api_key)
                                 session['taxi_arrival_time']=taxi_arrival_time
@@ -340,6 +341,7 @@ def select_destination():
                                 session['user_to_stage_time']=user_time
                                 session['bus_travel_time']=get_time(nearest_stage[0]['stage_name'],destination_name,'driving',api_key)
                         print(a_bus,'a bus in post')
+                        session['bus_location']={'latitude':nearest_stage[0]['latitude'],'longitude':nearest_stage[0]['longitude']}
                         session['closest_bus']=a_bus
                         session['closest_taxi']=my_taxi
                         session['closest_stage']=nearest_stage[0]['stage_name']
@@ -360,7 +362,7 @@ def select_destination():
                                         session['closest_hybrid']=None
                                         
                                 else:
-                                        my_hybrid=nearest_hybrid_to_user
+                                        
                                         hybrid_location_name=reverse_geocode(my_hybrid[0]['latitude'], my_hybrid[0]['longitude'])
                                         session['hybrid_location_name']=hybrid_location_name
                                         hybrid_arrival_time=get_time(nearest_stage[0]['stage_name'], hybrid_location_name,"driving", api_key)
@@ -372,6 +374,7 @@ def select_destination():
                                         session['hybrid_travel_time']=hybrid_time
                                         session['closest_hybrid']=my_hybrid_now
                         else:
+        
                                 my_hybrid=nearest_hybrid_to_user
                                 hybrid_location_name=reverse_geocode(my_hybrid[0]['latitude'], my_hybrid[0]['longitude'])
                                 session['hybrid_location_name']=hybrid_location_name
@@ -386,6 +389,7 @@ def select_destination():
                                 
 
                                 session['closest_hybrid']=my_hybrid_now
+                        session['hybrid_location']={'latitude':my_hybrid[0]['latitude'],'longitude': my_hybrid[0]['longitude']}
                         session['hybrid_message']=hybrid_message
                         return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message,destination=destination_name)
                 elif form_name == 'taxi-form':
@@ -419,6 +423,11 @@ def select_destination():
 @login_required
 def select_taxi():
         user_name=current_user.user_name
+
+        bookings=Booking.query.filter_by(user_name=user_name).all()
+        for booking in bookings:
+                if booking.Status=="Pending":
+                        return redirect(url_for('booking.wait'))
         print(user_name,'user name in select ride')
         phone_number=current_user.phone
         date=datetime.now().strftime("%Y-%m-%d")
@@ -463,7 +472,22 @@ def select_taxi():
 
         return render_template('booking_select_taxi.html',travel_time=travel_time,fare=fare,vehicle_no=vehicle_no,arrival_time=arrival_time,pickup_point=pickup_point,destination=destination,vehicle_type=vehicle_type)
 
+@bp.route('/booking/wait',methods=['GET','POST'])
+@login_required
+def wait():      
+        bookings=Booking.query.filter_by(user_name=current_user.user_name).all()
+        print(bookings,'bookings in wait')
+        for booking in bookings:
+                print(booking.Status,'status in wait')
+                if booking.Status=="Pending":
+                        return redirect(url_for('booking.wait_confirmation'))
+                if booking.Status=="confirmed" and booking.payment_details:
+                        if booking.payment_details.status=='pending':
+                                return redirect(url_for('booking.wait_for_vehicle'))
+                
 
+        return render_template('booking_wait.html')                
+                
 @bp.route('/booking/bus_options',methods=['GET','POST'])
 @login_required
 def bus_options():
@@ -518,10 +542,22 @@ def bus_options():
 @login_required
 @is_driver
 def confirm_booking():
-        
+        vehicle=Vehicle.query.filter_by(driver_username=current_user.user_name).first()
+        bookings=Booking.query.filter_by(vehicle_plate=vehicle.no_plate).all()
         details=[]
-        details=receive_notification(notifications,session.get('vehicle'))
-        session['notifications']=details
+
+        date=datetime.now().strftime("%Y-%m-%d")
+        dt1 = datetime.strptime(date, "%Y-%m-%d")
+        for booking in bookings:
+                if not booking.payment_details:
+                        date2 = booking.date
+                        
+                        dt2 = datetime.strptime(date2, "%Y-%m-%d")
+                        if dt1==dt2:
+                                details.append(booking)
+        
+        notifications_messages=receive_notification(notifications,session.get('vehicle'))
+        session['notifications']=notifications_messages
         
 
         
@@ -541,29 +577,24 @@ def confirm_booking():
                 
                         
                 if confirmation=='yes':
-                        print(booking.Status,'booking in confirmed')
+                        
                         booking.confirm()
-                        confirmed_message='Booking confirmed'
-                        print(booking.Status,'check booking in confirmed')
+                        session['passenger_location']=geocode(api_key,booking.pickup_point,booking)
+                        session['passenger_destination']=geocode(api_key,booking.destination,booking)
                         
 
                 else:
-                        print('booking in cancelled')
+                        
                         booking.cancel()
-                        confirmed_message='Booking cancelled'
-                for notification in details:
-                        print('ni notifications')
-                        if notification['booking_id']==id:
-                                print (notification,'before seen')
-                                notification['seen']=True 
-                                print (notification,'after seen')
+                        
                                 
                                       
                         
-                return render_template('booking_confirm.html',details=details,confirmed_message=confirmed_message)
+                return render_template('booking_confirm.html',details=details)
                
 
         return render_template('booking_confirm.html',details=details)
+
 
 
 
@@ -607,7 +638,7 @@ def wait_confirmation():
         
                 if confirm=='check':
                         while 1:
-                                booking=Booking.query.filter_by(id=booking_id).first()
+                                
                                 print(booking.Status,'booking in check here')
                                 if booking.Status=='confirmed':
                                                 
@@ -634,7 +665,10 @@ def wait_confirmation():
                                 else:
                                         time.sleep(10)
                                         
-                                
+                else:
+                        booking.cancel()
+                        return redirect(url_for('booking.cancel_booking'))
+
 
                       
         return render_template('booking_wait_confirmation.html',booking_notification=booking_notification,waiting_message=waiting_message,vehicle_no=vehicle_no,destination=destination,pickup_point=pickup_point)
@@ -656,13 +690,15 @@ def wait_for_vehicle():
     vehicle_type=session.get('vehicle_type')
     b_type='1'
     if vehicle_type=='taxi':
-    
+        session['vehicle_location']=session.get('taxi_location')
         wait_time=session.get('taxi_arrival_time')
         start_routing.delay()
     elif vehicle_type=='hybrid':
+        session['vehicle_location']=session.get('hybrid_location')
         wait_time=session.get('hybrid_arrival_time')
         start_routing.delay()
     elif vehicle_type=='bus':
+        session['vehicle_location']=session.get('bus_location')
         wait_time='bus leaves in a few minutes'
         start_routing.delay()
     else:
@@ -707,7 +743,7 @@ def book_taxi():
         user_location_name=session.get('location_name',None)
         destination_name=session.get('destination')
        
-        taxi_message=session.get('taxi_message','')
+        taxi_message=session.get('taxi_message',None)
         if request.method=='POST':
                 token = request.form.get('csrf_token')
                 try:
@@ -743,10 +779,11 @@ def book_taxi():
                                 taxi_message='No taxi nearby'
                         else:
                                 print('we have a nearest taxi')
+                                session['taxi_location']={'latitude':nearest_taxi[0]['latitude'],'longitude':nearest_taxi[0]['longitude']}
                                 taxi_location_name=reverse_geocode(nearest_taxi[0]['latitude'], nearest_taxi[0]['longitude'])
                                 session['taxi_location_name']=taxi_location_name
                                 taxi_arrival_time=get_time(user_location_name, taxi_location_name,"driving", api_key)
-                                session['arrival_time']=taxi_arrival_time
+                                session['taxi_arrival_time']=taxi_arrival_time
                                 my_taxi=nearest_taxi[0]['vehicle']
                                 taxi_message='Click here to book your taxi'
                                 taxi_time=get_time(session.get('location_name'), destination_name,"driving", api_key)
@@ -775,9 +812,8 @@ def book_taxi():
 @login_required
 def book_bus():
         user_location=session.get('current_location')
-        print(user_location,'user location in select destination')
         
-        user_location_name=session.get('location_name')
+        user_location_name=session.get('location_name',None)
         bus_message=session.get('bus_message',None)
         if request.method=='POST':
                 token = request.form.get('csrf_token')
@@ -972,9 +1008,10 @@ def book_bus():
                                 session['user_to_stage_time']=user_time
                                 session['bus_travel_time']=get_time(nearest_stage[0]['stage_name'],destination_name,'driving',api_key)
                         print(a_bus,'a bus in post')
+                        session['bus_location']={'latitude':nearest_stage[0]['latitude'],'longitude':nearest_stage[0]['longitude']}
                         session['closest_bus']=a_bus
                         session['closest_stage']=nearest_stage[0]['stage_name']
-                        session['pickup_point']=user_location_name
+                        session['pickup_point']=nearest_stage[0]['stage_name']
                 
                         return render_template('book_bus.html',closest_bus=bus_message,user_location=user_location,user_location_name=user_location_name)
                 
@@ -994,7 +1031,7 @@ def book_hybrid():
         user_location=session.get('current_location')
         print(user_location,'user location in select destination')
         
-        user_location_name=session.get('location_name')
+        user_location_name=session.get('location_name',None)
         hybrid_message=session.get('hybrid_message',None)
         
         if request.method=='POST':
@@ -1063,6 +1100,7 @@ def book_hybrid():
                                 hybrid_message='Click here to share your ride'
                         
                                 print(hybrid_time,'hybrid time in post')
+                        session['hybrid_location']={'latitude':my_hybrid[0]['latitude'],'longitude': my_hybrid[0]['longitude']}
                         session['hybrid_message']=hybrid_message
                         session['hybrid_travel_time']=hybrid_time
                         print (session.get('hybrid_travel_time'),'hybrid travel time ')

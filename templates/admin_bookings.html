@@ -5,9 +5,8 @@
 {% block content %}
 
 
-<button onclick="downloadFormsAsDoc()">Download as DOC</button>
-
-<form class="date_filter" action="/admin/bookings" method="post">
+<form class="date_filter" action="/admin/bookings" method="post" id="date_options">
+ 
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <div>
   <label for="date">Date</label>
@@ -55,8 +54,12 @@
 
 
 
-<form class="sidebar" method="post" action="/admin/bookings">
+<form class="sidebar" method="post" action="/admin/bookings" id="filter_options">
+  
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="text" name="entity" id="entity">
+  <button name="button_name" value="search">Search</button>
+  
   <button name="button_name" value="all">All Details</button>
     <button name="button_name" value="id">Booking ID</button>
     <button name="button_name" value="user_name">User Name</button>
@@ -74,7 +77,7 @@
           
 </form>
 {% if data is none %}
-<p>No riders are registered</p>
+<p>No bookings</p>
 {% elif data is iterable and data|length >0 %}
 {% if query=='all' %}
 
@@ -96,19 +99,58 @@
     <label for="">Destination</label>
     <p class="output">{{entry.destination}}</p>
     <label for="">Vehicle No Plate </label>
-    <p class="output">{{entry.entry_plate}}</p>
-    <label for="">Booking Status </label>
-    <p class="output">{{entry.status}}</p>
-    <label for="">Booking Type </label>
-    <p class="output">{{entry.booking_type}}</p>
-    <label for="">Payment Status </label>
-    <p class="output">{{entry.payment_details}}</p>
-
+  <p class="output">{{entry.vehicle_plate}}</p>
+  <label for="">Booking Status </label>
+  <p class="output">{{entry.Status}}</p>
+  <label for="">Booking Type </label>
+  <p class="output">{{entry.booking_type}}</p>
+  <label for="">Payment Status </label>
+  {% if entry.payment_details %}
+  <p class="output">Payment was initiated</p>
+  {% else %}
+  <p class="output">No payment was made</p>
+  {% endif %}
     
     </form>
     
   
 {% endfor %}
+{% elif query=='search' %}
+
+
+
+<form action="/admin/bookings" method="post" class='data'>
+    <label for="">Booking ID</label>
+    <p class="output">{{entry.id}}</p>
+    <label for="">User Name</label>
+    <p class="output">{{entry.user_name}}</p>
+    <label for="">Phone Number</label>
+    <p class="output">{{entry.phone}}</p>
+    <label for="">Address</label>
+    <p class="output">{{entry.pickup_point}}</p>
+    <label for="">Date</label>
+    <p class="output">{{entry.date}}</p>
+    <label for="">Time</label>
+    <p class="output">{{entry.time}}</p>
+    <label for="">Destination</label>
+    <p class="output">{{entry.destination}}</p>
+    <label for="">Vehicle No Plate </label>
+  <p class="output">{{entry.vehicle_plate}}</p>
+  <label for="">Booking Status </label>
+  <p class="output">{{entry.Status}}</p>
+  <label for="">Booking Type </label>
+  <p class="output">{{entry.booking_type}}</p>
+  <label for="">Payment Status </label>
+  {% if entry.payment_details %}
+  <p class="output">Payment was initiated</p>
+  {% else %}
+  <p class="output">No payment was made</p>
+  {% endif %}
+    
+    </form>
+    
+  
+
 
 {% elif query=='id' %}
 {% for entry in data %}
@@ -116,7 +158,7 @@
     <label for="id"></label>
     <p class="output">{{entry.id}}</p>
     <label for=""></label>
-    <p class="output">{{entry.status}}</p>
+    <p class="output">{{entry.Status}}</p>
   </form>
 {% endfor %}
 {% elif query=='user_name' %}
@@ -179,7 +221,7 @@
     <label for=""></label>
     <p class="output">{{entry.id}}</p>
     <label for="">Vehicle No Plate </label>
-    <p class="output">{{entry.entry_plate}}</p>
+    <p class="output">{{entry.vehicle_plate}}</p>
   </form>
 {% endfor %}
 {% elif query=='status' %}
@@ -188,7 +230,7 @@
     <label for=""></label>
     <p class="output">{{entry.id}}</p>
     <label for="">Booking Status </label>
-    <p class="output">{{entry.status}}</p>
+    <p class="output">{{entry.Status}}</p>
   </form>
 {% endfor %}
 {% elif query=='booking_type' %}
@@ -227,14 +269,17 @@
     <label for="">Destination</label>
     <p class="output">{{entry.destination}}</p>
     <label for="">Vehicle No Plate </label>
-    <p class="output">{{entry.entry_plate}}</p>
-    <label for="">Booking Status </label>
-    <p class="output">{{entry.status}}</p>
-    <label for="">Booking Type </label>
-    <p class="output">{{entry.booking_type}}</p>
-    <label for="">Payment Status </label>
-    <p class="output">{{entry.payment_details}}</p>
-  
+  <p class="output">{{entry.vehicle_plate}}</p>
+  <label for="">Booking Status </label>
+  <p class="output">{{entry.Status}}</p>
+  <label for="">Booking Type </label>
+  <p class="output">{{entry.booking_type}}</p>
+  <label for="">Payment Status </label>
+  {% if entry.payment_details %}
+  <p class="output">Payment was initiated</p>
+  {% else %}
+  <p class="output">No payment was made</p>
+  {% endif %}
 
   </form>
 {% endfor %}
@@ -256,14 +301,17 @@
     <label for="">Destination</label>
     <p class="output">{{entry.destination}}</p>
     <label for="">Vehicle No Plate </label>
-    <p class="output">{{entry.entry_plate}}</p>
-    <label for="">Booking Status </label>
-    <p class="output">{{entry.status}}</p>
-    <label for="">Booking Type </label>
-    <p class="output">{{entry.booking_type}}</p>
-    <label for="">Payment Status </label>
-    <p class="output">{{entry.payment_details}}</p>
-  
+  <p class="output">{{entry.vehicle_plate}}</p>
+  <label for="">Booking Status </label>
+  <p class="output">{{entry.Status}}</p>
+  <label for="">Booking Type </label>
+  <p class="output">{{entry.booking_type}}</p>
+  <label for="">Payment Status </label>
+  {% if entry.payment_details %}
+  <p class="output">Payment was initiated</p>
+  {% else %}
+  <p class="output">No payment was made</p>
+  {% endif %}
 
   </form>
 {% endfor %}
@@ -285,14 +333,17 @@
     <label for="">Destination</label>
     <p class="output">{{entry.destination}}</p>
     <label for="">Vehicle No Plate </label>
-    <p class="output">{{entry.entry_plate}}</p>
-    <label for="">Booking Status </label>
-    <p class="output">{{entry.status}}</p>
-    <label for="">Booking Type </label>
-    <p class="output">{{entry.booking_type}}</p>
-    <label for="">Payment Status </label>
-    <p class="output">{{entry.payment_details}}</p>
-  
+  <p class="output">{{entry.vehicle_plate}}</p>
+  <label for="">Booking Status </label>
+  <p class="output">{{entry.Status}}</p>
+  <label for="">Booking Type </label>
+  <p class="output">{{entry.booking_type}}</p>
+  <label for="">Payment Status </label>
+  {% if entry.payment_details %}
+  <p class="output">Payment was initiated</p>
+  {% else %}
+  <p class="output">No payment was made</p>
+  {% endif %}
 
   </form>
 {% endfor %}
@@ -314,14 +365,17 @@
   <label for="">Destination</label>
   <p class="output">{{entry.destination}}</p>
   <label for="">Vehicle No Plate </label>
-  <p class="output">{{entry.entry_plate}}</p>
+  <p class="output">{{entry.vehicle_plate}}</p>
   <label for="">Booking Status </label>
-  <p class="output">{{entry.status}}</p>
+  <p class="output">{{entry.Status}}</p>
   <label for="">Booking Type </label>
   <p class="output">{{entry.booking_type}}</p>
   <label for="">Payment Status </label>
-  <p class="output">{{entry.payment_details}}</p>
-  
+  {% if entry.payment_details %}
+  <p class="output">Payment was initiated</p>
+  {% else %}
+  <p class="output">No payment was made</p>
+  {% endif %}
 
   </form>
 {% endfor %}
@@ -344,20 +398,23 @@
   <label for="">Destination</label>
   <p class="output">{{entry.destination}}</p>
   <label for="">Vehicle No Plate </label>
-  <p class="output">{{entry.entry_plate}}</p>
+  <p class="output">{{entry.vehicle_plate}}</p>
   <label for="">Booking Status </label>
-  <p class="output">{{entry.status}}</p>
+  <p class="output">{{entry.Status}}</p>
   <label for="">Booking Type </label>
   <p class="output">{{entry.booking_type}}</p>
   <label for="">Payment Status </label>
-  <p class="output">{{entry.payment_details}}</p>
-    
+  {% if entry.payment_details %}
+  <p class="output">Payment was initiated</p>
+  {% else %}
+  <p class="output">No payment was made</p>
+  {% endif %}
  
     </form>
 {% endfor %}
 {% endif %}
 {% else %}
-<p>no riders registered</p>
+<p>no bookings</p>
 {% endif %}
 
 <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/sidebar.css')}}">

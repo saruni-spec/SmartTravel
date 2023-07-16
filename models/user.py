@@ -9,6 +9,9 @@ from .transaction import Transaction
 
 
 from datetime import datetime
+from flask_login import current_user
+
+
 
 
 
@@ -22,6 +25,8 @@ from datetime import datetime
 class User(db.Model):
     __tablename__="user"
     user_name=db.Column(db.String(100),primary_key=True)
+    first_name=db.Column(db.String(100),nullable=False)
+    other_name=db.Column(db.String(100),nullable=True)
     email=db.Column(db.String(100),nullable=True)
     password=db.Column(db.String(100),nullable=False)
     phone=db.Column(db.String(100),nullable=True)
@@ -49,19 +54,33 @@ class User(db.Model):
         return True
     
     def check_if_driver(self):
-        driver = Driver.query.filter_by(user_name=self.user_name).first()
-        return True if driver is not None else False
+        
+        user=User.query.filter_by(user_name=current_user.user_name).first()
+        driver=user.driver_details
+        
+        if driver is None:
+            return False
+        else:
+            return True
 
     
     def check_if_owner(self):
-        owner = Owner.query.filter_by(user_name=self.user_name).first()
-        return True if owner is not None else False
+        user=User.query.filter_by(user_name=current_user.user_name).first()
+        owner=user.owner_details
+        print(owner,'owner')
+        if owner is not None :
+            return True
+        else:
+            return False
 
-    def save(self,password):
+    def save(self,password,first_name,other_name,email):
+        self.first_name=first_name
+        self.other_name=other_name
+        self.email=email
+        self.role="user"
+        
         self.password=bcrypt.generate_password_hash(password)
         self.date_registered=datetime.now().strftime("%Y-%m-%d")
-        self.is_driver=False
-        self.is_owner=False
         db.session.add(self)
         db.session.commit()
         
@@ -109,4 +128,12 @@ class User(db.Model):
         db.session.commit()
     
     def commit(self):
+        db.session.commit()
+
+    def make_driver(self):
+        self.role="driver"
+        db.session.commit()
+    
+    def make_owner(self):
+        self.role="owner"
         db.session.commit()

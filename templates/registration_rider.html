@@ -7,18 +7,29 @@
 <h2>Registration</h2>
 <form action="/registration/rider" method="post" onsubmit="return validateForm()">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <label for="username">user_name</label>
-    <input type="text" name="username">
+    <label for="user_name">user_name</label>
+    <input type="text" name="user_name">
+    <label for="first_name">First Name</label>
+    <input type="text" name="first_name" id="">
+    <label for="other_name">Other Name</label>
+    <input type="text" name="other_name" id="">
+    <label for="email">Email</label>
+    <input type="email" name="email">
+
+
     <label for="password">Password</label>
     <input type="password" name="password" id="password">
     
     <label for="confirm_password">Confirm Password</label>
     <input type="password" name="confirm_password" id="confirm_password">
-    <button type="submit">Register</button>
+    
     {% if error %}
-    <span>{{error}}</span>
+    <p class="alert">{{error}}</p>
     {% endif %}
-    <a href="{{url_for('registration.register_driver')}}">Register as Driver</a>
+    <label for="">Register as Driver?</label>
+    <input type="checkbox" name="driver" id="" value="yes">
+
+    <button type="submit">Register</button>
 </form>
 </div>
 

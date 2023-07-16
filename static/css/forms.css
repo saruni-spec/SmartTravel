@@ -65,3 +65,20 @@ button:active{
   margin: 1%;
   
 }
+.data{
+  position: relative;
+  display: flex;
+  flex-direction: column; /* Ensures items stack vertically */
+  justify-content: center;
+  align-items: center;
+  height: auto;
+  left: 35%;
+  width:40vh;
+  padding: 5%;
+  margin-top: 5%;
+  border: 1px solid var(--primary-border-color);
+  border-radius: 10px;
+  background-color: var(--primary-form-color);
+  z-index: 2;
+}
+

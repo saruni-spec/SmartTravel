@@ -1,0 +1,44 @@
+.rating-box{
+display: flex;
+flex-direction: row;
+
+}
+.radio-container {
+  display: inline-block;
+  position: relative;
+  padding-left: 30px; /* Adjust this value to control the size of the circle */
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px; /* Adjust this value to control the size of the circle */
+  width: 20px; /* Adjust this value to control the size of the circle */
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+.radio-container input[type="radio"] {
+  opacity: 0;
+}
+
+.radio-container input#radio-1:checked + .checkmark {
+  background-color: red; /* Adjust this value to set the color when the radio button is checked */
+  
+}
+.radio-container input#radio-2:checked + .checkmark {
+  background-color: orange; /* Adjust this value to set the color when the radio button is checked */
+}
+.radio-container input#radio-3:checked + .checkmark {
+  background-color: yellow; /* Adjust this value to set the color when the radio button is checked */
+}
+.radio-container input#radio-4:checked + .checkmark {
+  background-color: green; /* Adjust this value to set the color when the radio button is checked */
+}
+.radio-container input#radio-5:checked + .checkmark {
+  background-color: blue; /* Adjust this value to set the color when the radio button is checked */
+}
+

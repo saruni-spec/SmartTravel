@@ -1,6 +1,9 @@
 from extensions.extensions import db
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
+from .transaction import Transaction
+
+
 
 
 class Booking(db.Model):
@@ -15,10 +18,13 @@ class Booking(db.Model):
     vehicle_plate=db.Column(db.String(50),ForeignKey("vehicle.no_plate"),nullable=False)
     Status=db.Column(db.String(100), nullable=False)
     
+    
     booking_type=db.Column(db.String(20),nullable=True)
+    duration=db.Column(db.String(20),nullable=True)
+    
 
+    payment_details = db.relationship("Transaction", backref="booking", uselist=False)
 
-    payment_details = relationship("Transaction", backref="payment_details" )
 
     def __init__(self, user_name, phone, date, time, pickup_point, destination, vehicle,booking_type):
         self.user_name = user_name
@@ -38,6 +44,10 @@ class Booking(db.Model):
 
     def confirm(self):
         self.Status="confirmed"
+        db.session.commit()
+    
+    def set_duration(self,duration):
+        self.duration=duration
         db.session.commit()
     
     

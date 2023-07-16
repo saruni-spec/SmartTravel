@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}
+<h1>Registration </h1>
+{% endblock %}
+{% block content %}
+<div class="home">
+<h2>Pick a username</h2>
+<form action="/registration/verify_vehicle" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="username">verification Code</label>
+    <input type="text" name="verification_code">
+    <label for="first_name">Number Plate</label>
+    <input type="text" name="no_plate" id="">
+   
+   
+    <button type="submit">submit</button>
+</form>
+</div>
+{% endblock %}

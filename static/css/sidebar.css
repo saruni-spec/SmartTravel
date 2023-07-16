@@ -6,13 +6,37 @@
   position: fixed;
   height: 70vh;
   left: 0;
-  margin-top: 1%;
+  margin-top: 4%;
   overflow: auto;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   border: 2px solid var(--primary-border-color);
+  overflow: visible;
+  z-index: 10;
 }
+#hide {
+position: fixed;
+margin-top: 0.3%;
+left: 0%;
+width: 20%;
+z-index: 10;
+margin-left: 2%;
+}
+.hidden_bar{
+  position: fixed;
+ width: 1vw;
+ height: 70vh;
+ overflow: auto;
+ z-index: 1;
+ padding: 1%;
+ margin: 1%;
+
+}
+.hidden_bar button{
+  display: none;
+}
+
 
 /* Sidebar links */
 .sidebar button {
@@ -64,14 +88,48 @@
   position: fixed;
   height: 70vh;
   right: 0;
-  margin-top: 1%;
-  overflow: auto;
+  margin-top: 4%;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   border: 2px solid var(--primary-border-color);
+  z-index: 10;
   
 }
+
+.date_hide{
+  position: fixed;
+  right: 0;
+  width: 1vw;
+  height: 70vh;
+  overflow: auto;
+  z-index: 1;
+  padding: 1%;
+  margin: 1%;
+}
+.date_hide button{
+
+  display: none;
+}
+.date_hide input{
+  display: none;
+}
+.date_hide select{
+  display: none;
+}
+.date_hide label{
+  display: none;
+}
+
+#date_hide {
+  position: fixed;
+  margin-top: 0.3%;
+  right: 0%;
+  margin-right: 2%;
+  width: 20%;
+  z-index: 10;
+  }
 .date_filter button{
   width: 100%;
   margin-top: 1%;
@@ -94,3 +152,19 @@
     float: none;
   }
 }
+
+
+#download{
+  position: fixed;
+  margin-left: 57%;
+  width: 20%;
+  z-index: 10;
+  margin-top: 0.3%;
+  }
+  #switch{
+  position: fixed;
+  margin-left: 23%;
+  width: 20%;
+  z-index: 10;
+  margin-top: 0.3%;
+  }

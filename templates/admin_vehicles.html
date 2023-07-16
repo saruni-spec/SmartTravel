@@ -4,7 +4,7 @@
 {% endblock %}
 {% block content %}
 
-<form class="date_filter" action="/admin/vehicles" method="post">
+<form class="date_filter" action="/admin/vehicles" method="post" id="date_options">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <div>
   <label for="date">Date</label>
@@ -49,8 +49,11 @@
 
 
 
-<form class="sidebar" method="post" action="/admin/vehicles">
+<form class="sidebar" method="post" action="/admin/vehicles" id="filter_options">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="text" name="entity" id="entity">
+  <button name="button_name" value="search">Search</button>
+
   <button name="button_name" value="all">All Details</button>
     <button name="button_name" value="no_plate">Number Plate</button>
     <button name="button_name" value="capacity">Capacity</button>
@@ -74,29 +77,48 @@
 
 <form action="/admin/vehicles" method="post" class='data'>
     <label for="no_plate">No Plate</label>
-    {{vehicle.no_plate}}
+    <p class="output">{{vehicle.no_plate}}</p>
     <label for="driver">Driver</label>
-    {{vehicle.driver_username}}
+    <p class="output">{{vehicle.driver_username}}</p>
     <label for="owner">Owner</label>
-    {{vehicle.owner_username}}
+    <p class="output">{{vehicle.owner_username}}</p>
     <label for="capacity">Capacity</label>
-    {{vehicle.capacity}}
+    <p class="output">{{vehicle.capacity}}</p>
     <label for="color">Color</label>
-    {{vehicle.color}}
+    <p class="output">{{vehicle.color}}</p>
     <label for="vehicle_type">Type</label>
-    {{vehicle.vehicle_type}}
+    <p class="output">{{vehicle.vehicle_type}}</p>
     <label for="date_registered">Date Registered</label>
   <p class="output"> {{vehicle.date_registered}}</p>
     </form>
     
   
 {% endfor %}
+{% elif query=='search' %}
+
+
+<form action="/admin/vehicles" method="post" class='data'>
+    <label for="no_plate">No Plate</label>
+    <p class="output">{{vehicle.no_plate}}</p>
+    <label for="driver">Driver</label>
+    <p class="output">{{vehicle.driver_username}}</p>
+    <label for="owner">Owner</label>
+    <p class="output">{{vehicle.owner_username}}</p>
+    <label for="capacity">Capacity</label>
+    <p class="output">{{vehicle.capacity}}</p>
+    <label for="color">Color</label>
+    <p class="output">{{vehicle.color}}</p>
+    <label for="vehicle_type">Type</label>
+    <p class="output">{{vehicle.vehicle_type}}</p>
+    <label for="date_registered">Date Registered</label>
+  <p class="output"> {{vehicle.date_registered}}</p>
+    </form>
 
 {% elif query=='no_plate' %}
 {% for vehicle in vehicles %}
 <form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
-  {{vehicle.no_plate}}
+  <p class="output">{{vehicle.no_plate}}</p>
   <label for="type">Vehicle Type</label>
  <p class="output"> {{vehicle.vehicle_type}}</p>
   </form>
@@ -105,7 +127,7 @@
 {% for vehicle in vehicles %}
 <form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
-  {{vehicle.no_plate}}
+  <p class="output">{{vehicle.no_plate}}</p>
   <label for="capacity">Capacity</label>
   <p class="output"> {{vehicle.capacity}}</p>
   </form>
@@ -115,7 +137,7 @@
 <form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
 
-  {{vehicle.no_plate}}
+  <p class="output">{{vehicle.no_plate}}</p>
   <label for="owner_username">Owner</label>
   <p class="output"> {{vehicle.owner_username}}</p>
   </form>
@@ -124,16 +146,16 @@
 {% for vehicle in vehicles %}
 <form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
-  {{vehicle.no_plate}}
+  <p class="output">{{vehicle.no_plate}}</p>
   <label for="driver_username">Driver</label>
-  <p class="output"> {{vehicle.driver_username}}</p>
+   {{vehicle.driver_username}}</p>
   </form>
 {% endfor %}
 {% elif query=='color' %}
 {% for vehicle in vehicles %}
 <form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
-  {{vehicle.no_plate}}
+  <p class="output">{{vehicle.no_plate}}</p>
   <label for="color">Color</label>
   <p class="output"> {{vehicle.color}}</p>
   </form>
@@ -142,7 +164,7 @@
 {% for vehicle in vehicles %}
 <form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
-  {{vehicle.no_plate}}
+  <p class="output">{{vehicle.no_plate}}</p>
   <label for="is_active"></label>
   <p class="output"> {{vehicle.is_active}}</p>
   </form>
@@ -151,7 +173,7 @@
 {% for vehicle in vehicles %}
 <form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
-  {{vehicle.no_plate}}
+  <p class="output"></p>{{vehicle.no_plate}}</p>
   <label for="for_hire"></label>
   <p class="output"> {{vehicle.for_hire}}</p>
   </form>
@@ -160,7 +182,7 @@
 {% for vehicle in vehicles %}
 <form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
-  {{vehicle.no_plate}}
+  <p class="output">{{vehicle.no_plate}}</p>
   <label for="build_type"></label>
   <p class="output"> {{vehicle.build_type}}</p>
   </form>
@@ -169,7 +191,7 @@
 {% for vehicle in vehicles %}
 <form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
-  {{vehicle.no_plate}}
+  <p class="output">{{vehicle.no_plate}}</p>
   <label for="date_registered">Date Registered</label>
   <p class="output"> {{vehicle.date_registered}}</p>
   </form>
@@ -178,7 +200,7 @@
 {% for vehicle in vehicles %}
 <form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
-  {{vehicle.no_plate}}
+  <p class="output">{{vehicle.no_plate}}</p>
   <label for="ratings"></label>
   <p class="output"> {{vehicle.ratings}}</p>
   </form>
@@ -187,18 +209,18 @@
 {% for vehicle in vehicles %}
 <form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
-  {{vehicle.no_plate}}
-  <label for="driver">Driver</label>
-  {{vehicle.driver_username}}
-  <label for="owner">Owner</label>
-  {{vehicle.owner_username}}
-  <label for="capacity">Capacity</label>
-  {{vehicle.capacity}}
-  <label for="color">Color</label>
-  {{vehicle.color}}
-  <label for="vehicle_type">Type</label>
-  {{vehicle.vehicle_type}}
-  <label for="date_registered">Date Registered</label>
+    <p class="output">{{vehicle.no_plate}}</p>
+    <label for="driver">Driver</label>
+    <p class="output">{{vehicle.driver_username}}</p>
+    <label for="owner">Owner</label>
+    <p class="output">{{vehicle.owner_username}}</p>
+    <label for="capacity">Capacity</label>
+    <p class="output">{{vehicle.capacity}}</p>
+    <label for="color">Color</label>
+    <p class="output">{{vehicle.color}}</p>
+    <label for="vehicle_type">Type</label>
+    <p class="output">{{vehicle.vehicle_type}}</p>
+    <label for="date_registered">Date Registered</label>
   <p class="output"> {{vehicle.date_registered}}</p>
   </form>
 {% endfor %}
@@ -206,18 +228,18 @@
 {% for vehicle in vehicles %}
 <form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
-  {{vehicle.no_plate}}
-  <label for="driver">Driver</label>
-  {{vehicle.driver_username}}
-  <label for="owner">Owner</label>
-  {{vehicle.owner_username}}
-  <label for="capacity">Capacity</label>
-  {{vehicle.capacity}}
-  <label for="color">Color</label>
-  {{vehicle.color}}
-  <label for="vehicle_type">Type</label>
-  {{vehicle.vehicle_type}}
-  <label for="date_registered">Date Registered</label>
+    <p class="output">{{vehicle.no_plate}}</p>
+    <label for="driver">Driver</label>
+    <p class="output">{{vehicle.driver_username}}</p>
+    <label for="owner">Owner</label>
+    <p class="output">{{vehicle.owner_username}}</p>
+    <label for="capacity">Capacity</label>
+    <p class="output">{{vehicle.capacity}}</p>
+    <label for="color">Color</label>
+    <p class="output">{{vehicle.color}}</p>
+    <label for="vehicle_type">Type</label>
+    <p class="output">{{vehicle.vehicle_type}}</p>
+    <label for="date_registered">Date Registered</label>
   <p class="output"> {{vehicle.date_registered}}</p>
   </form>
 {% endfor %}
@@ -225,18 +247,18 @@
 {% for vehicle in vehicles %}
 <form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
-  {{vehicle.no_plate}}
-  <label for="driver">Driver</label>
-  {{vehicle.driver_username}}
-  <label for="owner">Owner</label>
-  {{vehicle.owner_username}}
-  <label for="capacity">Capacity</label>
-  {{vehicle.capacity}}
-  <label for="color">Color</label>
-  {{vehicle.color}}
-  <label for="vehicle_type">Type</label>
-  {{vehicle.vehicle_type}}
-  <label for="date_registered">Date Registered</label>
+    <p class="output">{{vehicle.no_plate}}</p>
+    <label for="driver">Driver</label>
+    <p class="output">{{vehicle.driver_username}}</p>
+    <label for="owner">Owner</label>
+    <p class="output">{{vehicle.owner_username}}</p>
+    <label for="capacity">Capacity</label>
+    <p class="output">{{vehicle.capacity}}</p>
+    <label for="color">Color</label>
+    <p class="output">{{vehicle.color}}</p>
+    <label for="vehicle_type">Type</label>
+    <p class="output">{{vehicle.vehicle_type}}</p>
+    <label for="date_registered">Date Registered</label>
   <p class="output"> {{vehicle.date_registered}}</p>
   </form>
 {% endfor %}
@@ -244,18 +266,18 @@
 {% for vehicle in vehicles %}
 <form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
-  {{vehicle.no_plate}}
-  <label for="driver">Driver</label>
-  {{vehicle.driver_username}}
-  <label for="owner">Owner</label>
-  {{vehicle.owner_username}}
-  <label for="capacity">Capacity</label>
-  {{vehicle.capacity}}
-  <label for="color">Color</label>
-  {{vehicle.color}}
-  <label for="vehicle_type">Type</label>
-  {{vehicle.vehicle_type}}
-  <label for="date_registered">Date Registered</label>
+    <p class="output">{{vehicle.no_plate}}</p>
+    <label for="driver">Driver</label>
+    <p class="output">{{vehicle.driver_username}}</p>
+    <label for="owner">Owner</label>
+    <p class="output">{{vehicle.owner_username}}</p>
+    <label for="capacity">Capacity</label>
+    <p class="output">{{vehicle.capacity}}</p>
+    <label for="color">Color</label>
+    <p class="output">{{vehicle.color}}</p>
+    <label for="vehicle_type">Type</label>
+    <p class="output">{{vehicle.vehicle_type}}</p>
+    <label for="date_registered">Date Registered</label>
   <p class="output"> {{vehicle.date_registered}}</p>
   </form>
 {% endfor %}
@@ -263,18 +285,18 @@
 {% for vehicle in vehicles %}
 <form action="/admin/vehicles" method="post" class='data'>
   <label for="no_plate">No Plate</label>
-  {{vehicle.no_plate}}
-  <label for="driver">Driver</label>
-  {{vehicle.driver_username}}
-  <label for="owner">Owner</label>
-  {{vehicle.owner_username}}
-  <label for="capacity">Capacity</label>
-  {{vehicle.capacity}}
-  <label for="color">Color</label>
-  {{vehicle.color}}
-  <label for="vehicle_type">Type</label>
-  {{vehicle.vehicle_type}}
-  <label for="date_registered">Date Registered</label>
+    <p class="output">{{vehicle.no_plate}}</p>
+    <label for="driver">Driver</label>
+    <p class="output">{{vehicle.driver_username}}</p>
+    <label for="owner">Owner</label>
+    <p class="output">{{vehicle.owner_username}}</p>
+    <label for="capacity">Capacity</label>
+    <p class="output">{{vehicle.capacity}}</p>
+    <label for="color">Color</label>
+    <p class="output">{{vehicle.color}}</p>
+    <label for="vehicle_type">Type</label>
+    <p class="output">{{vehicle.vehicle_type}}</p>
+    <label for="date_registered">Date Registered</label>
   <p class="output"> {{vehicle.date_registered}}</p>
   </form>
 {% endfor %}

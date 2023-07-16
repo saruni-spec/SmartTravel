@@ -10,26 +10,53 @@
 {% elif details is iterable and details|length >0 %}
 {% for detail in details %} 
 
-{% if not detail.seen %}
+{% if detail.Status=='Pending' %}
 <form action="/booking/confirm" method="post">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <p>Destination:{{detail.destination}}  <br></p>  
-  <p>Pickup_point:{{detail.pickup_point}}</p>
-  <input type="hidden" name="id" id="id" value="{{detail.booking_id}}">
+  <p class="output">Destination:{{detail.destination}}  <br></p>  
+  <p class="output">Pickup_point:{{detail.pickup_point}}</p>
+  <p class="output">Booked at: {{detail.time}}</p>
+  <input type="hidden" name="id" id="id" value="{{detail.id}}">
   <button type="submit" name="confirmation" value="yes">Accept</button>
   <button type="submit" name="confirmation" value="no">Reject</button>    
   
   </form>
-  {% else  %}
+  
 
-  <form action="/booking/confirm" method="post">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <p>Destination:{{detail.destination}}  <br></p>  
-    <p>Pickup_point:{{detail.pickup_point}}</p>
-    <input type="hidden" name="id" id="id" value="{{detail.booking_id}}">
-      
-    <p>{{confirmed_message}}</p>
+  
 {% endif %}
+
+{% endfor %}
+{% for detail in details %} 
+
+{% if detail.Status=="confirmed" %}
+<form action="/booking/confirm" >
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="id" id="id" value="{{detail.id}}">
+  <p class="output">Destination:{{detail.destination}}  <br></p>  
+  <p class="output">Pickup_point:{{detail.pickup_point}}</p>
+  <p class="output">Booked at: {{detail.time}}</p>
+  <input type="hidden" name="id" id="id" value="{{detail.booking_id}}">
+    
+  <p class="success">Conirmed Booking</p>
+  </form>
+  {% endif %}
+
+{% endfor %}
+{% for detail in details %} 
+
+{% if detail.Status=="Cancelled" %}
+<form action="/booking/confirm" >
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="id" id="id" value="{{detail.id}}">
+  <p class="output">Destination:{{detail.destination}}  <br></p>  
+  <p class="output">Pickup_point:{{detail.pickup_point}}</p>
+  <p class="output">Booked at: {{detail.time}}</p>
+  <input type="hidden" name="id" id="id" value="{{detail.booking_id}}">
+    
+  <p>Cancelled Booking</p>
+  </form>
+  {% endif %}
 
 {% endfor %}
 {% else %}
@@ -38,6 +65,13 @@
 
 
 
+<script>
 
+  window.setTimeout(function(){
+      window.location.reload();
+  }, 10000);
+  
+  
+  </script>
 
 {% endblock %}

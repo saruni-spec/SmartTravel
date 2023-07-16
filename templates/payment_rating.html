@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Rating</h2>
+{% endblock %}
+{% block content %}
+<p class="output"> Please rate your experience</p>
+<form  action="/payment/rating" method="post">
+  <input type="hidden" name="form-name" value="rating">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<div class="rating-box">
+
+
+  <label class="radio-container" id="radio-1">
+    <input type="radio" id="radio-1" name="option" value="1" />
+    <span class="checkmark" id="radio-1"></span>
+  </label>
+  <label class="radio-container" id="radio-2">
+    <input type="radio" id="radio-2" name="option" value="2" />
+    <span class="checkmark" id="radio-2"></span>
+  </label>
+  <label class="radio-container" id="radio-3">
+    <input type="radio" id="radio-3" name="option" value="3"  />
+    <span class="checkmark" id="radio-3"></span>
+  </label>
+  <label class="radio-container" id="radio-4">
+    <input type="radio" id="radio-4" name="option" value="4" />
+    <span class="checkmark" id="radio-4"></span>
+  </label>
+  <label class="radio-container" id="radio-5">
+    <input type="radio" id="radio-5" name="option" value="5" />
+    <span class="checkmark" id="radio-5"></span>
+  </label>
+        
+  
+  </div>
+  <button type="submit">Rate</button>
+</form>
+
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/rating.css')}}">
+
+<script>
+  // Retrieve the stored results from local storage
+  var storedResults = localStorage.getItem('results');
+
+  // Parse the JSON string back into an object
+  var results = JSON.parse(storedResults);
+
+  // Use the retrieved results object as needed
+  console.log(results); // or perform any other actions with the results
+  console.log(results.provider); // Accessing a specific property using dot notation
+  console.log(results['provider']);
+   // Accessing a specific property using bracket notation
+  var csrfToken = document.querySelector('meta[name=csrf-token]').content;
+
+  // Create a new FormData object
+  var formData = new FormData();
+  formData.append("provider", results.provider);
+  formData.append("number", results.account);
+  formData.append("provider1", results['provider']);
+  formData.append("number1", results['account']);
+  formData.append("csrf_token", csrfToken); // Include the CSRF token as a form field
+
+  // Send the location data to the Flask route using axios
+  axios({
+    method: 'post',
+    url: '/payment/rating',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+  .then(function (response) {
+    console.log("Results sent successfully.");
+  })
+  .catch(function (error) {
+    console.log("Error sending results:", error);
+  });
+
+</script>
+
+{% endblock %}

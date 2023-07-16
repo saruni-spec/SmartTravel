@@ -1,10 +1,27 @@
 .intaSendPayButton {
-    background: var(--link-background-color);
-    border-radius: 3px;
-    border: 1px solid var(--primary-border-color);
-    color:var(--link-color);
-    height: 34px;
+  margin-top: 5%;
+  display: inline-block;
+  padding: 10px 20px;
+  width: 50%;
+  background-color: var(--link-active-background-color);
+  color: var(--link-active-color);
+  text-decoration: none;
+  border: none;
+  border-radius: 4px;
   }
   .intaSendPayButton:hover {
     cursor: pointer;
   }
+
+.payment{
+  display: flex;
+  flex-direction: column;
+  width: 20vw;
+  height: 70vh;
+  
+  
+}
+.payment form{
+  width: 90%;
+  height: 70%;
+}

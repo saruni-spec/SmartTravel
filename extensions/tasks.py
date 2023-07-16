@@ -80,6 +80,35 @@ def start_tracking():
 
 
 
+@bp.route('/tracker/near', methods=['GET', 'POST'])
+@login_required
+def reach_near():
+    import time
+    tolerance = 0.005  # Adjust the tolerance level as needed
+    other_coordinates = session.get('other_coordinates')
+    print('it is ineveitable')
+    while True:
+        current_coordinates = session.get('tracking_coordinates')
+        if current_coordinates is not None:
+            current_lat = current_coordinates.get('latitude')
+            current_lon = current_coordinates.get('longitude')
+
+            lat_diff = abs(float(current_lat) - float(other_coordinates['latitude']))
+            lon_diff = abs(float(current_lon) - float(other_coordinates['longitude']))
+
+            if lat_diff <= tolerance and lon_diff <= tolerance:
+                session['reached_near'] = True
+                break
+            else:
+                session['reached_near'] = False
+                print('not arrived')
+        
+        time.sleep(60)
+
+@celery.task
+def is_near():
+    reach_near()
+    
 @bp.route('/tracker/destination', methods=['GET', 'POST'])
 @login_required
 def reach_destination():
@@ -98,7 +127,7 @@ def reach_destination():
 
             if lat_diff <= tolerance and lon_diff <= tolerance:
                 session['arrived'] = True
-                return "success"
+                break
             else:
                 session['arrived'] = False
                 print('not arrived')
@@ -108,8 +137,6 @@ def reach_destination():
 @celery.task
 def start_routing():
     reach_destination()
-    
-
 
 
 

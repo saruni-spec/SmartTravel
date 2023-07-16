@@ -4,7 +4,7 @@
 {% endblock %}
 {% block content %}
 
-<form class="date_filter" action="/admin/riders" method="post">
+<form class="date_filter" action="/admin/riders" method="post" id="date_options">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <div>
   <label for="date">Date</label>
@@ -55,8 +55,11 @@
 
 
 
-<form class="sidebar" method="post" action="/admin/riders">
+<form class="sidebar" method="post" action="/admin/riders" id="filter_options">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="text" name="entity" id="entity">
+  <button name="button_name" value="search">Search</button>
+
   <button name="button_name" value="all">All Details</button>
     <button name="button_name" value="user_name">User Name</button>
     <button name="button_name" value="email">Email</button>
@@ -91,7 +94,23 @@
     
   
 {% endfor %}
+{% elif query=='search' %}
 
+
+
+<form action="/admin/riders" method="post" class='data'>
+    <label for="">User Name</label>
+    <p class="output">{{user.user_name}}</p>
+    <label for="">Email</label>
+    <p class="output">{{user.email}}</p>
+    <label for="">Phone Number</label>
+    <p class="output">{{user.phone}}</p>
+    <label for="">Address</label>
+    <p class="output">{{user.address}}</p>
+    <label for="">Date registered</label>
+    <p class="output">{{user.date_registered}}</p>
+    
+    </form>
 {% elif query=='role' %}
 {% for user in users %}
 <form action="/admin/riders"method="post" class='data'>

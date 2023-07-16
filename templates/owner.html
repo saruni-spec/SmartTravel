@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}
+
+{% endblock %}
+{% block content %}
+
+
+<div class="index0" >
+    <div class="container">
+      <a href="{{url_for('registration.register_vehicle')}}" class="a">Register</a>
+      <div class="sign_up"> <p>Sign         up<br>Vehicle</p></div>
+    </div>
+    
+  </div>
+
+<div class="index2">
+    <div class="container">
+        <a href="{{url_for('hire.confirm_booking')}}" class="a">Hire Requests</a>
+        <div class="sign_up"> <p>Hire         <br>Requests</p></div>
+</div>
+</div>
+
+<div class="index3">
+    <div class="container">
+        <a href="{{ url_for('report.vehicle_bookings') }}" class="a">Bookings report</a>
+        <div class="sign_up"> <p>Bookings         <br>Report</p></div>
+</div>
+</div>
+
+<div class="index3">
+    <div class="container">        
+        <a href="{{url_for('report.vehicle_transactions')}}" class="a">Transactions Report</a>
+        <div class="sign_up"> <p>Transactions         <br>Report</p></div>
+</div>
+</div>
+
+
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/home.css')}}">
+{% endblock %}
