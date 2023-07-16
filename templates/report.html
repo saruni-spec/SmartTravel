@@ -8,16 +8,16 @@
 
 {% if current_user.check_if_driver() %}
 
-<a href="{{url_for('report.vehicle_transactions')}}">Transaction History</a>
+<a class="a-free" href="{{url_for('report.vehicle_transactions')}}">Transaction History</a>
 
-<a href="{{url_for('report.vehicle_bookings')}}">Booking history</a>
+<a class="a-free" href="{{url_for('report.vehicle_bookings')}}">Booking history</a>
 
 {% else %}
-<a href="{{url_for('report.booking_history')}}">Booking history</a>
+<a class="a-free" href="{{url_for('report.booking_history')}}">Booking history</a>
 
 
 
-<a href="{{url_for('report.transaction_history')}}">Transaction History</a>
+<a class="a-free" href="{{url_for('report.transaction_history')}}">Transaction History</a>
 {% endif %}
 
 {% endblock %}

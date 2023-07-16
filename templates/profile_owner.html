@@ -5,6 +5,8 @@
 {% block content %}
 
     <form action="">
+        <a href="{{url_for('profile.edit_profile')}}" class="a-form"> edit profile</a>
+
         <label for="username">Username</label>
         <p class="output">{{user_name}}</p>
         <label for="">Names</label>
@@ -19,7 +21,7 @@
         <p class="output">{{card}}</p>
         <label for="vehicle">Vehicle</label>
     <p class="output">{{vehicle_no}}</p>
-        <a href="{{url_for('profile.edit_profile')}}" class="a-form"> edit profile</a>
+        
     
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     

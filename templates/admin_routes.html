@@ -6,6 +6,25 @@
 {% endblock %}
 {% block content %}
 
+<form class="date_filter" action="/admin/routes" method="post" id="date_options">
+  {% if error %}
+<p class="output">{{error}}</p>
+{% endif %} 
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label for="">Route No</label>
+  <input type="number" name="route_no" id="">
+  <label for="">Route Distance</label>
+  <input type="text" name="distance" id="">
+  <button type="submit" name="button_name" value="register">Add Route</button>
+  
+  <label for="">Stage name</label>
+  <input type="text" name="stage_name" id="">
+
+  
+    <button type="submit" name="button_name" value="add_stage">Add Stage</button>
+</form>
+
+
 <form class="sidebar" method="post" action="/admin/routes" id="filter_options">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <input type="text" name="entity" id="entity">
@@ -50,11 +69,11 @@
 
 <form action="/admin/routes" method="post" class='data'>
     <label for="">Route No</label>
-    <p class="output">{{entry.id}}</p>
+    <p class="output">{{data.id}}</p>
     <label for="">Route Distance</label>
-    <p class="output">{{entry.route_distane}}</p>
+    <p class="output">{{data.route_distane}}</p>
     <label for="">Stages</label>
-    {% for stage in entry.stages %}
+    {% for stage in data.stages %}
     <p class="output">{{stage.stage_name}},{{stage.latitude}}:{{stage.longitude}}</p>
     {% endfor %}
     

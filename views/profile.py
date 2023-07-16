@@ -109,6 +109,7 @@ def profile_driver():
     
     session['my_vehicle']=vehicle.no_plate
     stages=Stages.query.all()
+    fare=vehicle.fare
     
     if request.method == 'POST':
         token = request.form.get('csrf_token')
@@ -139,13 +140,13 @@ def profile_driver():
             print(destination,'destination in proifle')
             session['docked']=True
             if error:
-                return render_template('profile_driver.html',error=error,vehicle_no=vehicle_no,docked=docked,first_name=first_name,other_name=other_name,user_name=user_name,email=email,phone_number=phone_number,address=address)
+                return render_template('profile_driver.html',error=error,fare=fare,vehicle_no=vehicle_no,docked=docked,first_name=first_name,other_name=other_name,user_name=user_name,email=email,phone_number=phone_number,address=address)
         else:
             session['is_docked'] = False
             session['docked']=False
             
             
-    return render_template('profile_driver.html',vehicle_no=vehicle_no,docked=docked,first_name=first_name,other_name=other_name,user_name=user_name,email=email,phone_number=phone_number,address=address)
+    return render_template('profile_driver.html',fare=fare,vehicle_no=vehicle_no,docked=docked,first_name=first_name,other_name=other_name,user_name=user_name,email=email,phone_number=phone_number,address=address)
 
 
 @bp.route('/profile/driver/select_destination',methods=['GET','POST'])
@@ -175,9 +176,11 @@ def edit_profile():
         
         form_name=request.form.get('form-name')
         if form_name=='delete':
+            print ('delete')
             return redirect(url_for('profile.delete_profile'))
 
         else:
+            print('not delete')
             user_name=request.form.get('user_name')
             if user_name !='':
                 print('user_name here')
@@ -247,7 +250,9 @@ def vehicle():
     model=vehicle.build_type
     service_type=vehicle.vehicle_type
     for_hire=vehicle.for_hire
-    return render_template('profile_vehicle.html',color=color,no_plate=no_plate,capacity=capacity,model=model,service_type=service_type,for_hire=for_hire)
+    fare=vehicle.fare
+    hire_cost=vehicle.hiring_cost
+    return render_template('profile_vehicle.html',hire_cost=hire_cost,fare=fare,color=color,no_plate=no_plate,capacity=capacity,model=model,service_type=service_type,for_hire=for_hire)
 
 
 @bp.route('/profile/vehicle/edit',methods=['GET','POST'])
@@ -258,30 +263,37 @@ def vehicle_edit():
     color=vehicle.color
     capacity=vehicle.capacity
     service_type=vehicle.vehicle_type
+    fare=vehicle.fare
+    hire_cost=vehicle.hiring_cost
     if request.method == 'POST':
         color=request.form.get('color')
         capacity=request.form.get('capacity')
         service_type=request.form.get('service_type')
-       
+        fare=request.form.get('fare')
+        hire_cost=request.form.get('hire_cost')
         if color !='':
             vehicle.change_color(color)
         if capacity !='':
             vehicle.change_capacity(capacity)
         if service_type !='':
             vehicle.change_type(service_type)
+        if fare !='':
+            vehicle.set_fare(fare)
+        if hire_cost !='':
+            vehicle.set_hiring_cost(hire_cost)
         
         
         
         return redirect(url_for('profile.vehicle'))
-    return render_template('profile_vehicle_edit.html',color=color,capacity=capacity,service_type=service_type)
+    return render_template('profile_vehicle_edit.html',fare=fare,hire_cost=hire_cost,color=color,capacity=capacity,service_type=service_type)
 
-
+from flask_login import logout_user
 @bp.route('/profile/delete',methods=['GET','POST'])
 @login_required
 def delete_profile():
     user_name=current_user.user_name
     user=User.query.filter_by(user_name=user_name).first()
-    if user.check_if_owner and not user.check_if_driver():
+    if user.check_if_owner() and not user.check_if_driver():
         status='level4'
         message='As an owner. Deleting this profile will delete your vehicle,suspend its driver and change your status to rider'
     elif user.check_if_driver() and user.check_if_owner():
@@ -300,7 +312,7 @@ def delete_profile():
             
 
             user.delete()
-            return redirect(url_for('index.index'))
+            logout_user()
         elif status=='level2':
             driver=Driver.query.filter_by(user_name=user_name).first()
             

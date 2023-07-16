@@ -168,3 +168,11 @@ margin-left: 2%;
   z-index: 10;
   margin-top: 0.3%;
   }
+  .earnings{
+    position: fixed;
+  margin-left: 45%;
+  width: 15%;
+  z-index: 10;
+  margin-top: 0.3%;
+    
+  }

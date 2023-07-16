@@ -35,3 +35,11 @@ def generate_verification_code():
     length = 6
     code = ''.join(random.choices(chars, k=length))
     return code
+
+
+def is_float(string):
+    try:
+        float(string)
+        return True
+    except ValueError:
+        return False

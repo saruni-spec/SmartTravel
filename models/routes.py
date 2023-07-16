@@ -35,6 +35,16 @@ class Route(db.Model):
         self.stages = stages
         db.session.commit()
 
+    def add_stage(self,stage):
+        self.stages.append(stage)
+        db.session.commit()
+        
+    def add_stages(self, stages_list):
+        for stage in stages_list:
+            self.add_stage(stage)
+            db.session.commit()
+
+
 from .stages import Stages
 
 

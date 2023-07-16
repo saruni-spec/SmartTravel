@@ -44,7 +44,9 @@ a {
   text-decoration: none; 
 }
 .output{
-  width: 70%;
+  width: fit-content;
+  padding: 3px;
+  margin: 3px;
   height: auto;
    border: 2px solid var(--primary-border-color);
    border-radius: 5px;

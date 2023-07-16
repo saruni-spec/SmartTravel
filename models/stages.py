@@ -14,10 +14,10 @@ class Stages(db.Model):
     
 
 
-    def __init__(self,stage_no):
-        self.stage_no=stage_no
+    def __init__(self,stage_name):
+        self.stage_name=stage_name
 
-    def save(self,latitude,longitude,stage_name,stage_description,route_no):
+    def save(self,latitude,longitude,stage_name,stage_description):
         self.latitude=latitude
         self.longitude=longitude
         self.stage_name=stage_name

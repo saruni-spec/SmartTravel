@@ -4,9 +4,11 @@
 {% endblock %}
 {% block content %}
 <a href="{{url_for('profile.profile')}}">Profile</a>
+
    <p class="alert">{{message}}</p>
 
    <form action="/profile/delete" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <button type="submit">Delete </button>
    </form>
 

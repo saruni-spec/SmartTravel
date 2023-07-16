@@ -3,7 +3,8 @@
 <h2>Profile</h2>
 {% endblock %}
 {% block content %}
-<form action="/profile/edit">
+<form class="delete-button" action="/profile/edit" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="hidden" name="form-name" value="delete">
     <button type="submit">Delete Profile</button>
 </form>

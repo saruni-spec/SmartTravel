@@ -4,6 +4,21 @@
 {% endblock %}
 {% block content %}
 
+<form class="date_filter" action="/admin/stages" method="post" id="date_options">
+ 
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label for="">Latitue</label>
+  <input type="text" name="latitude" id="">
+  <label for="">Longitude</label>
+  <input type="text" name="longitude" id="">
+  <label for="">Stage name</label>
+  <input type="text" name="stage_name" id="">
+  <label for="">Stage Description</label>
+  <input type="text" name="stage_description" id="">
+  
+    <button type="submit" name="button_name" value="register">Add</button>
+</form>
+
 
 
 <form class="sidebar" method="post" action="/admin/stages" id="filter_options">

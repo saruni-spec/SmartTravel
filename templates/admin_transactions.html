@@ -3,6 +3,11 @@
 <h2>Transaction Details</h2>
 {% endblock %}
 {% block content %}
+<div class="earnings">
+<p class="output">Total earning :{{total}}</p>
+<p class="output">Pending earning : {{pending}}</p>
+</div>
+
 <form class="date_filter" action="/admin/transactions" method="post" id="date_options">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <div>

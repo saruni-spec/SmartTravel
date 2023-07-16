@@ -845,12 +845,21 @@ def transactions():
     data=Transaction.query.all()
     query='all'
     filtered_data=[]
+    total=0
+    pending=0
+    for transaction in data:
+        if transaction.status=='completed':
+            total+=transaction.amount
+        else:
+            pending+=transaction.amount
     if request.method=='POST':
         button=request.form.get('button_name')
         if button=='date_filter':
             query='date_filter'
             date=request.form.get('date')
             dt1 = datetime.strptime(date, "%Y-%m-%d")
+            total=0
+            pending=0
             for transaction in data:
                 if transaction.paid_at is None:
                     transaction.paid_at=datetime.now().strftime("%Y-%m-%d")
@@ -861,10 +870,16 @@ def transactions():
                 print(dt1,dt2,'date')
                 if dt1==dt2:
                     filtered_data.append(transaction)
+                if transaction.status=='completed':
+                    total+=transaction.amount
+                else:
+                    pending+=transaction.amount
         elif button=='month_filter':
             query='month_filter'
             month_name=request.form.get('month')
             month_no=month(month_name)
+            total=0
+            pending=0
             for transaction in data:
                 if transaction.paid_at is None:
                     transaction.paid_at=datetime.now().strftime("%Y-%m-%d")
@@ -877,9 +892,15 @@ def transactions():
                 if int(month_reg)==int(month_no):
                     
                     filtered_data.append(transaction)
+                if transaction.status=='completed':
+                    total+=transaction.amount
+                else:
+                    pending+=transaction.amount
         elif button=='year_filter':
             query='year_filter'
             year=request.form.get('year')
+            total=0
+            pending=0
             for transaction in data:
                 if transaction.paid_at is None:
                     transaction.paid_at=datetime.now().strftime("%Y-%m-%d")
@@ -890,11 +911,17 @@ def transactions():
                 print(year_reg,year,'year')
                 if int(year_reg)==int(year):
                     filtered_data.append(transaction)
+                if transaction.status=='completed':
+                    total+=transaction.amount
+                else:
+                    pending+=transaction.amount
         elif button=='week_filter':
             query='week_filter'
             today=datetime.now().strftime("%Y-%m-%d")
             dt_today = datetime.strptime(today, "%Y-%m-%d")
             dt_week_ago = dt_today - timedelta(days=7)
+            total=0
+            pending=0
             for transaction in data:
                 if transaction.paid_at is None:
                     transaction.paid_at=datetime.now().strftime("%Y-%m-%d")
@@ -904,6 +931,10 @@ def transactions():
 
                 if dt_date >= dt_week_ago and dt_date <= dt_today:
                     filtered_data.append(transaction)
+                if transaction.status=='completed':
+                    total+=transaction.amount
+                else:
+                    pending+=transaction.amount
         elif button=='search':
             query=='search'
             entity=request.form.get('entity')
@@ -982,17 +1013,22 @@ def transactions():
             query='all'
             filtered_data=data
 
-        return render_template('admin_transactions.html',data=filtered_data,query=query)
+        return render_template('admin_transactions.html',data=filtered_data,query=query,total=total,pending=pending)
 
-    return render_template('admin_transactions.html',data=data)
+    return render_template('admin_transactions.html',data=data,total=total,pending=pending)
 
 @bp.route('/admin/routes',methods=['GET','POST'])
 @login_required
 @is_admin
+
 def routes():
+    from logic.validation import is_float
+
     data=Route.query.all()
+    
     query='all'
     filtered_data=[]
+    error=None
     if request.method=='POST':
         button=request.form.get('button_name')
         if button=='id':
@@ -1011,10 +1047,36 @@ def routes():
                
                 entry={'id':route.id,'stages':route.stages}
                 filtered_data.append(entry)
+        elif button=='register':
+            print('register')
+
+            id=request.form.get('route_no')
+            print(id)
+            route_distance=request.form.get('distance')
+            if not is_float(route_distance):
+                error='enter valid distance'
+            else:
+                route=Route.query.filter_by(id=id).first()
+                if route is None:
+                    route=Route(id)
+                    route.save()
+                    route.distane(route_distance)
+                    error='route added'
+        elif button=='add_stage':
+            stage=request.form.get('stage_name')
+            id=request.form.get('route_no')
+            route=Route.query.filter_by(id=id).first()
+            for stage in route.stages:
+                if stage.stage_name_==stage:
+                    error='stage already exists'
+                else:
+                    route.add_stage(stage)
+                    error='stage added'
+            
         else:
             query='all'
             filtered_data=data
-        return render_template('admin_routes.html',data=filtered_data,query=query)
+        return render_template('admin_routes.html',data=filtered_data,query=query,error=error)
 
     return render_template('admin_routes.html',data=data)
 
@@ -1024,9 +1086,11 @@ def routes():
 @login_required
 @is_admin
 def stages():
+
     data=Stages.query.all()
     query='all'
     filtered_data=[]
+    error=None
     if request.method=='POST':
         button=request.form.get('button_name')
         if button=='stage_name':
@@ -1052,11 +1116,29 @@ def stages():
             entity=request.form.get('entity')
             user=Stages.query.filter_by(stage_name=entity).first()
             filtered_data.append(user)
+
+        elif button=='register':
+            stage_name=request.form.get('stage_name')
+            latitude=request.form.get('latitude')
+            longitude=request.form.get('longitude')
+            stage_description=request.form.get('stage_description')
+           
+            stage1=Stages.query.filter_by(latitude=latitude).first()
+            if stage1 is not None:
+                if stage1.longitude==longitude:
+                    error='stage already exists'
+                else:
+                
+
+                
+                
+                    stage=Stages(stage_name)
+                    stage.save(latitude,longitude,stage_name,stage_description)
         else:
             query='all'
             print(query)
             filtered_data=data
         
-        return render_template('admin_stages.html',data=filtered_data,query=query)
+        return render_template('admin_stages.html',data=filtered_data,query=query,error=error)
 
     return render_template('admin_stages.html',data=data)

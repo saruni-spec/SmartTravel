@@ -10,7 +10,7 @@
 
 <form action="/profile/rider" method="get">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
+    <a href="{{url_for('profile.edit_profile')}}" class="a-form"> edit profile</a>
     <label for="username">Username</label>
     <p class="output">{{user_name}}</p>
     <label for="">Names</label>
@@ -23,7 +23,7 @@
     <p class="output">{{address}}</p>
     <label for="">Card</label>
     <p class="output">{{card}}</p>
-    <a href="{{url_for('profile.edit_profile')}}" class="a-form"> edit profile</a>
+    
 
 </form>
 

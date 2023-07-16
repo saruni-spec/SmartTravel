@@ -66,12 +66,14 @@ def closest_stage(user_location):
         longitude=float(user_location['longitude'])
         print(latitude,longitude,'in closest stage')
         closest_stage=(find_closest_bus_stop(latitude, longitude, stage_clusters))
-    
-        destination_lat = float(closest_stage['latitude'])
-        destination_lng = float(closest_stage['longitude'])
-        distance = get_distance(latitude, longitude, destination_lat, destination_lng)
+        if closest_stage is None:
+                return None
+        else:        
+                destination_lat = float(closest_stage['latitude'])
+                destination_lng = float(closest_stage['longitude'])
+                distance = get_distance(latitude, longitude, destination_lat, destination_lng)
 
-        return[closest_stage,distance]
+                return[closest_stage,distance]
 
 def closest_taxi(user_location,taxi_data):
         taxi_clusters=group_coordinates(taxi_data, 5)
@@ -124,12 +126,9 @@ def select_destination():
         bus_message=session.get('bus_message',None)
         
         if request.method=='POST':
-                token = request.form.get('csrf_token')
-                try:
-                        validate_csrf(token)
-                except ValidationError :
-                        error="Invalid CSRF token"
-                        return error,404
+                if user_location is None:
+                        error='Cannot find user_location'
+                        return render_template('booking_select_destination.html',user_location=user_location,user_location_name=user_location_name,error=error)
                 form_name = request.form.get('form-name')
                 print(form_name,'form name')
                 if form_name == 'destination-form':
@@ -292,7 +291,11 @@ def select_destination():
                         
                         
                         nearest_stage=closest_stage(user_location)
-                        print(nearest_stage[0]['stage_name'],'nearest stage to user')
+                        if nearest_stage is None or len(nearest_stage)==0:
+                                print('no stage nearby')
+                        else:
+                                print(nearest_stage[0]['stage_name'])
+                        
                         if user_location is None or user_location=='':
                                 error='Please select your location'
                                 return render_template('booking_select_destination.html',error=error)
@@ -302,6 +305,8 @@ def select_destination():
                                 my_taxi=None
                                 taxi_message='No taxi nearby'
                         else:
+                                coordinates=session.get('tracking_coordinates')
+                                session['location_to_destination']=get_distance(coordinates['latitude'],coordinates['longitude'],destination['latitude'],destination['longitude'])
                                 print('we have a nearest taxi')
                                 taxi_location_name=reverse_geocode(nearest_taxi[0]['latitude'], nearest_taxi[0]['longitude'])
                                 session['taxi_location']={'latitude':nearest_taxi[0]['latitude'],'longitude':nearest_taxi[0]['longitude']}
@@ -316,15 +321,23 @@ def select_destination():
                                 print (session.get('taxi_travel_time'),'taxi travel time ')
                         
                         
-                        
-                        user_time=get_time(session.get('location_name'), nearest_stage[0]['stage_name'],"walking", api_key)
-                        print(f"{user_time} Time needed for user to walk to stage {nearest_stage[0]['stage_name']}")
-                        bus_time=get_time(nearest_stage[0]['stage_name'], destination_name,"driving", api_key)
-                        print(f"{bus_time} Total time for user to get to destination on bus")
-                        session['travel_time']=bus_time
+                        if nearest_stage is None:
+                                user_time=None
+                                bus_time=None
+                                
+                        else:
+                                user_time=get_time(session.get('location_name'), nearest_stage[0]['stage_name'],"walking", api_key)
+                                print(f"{user_time} Time needed for user to walk to stage {nearest_stage[0]['stage_name']}")
+                                bus_time=get_time(nearest_stage[0]['stage_name'], destination_name,"driving", api_key)
+                                print(f"{bus_time} Total time for user to get to destination on bus")
+                                session['travel_time']=bus_time
 
                         routed_bus_data=find_route(bus_data)
-                        viable_buses=allow_passenger(routed_bus_data,destination_name,nearest_stage[0]['stage_name'])
+                        if nearest_stage is None:
+                                viable_buses=None
+                        else:
+                                session['stage_to_destination']=get_distance(nearest_stage[0]['latitude'], nearest_stage[0]['longitude'],destination['latitude'],destination['longitude'])
+                                viable_buses=allow_passenger(routed_bus_data,destination_name,nearest_stage[0]['stage_name'])
 
                         a_bus=bus(viable_buses)
                         if a_bus is None:
@@ -336,15 +349,16 @@ def select_destination():
                                 #bus_location_name=reverse_geocode(a_bus[0]['latitude'], a_bus[0]['longitude'])
                                 #bus_arrival_time=get_time(nearest_stage[0]['stage_name'], bus_location_name,"driving", api_key)
                                 #my_bus=a_bus[0]['vehicle']
-                                
+                                session['closest_stage']=nearest_stage[0]['stage_name']
                                 bus_message='Click here to select a bus'
                                 session['user_to_stage_time']=user_time
+                                session['bus_location']={'latitude':nearest_stage[0]['latitude'],'longitude':nearest_stage[0]['longitude']}
                                 session['bus_travel_time']=get_time(nearest_stage[0]['stage_name'],destination_name,'driving',api_key)
                         print(a_bus,'a bus in post')
-                        session['bus_location']={'latitude':nearest_stage[0]['latitude'],'longitude':nearest_stage[0]['longitude']}
+                        
                         session['closest_bus']=a_bus
                         session['closest_taxi']=my_taxi
-                        session['closest_stage']=nearest_stage[0]['stage_name']
+                        
                         session['taxi_pickup_point']=user_location_name
                         session['taxi_message']=taxi_message
                         session['bus_message']=bus_message
@@ -353,26 +367,31 @@ def select_destination():
                         print(nearest_hybrid_to_user,'nearest hybrid to user')
                         
                         if nearest_hybrid_to_user is None:
-                                nearest_hybrid_to_stage=find_closest_hybrid_to_stage(nearest_stage[0]['latitude'],nearest_stage[0]['longitude'],hybrid_data)
-                                my_hybrid=nearest_hybrid_to_stage
-                                print(nearest_hybrid_to_stage,'nearest hybrid to stage')
-                                if my_hybrid is None or len(my_hybrid)==0:
-                                        print('no hybrid nearby')
+                                if nearest_stage is None:
+                                        nearest_hybrid_to_stage=None
+                                        my_hybrid=None
                                         hybrid_message='No hybrid nearby'
-                                        session['closest_hybrid']=None
-                                        
                                 else:
-                                        
-                                        hybrid_location_name=reverse_geocode(my_hybrid[0]['latitude'], my_hybrid[0]['longitude'])
-                                        session['hybrid_location_name']=hybrid_location_name
-                                        hybrid_arrival_time=get_time(nearest_stage[0]['stage_name'], hybrid_location_name,"driving", api_key)
-                                        hybrid_time=get_time(nearest_stage[0]['stage_name'], destination_name,"driving", api_key)
-                                        session['hybrid_pickup_point']=nearest_stage[0]['stage_name']
-                                        my_hybrid_now=my_hybrid[0]['vehicle']
-                                        hybrid_message='Click here to book your ride'
-                                        session['hybrid_arrival_time']=hybrid_arrival_time
-                                        session['hybrid_travel_time']=hybrid_time
-                                        session['closest_hybrid']=my_hybrid_now
+                                        nearest_hybrid_to_stage=find_closest_hybrid_to_stage(nearest_stage[0]['latitude'],nearest_stage[0]['longitude'],hybrid_data)
+                                        my_hybrid=nearest_hybrid_to_stage
+                                        print(nearest_hybrid_to_stage,'nearest hybrid to stage')
+                                        if my_hybrid is None or len(my_hybrid)==0:
+                                                print('no hybrid nearby')
+                                                hybrid_message='No hybrid nearby'
+                                                session['closest_hybrid']=None
+                                                
+                                        else:
+                                                
+                                                hybrid_location_name=reverse_geocode(my_hybrid[0]['latitude'], my_hybrid[0]['longitude'])
+                                                session['hybrid_location_name']=hybrid_location_name
+                                                hybrid_arrival_time=get_time(nearest_stage[0]['stage_name'], hybrid_location_name,"driving", api_key)
+                                                hybrid_time=get_time(nearest_stage[0]['stage_name'], destination_name,"driving", api_key)
+                                                session['hybrid_pickup_point']=nearest_stage[0]['stage_name']
+                                                my_hybrid_now=my_hybrid[0]['vehicle']
+                                                hybrid_message='Click here to book your ride'
+                                                session['hybrid_arrival_time']=hybrid_arrival_time
+                                                session['hybrid_travel_time']=hybrid_time
+                                                session['closest_hybrid']=my_hybrid_now
                         else:
         
                                 my_hybrid=nearest_hybrid_to_user
@@ -389,8 +408,12 @@ def select_destination():
                                 
 
                                 session['closest_hybrid']=my_hybrid_now
-                        session['hybrid_location']={'latitude':my_hybrid[0]['latitude'],'longitude': my_hybrid[0]['longitude']}
-                        session['hybrid_message']=hybrid_message
+                        if my_hybrid is None:
+                                session['closest_hybrid']=None
+                        else:
+                                session['hybrid_location']={'latitude':my_hybrid[0]['latitude'],'longitude': my_hybrid[0]['longitude']}
+                                session['hybrid_message']=hybrid_message
+                        
                         return render_template('booking_select_destination.html',closest_bus=bus_message,closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,closest_hybrid=hybrid_message,destination=destination_name)
                 elif form_name == 'taxi-form':
                         if session.get('closest_taxi') is None:
@@ -449,7 +472,9 @@ def select_taxi():
         
         print(vehicle_no,'vehicle no in select vehicle')
         
-        fare=10
+        vehicle=Vehicle.query.filter_by(no_plate=vehicle_no).first()
+        fare=vehicle.fare*float(session.get('location_to_destination'))
+        session['fare']=fare
         
         
         if request.method=='POST':
@@ -502,7 +527,7 @@ def bus_options():
         time=datetime.now().strftime("%H:%M:%S")
         destination=session.get('destination')
         
-        fare=10
+        
         print(pickup_point,'pickup point in bus options')
         print(buses,'buses in bus options')
         if request.method=='POST':
@@ -745,12 +770,9 @@ def book_taxi():
        
         taxi_message=session.get('taxi_message',None)
         if request.method=='POST':
-                token = request.form.get('csrf_token')
-                try:
-                        validate_csrf(token)
-                except ValidationError :
-                        error="Invalid CSRF token"
-                        return error,404
+                if user_location is None:
+                        error='Cannot find user_location'
+                        return render_template('booking_select_destination.html',user_location=user_location,user_location_name=user_location_name,error=error)
                 form_name = request.form.get('form-name')
                 print(form_name,'form name')
                 if form_name == 'destination-form':
@@ -778,6 +800,8 @@ def book_taxi():
                                 my_taxi=None
                                 taxi_message='No taxi nearby'
                         else:
+                                coordinates=session.get('tracking_coordinates')
+                                session['location_to_destination']=get_distance(coordinates['latitude'],coordinates['longitude'],destination['latitude'],destination['longitude'])
                                 print('we have a nearest taxi')
                                 session['taxi_location']={'latitude':nearest_taxi[0]['latitude'],'longitude':nearest_taxi[0]['longitude']}
                                 taxi_location_name=reverse_geocode(nearest_taxi[0]['latitude'], nearest_taxi[0]['longitude'])
@@ -816,12 +840,9 @@ def book_bus():
         user_location_name=session.get('location_name',None)
         bus_message=session.get('bus_message',None)
         if request.method=='POST':
-                token = request.form.get('csrf_token')
-                try:
-                        validate_csrf(token)
-                except ValidationError :
-                        error="Invalid CSRF token"
-                        return error,404
+                if user_location is None:
+                        error='Cannot find user_location'
+                        return render_template('booking_select_destination.html',user_location=user_location,user_location_name=user_location_name,error=error)
                 form_name = request.form.get('form-name')
                 print(form_name,'form name')
                 if form_name == 'destination-form':
@@ -979,7 +1000,11 @@ def book_bus():
                         
                         
                         nearest_stage=closest_stage(user_location)
-                        print(nearest_stage[0]['stage_name'],'nearest stage to user')
+                        
+                        if nearest_stage is None:
+                                bus_message='No bus nearby'
+                                return render_template('book_bus.html',closest_bus=bus_message,user_location=user_location,user_location_name=user_location_name)
+                        print(nearest_stage[0]['stage_name'],'nearest stage to user')        
                         if user_location is None or user_location=='':
                                 error='Please select your location'
                                 return render_template('book_bus.html',error=error)
@@ -1003,7 +1028,7 @@ def book_bus():
                                 #bus_location_name=reverse_geocode(a_bus[0]['latitude'], a_bus[0]['longitude'])
                                 #bus_arrival_time=get_time(nearest_stage[0]['stage_name'], bus_location_name,"driving", api_key)
                                 #my_bus=a_bus[0]['vehicle']
-                                
+                                session['stage_to_destination']=get_distance(nearest_stage[0]['latitude'], nearest_stage[0]['longitude'],destination['latitude'],destination['longitude'])
                                 bus_message='Click here to select a bus'
                                 session['user_to_stage_time']=user_time
                                 session['bus_travel_time']=get_time(nearest_stage[0]['stage_name'],destination_name,'driving',api_key)
@@ -1035,12 +1060,9 @@ def book_hybrid():
         hybrid_message=session.get('hybrid_message',None)
         
         if request.method=='POST':
-                token = request.form.get('csrf_token')
-                try:
-                        validate_csrf(token)
-                except ValidationError :
-                        error="Invalid CSRF token"
-                        return error,404
+                if user_location is None:
+                        error='Cannot find user_location'
+                        return render_template('booking_select_destination.html',user_location=user_location,user_location_name=user_location_name,error=error)
                 form_name = request.form.get('form-name')
                 print(form_name,'form name')
                 if form_name == 'destination-form':
@@ -1061,6 +1083,9 @@ def book_hybrid():
                         
                         
                         nearest_stage=closest_stage(user_location)
+                        if nearest_stage is None:
+                                hybrid_message='No hybrid nearby'
+                                return render_template('book_hybrid.html',user_location=user_location,user_location_name=user_location_name,hybrid_message=hybrid_message)
                         print(nearest_stage[0]['stage_name'],'nearest stage to user')
                         if user_location is None or user_location=='':
                                 error='Please select your location'
@@ -1078,6 +1103,7 @@ def book_hybrid():
                                         hybrid_message='No hybrid nearby'
                                         return render_template('book_hybrid.html',user_location=user_location,user_location_name=user_location_name,closest_hybrid=closest_hybrid)
                                 else:
+                                        session['location_to_destination']=get_distance(nearest_stage[0]['latitude'], nearest_stage[0]['longitude'],destination['latitude'],destination['longitude'])
                                         my_hybrid=nearest_hybrid_to_user
                                         hybrid_location_name=reverse_geocode(my_hybrid[0]['latitude'], my_hybrid[0]['longitude'])
                                         session['hybrid_location_name']=hybrid_location_name
@@ -1088,6 +1114,8 @@ def book_hybrid():
                                         session['hybrid_arrival_time']=hybrid_arrival_time
                                         hybrid_message='Click here to share your ride'
                         else:
+                                coordinates=session.get('tracking_coordinates')
+                                session['location_to_destination']=get_distance(coordinates['latitude'],coordinates['longitude'],destination['latitude'],destination['longitude'])
                                 my_hybrid=nearest_hybrid_to_user
                                 hybrid_location_name=reverse_geocode(my_hybrid[0]['latitude'], my_hybrid[0]['longitude'])
                                 session['hybrid_location_name']=hybrid_location_name

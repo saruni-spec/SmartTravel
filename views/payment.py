@@ -23,7 +23,7 @@ def payment():
 
     vehicle_id=session.get('booking')['vehicle']
     booking_id=session.get('booking')['booking_id']
-    amount=10
+    amount=session.get('fare',None)
     transaction=Transaction(user_name,vehicle_id,booking_id,amount)
     transaction.save()
     session['transaction']=transaction.id

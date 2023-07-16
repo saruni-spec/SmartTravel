@@ -105,46 +105,43 @@
         </script>
         <script>
 
-function switchView(){
-  var form_data=document.getElementsByClassName('data');
-  console.log('here')
+function switchView() {
+  var form_data = document.getElementsByClassName('data');
+  console.log('here');
 
   for (var i = 0; i < form_data.length; i++) {
-    if (form_data[i].style.flexDirection=='column'){
-  form_data[i].style.flexDirection='row';
-  form_data[i].style.width='90vw';
-  form_data[i].style.padding='0.5%';
-  form_data[i].style.position='relative';
-  form_data[i].style.marginLeft='1%';
-  form_data[i].style.left='2%';
-  form_data[i].style.marginTop='0.5%';
-  form_data[i].style.margin='0.5%';
-  form_data[i].style.zIndex='2';
-  form_data[i].style.fontSize='0.6rem';
-  
+    if (form_data[i].style.flexDirection == 'column') {
+      form_data[i].style.flexDirection = 'row';
+      form_data[i].style.width = '90vw';
+      form_data[i].style.padding = '0.5%';
+      form_data[i].style.position = 'relative';
+      form_data[i].style.marginLeft = '1%';
+      form_data[i].style.left = '2%';
+      form_data[i].style.margin = '0.5%';
+      form_data[i].style.zIndex = '2';
+      form_data[i].style.fontSize = '0.6rem';
 
-
- } 
- else{
-  form_data[i].style.flexDirection='column';
-  form_data[i].style.position= 'relative';
-  form_data[i].style.display= 'flex';
-  form_data[i].style.flexDirection= 'column'; 
-  
-
-  
-  form_data[i].style.left= '35%';
-  form_data[i].style.width='40vh';
-  form_data[i].style.padding= '5%';
-  form_data[i].style.marginTop= '5%';
-  
-  
- }
+      if (i === 0) {
+        form_data[i].style.marginTop = '5%'; // Set marginTop to 10% for the first element (index 0)
+      } else {
+        form_data[i].style.marginTop = '0.5%';
+      }
+    } else {
+      form_data[i].style.flexDirection = 'column';
+      form_data[i].style.position = 'relative';
+      form_data[i].style.display = 'flex';
+      form_data[i].style.flexDirection = 'column';
+      form_data[i].style.left = '35%';
+      form_data[i].style.width = '50vh';
+      form_data[i].style.padding = '5%';
+      form_data[i].style.marginTop = '5%';
+      form_data[i].style.fontSize = '0.9rem';
+    }
+  }
 }
 
- 
-}
-console.log('failed')
+console.log('failed');
+
 
         </script>
 

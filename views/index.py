@@ -1,6 +1,6 @@
 from flask import render_template,Blueprint,redirect,session
 from flask import url_for
-from flask_login import current_user,login_required
+from flask_login import current_user,login_required,logout_user
 from models.user import User
 from models.driver import Driver
 
@@ -13,24 +13,27 @@ bp=Blueprint('index',__name__)
 
 @bp.route('/')
 def index():  
-   
+    
     if current_user.is_authenticated:
         user=User.query.filter_by(user_name=current_user.user_name).first()
-            
-            
-        if user.is_admin():
-            
-            return redirect(url_for('admin.admin'))
+        if user is None:
+            logout_user()
         else:
-            if user.driver_details and user.owner_details:
-                return redirect(url_for('index.driver'))
-            elif user.driver_details and not user.owner_details:
-                return redirect(url_for('index.driver'))
-            elif not user.driver_details and user.owner_details:
-                return redirect(url_for('index.owner'))
+            
+            
+            if user.is_admin():
+                
+                return redirect(url_for('admin.admin'))
             else:
+                if user.driver_details and user.owner_details:
+                    return redirect(url_for('index.driver'))
+                elif user.driver_details and not user.owner_details:
+                    return redirect(url_for('index.driver'))
+                elif not user.driver_details and user.owner_details:
+                    return redirect(url_for('index.owner'))
+                else:
 
-                return redirect(url_for('index.home'))  
+                    return redirect(url_for('index.home'))  
     else:
         return redirect(url_for('index.index_page'))
     
