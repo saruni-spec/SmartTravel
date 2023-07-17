@@ -32,7 +32,7 @@ def login():
                 user=User.query.filter_by(email=username).first()
                 if not user:
                     error='Invalid User'
-                    return render_template('login.html',error=error)
+                    return render_template('login.html',error=error,username=username)
             
             
             if user and user.verify_password(password):
@@ -46,10 +46,10 @@ def login():
                     return response
             elif  user and not user.verify_password(password):
                 error='Invaid Password'
-                return render_template('login.html',error=error)
+                return render_template('login.html',error=error,username=username)
             else:
                 error='Invalid User'
-                return render_template('login.html',error=error)
+                return render_template('login.html',error=error,username=username)
     return render_template('login.html')
 
 

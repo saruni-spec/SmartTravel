@@ -9,9 +9,9 @@
 <form action="/registration/login" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="username">Email or username</label>
-    <input type="text" name="username" >
+    <input type="text" name="username" value="{{username}}" >
     <label for="password">Password</label>
-    <input type="password" name="password" >
+    <input type="password" name="password"  >
     
     <button type="submit">Login</button>
 

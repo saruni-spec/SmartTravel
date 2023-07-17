@@ -7,15 +7,13 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="hidden" name="booking_id" id="booking_id" value="{{booking_id}}">
     <label for="vehicle">Vehicle</label>
-    <p>{{ vehicle_no }}</p>
-    <label for="driver">Driver</label>
-    <p>{{ driver }}</p>
+    <p class="output">{{ vehicle_no }}</p>
     <label for="destination">Destination</label>
-    {{ destination }}
+    <p class="output">{{ destination }}</p>
     <label for="pickup">Pickup point</label>
-    {{ pickup_point[0]}}
+    <p class="output">{{ pickup_point}}</p>
 
-    <p>{{ waiting_message }}</p>
+    <p >{{ waiting_message }}</p>
     <button type="submit" name="confirm" value="check">Check</button>
 
     <button type="submit" name="confirm" value="cancel">Cancel</button>

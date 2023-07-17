@@ -20,7 +20,7 @@ bp=Blueprint('admin',__name__)
 @login_required
 @is_admin
 def admin():
-    return render_template('admin.html')
+    return render_template('admin_vehicles.html')
 
 @bp.route('/admin/vehicles' ,methods=['GET','POST'])
 @login_required
@@ -853,6 +853,8 @@ def transactions():
         else:
             pending+=transaction.amount
     if request.method=='POST':
+        total=0
+        pending=0
         button=request.form.get('button_name')
         if button=='date_filter':
             query='date_filter'
@@ -870,10 +872,10 @@ def transactions():
                 print(dt1,dt2,'date')
                 if dt1==dt2:
                     filtered_data.append(transaction)
-                if transaction.status=='completed':
-                    total+=transaction.amount
-                else:
-                    pending+=transaction.amount
+                    if transaction.status=='completed':
+                        total+=transaction.amount
+                    else:
+                        pending+=transaction.amount
         elif button=='month_filter':
             query='month_filter'
             month_name=request.form.get('month')
@@ -892,10 +894,10 @@ def transactions():
                 if int(month_reg)==int(month_no):
                     
                     filtered_data.append(transaction)
-                if transaction.status=='completed':
-                    total+=transaction.amount
-                else:
-                    pending+=transaction.amount
+                    if transaction.status=='completed':
+                        total+=transaction.amount
+                    else:
+                        pending+=transaction.amount
         elif button=='year_filter':
             query='year_filter'
             year=request.form.get('year')
@@ -911,10 +913,10 @@ def transactions():
                 print(year_reg,year,'year')
                 if int(year_reg)==int(year):
                     filtered_data.append(transaction)
-                if transaction.status=='completed':
-                    total+=transaction.amount
-                else:
-                    pending+=transaction.amount
+                    if transaction.status=='completed':
+                        total+=transaction.amount
+                    else:
+                        pending+=transaction.amount
         elif button=='week_filter':
             query='week_filter'
             today=datetime.now().strftime("%Y-%m-%d")
@@ -931,45 +933,83 @@ def transactions():
 
                 if dt_date >= dt_week_ago and dt_date <= dt_today:
                     filtered_data.append(transaction)
-                if transaction.status=='completed':
-                    total+=transaction.amount
-                else:
-                    pending+=transaction.amount
+                    if transaction.status=='completed':
+                        total+=transaction.amount
+                    else:
+                        pending+=transaction.amount
         elif button=='search':
             query=='search'
             entity=request.form.get('entity')
-            user=Transaction.query.filter_by(user_name=entity).first()
+            user=Transaction.query.filter_by(user_name=entity).all()
             if user is None:
-                user=Transaction.query.filter_by(vehicle_id=entity).first()
-            filtered_data.append(user) 
+                user=Transaction.query.filter_by(vehicle_id=entity).all()
+            if user is None:
+                filtered_data=None
+            else:
+                if len(user)==1:
+                    filtered_data.append(user)
+                    if user[0].status=='completed':
+                        total+=user[0].amount
+                    else:
+                        pending+=user[0].amount
+                else:
+                    
+                    for entity in user:
+
+                        filtered_data.append(entity) 
+            
+                        if entity.status=='completed':
+                                total+=transaction.amount
+                        else:
+                            pending+=transaction.amount
         elif button=='id':
             query='id'
             for transaction in data:
                 entry={'id':transaction.id,'status':transaction.status}
                 filtered_data.append(entry)
+                if transaction.status=='completed':
+                        total+=transaction.amount
+                else:
+                    pending+=transaction.amount
         elif button=='user_name':
             query='user_name'
             for transaction in data:
                 entry={'id':transaction.id,'user_name':transaction.user_name}
                 filtered_data.append(entry)
+                if transaction.status=='completed':
+                    total+=transaction.amount
+                else:
+                    pending+=transaction.amount
         elif button=='amount':
             query='amount'
             
             for transaction in data:
                 entry={'id':transaction.id,'amount':transaction.amount}
                 filtered_data.append(entry)
+                if transaction.status=='completed':
+                    total+=transaction.amount
+                else:
+                    pending+=transaction.amount
         elif button=='rating':
             query='rating'
             
             for transaction in data:
                 entry={'id':transaction.id,'rating':transaction.rating}
                 filtered_data.append(entry)
+                if transaction.status=='completed':
+                    total+=transaction.amount
+                else:
+                    pending+=transaction.amount
         elif button=='paid_at':
             query='paid_at'
             
             for transaction in data:
                 entry={'id':transaction.id,'paid_at':transaction.time}
                 filtered_data.append(entry)
+                if transaction.status=='completed':
+                    total+=transaction.amount
+                else:
+                    pending+=transaction.amount
         elif button=='payment_type':
             query='payment_type'
             
@@ -978,6 +1018,10 @@ def transactions():
                 
                 entry={'id':transaction.id,'payment_type':transaction.payment_type}
                 filtered_data.append(entry)
+                if transaction.status=='completed':
+                    total+=transaction.amount
+                else:
+                    pending+=transaction.amount
         elif button=='vehicle_id"':
             query='vehicle_id'
             
@@ -986,6 +1030,10 @@ def transactions():
                 
                 entry={'id':transaction.id,'vehicle_id':transaction.vehicle_id}
                 filtered_data.append(entry)
+                if transaction.status=='completed':
+                    total+=transaction.amount
+                else:
+                    pending+=transaction.amount
                 
         elif button=='date':
             query='date'
@@ -993,6 +1041,10 @@ def transactions():
             for transaction in data:
                 entry={'id':transaction.id,'date':transaction.paid_at}
                 filtered_data.append(entry)
+                if transaction.status=='completed':
+                    total+=transaction.amount
+                else:
+                    pending+=transaction.amount
 
         elif button=='status':
             query='status'
@@ -1000,6 +1052,10 @@ def transactions():
             for transaction in data:
                 entry={'id':transaction.id,'status':transaction.status}
                 filtered_data.append(entry)
+                if transaction.status=='completed':
+                    total+=transaction.amount
+                else:
+                    pending+=transaction.amount
         
         elif button=='card_number':
             query='card_number'
@@ -1007,11 +1063,21 @@ def transactions():
             for transaction in data:
                 entry={'id':transaction.id,'card_number':transaction.card_number}
                 filtered_data.append(entry)
+                if transaction.status=='completed':
+                    total+=transaction.amount
+                else:
+                    pending+=transaction.amount
 
 
         else:
             query='all'
             filtered_data=data
+            for transaction in filtered_data:
+                if transaction.status=='completed':
+                    total+=transaction.amount
+                else:
+                    pending+=transaction.amount
+
 
         return render_template('admin_transactions.html',data=filtered_data,query=query,total=total,pending=pending)
 

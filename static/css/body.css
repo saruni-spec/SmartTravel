@@ -93,4 +93,14 @@ input{
       border-radius: 5px;
     }
   }
-  
+
+  .home-1{
+margin-left: -12%;
+margin-top: 5%;
+overflow-y: scroll;
+overflow: visible;
+  }
+  .home-1 form{
+position: relative;
+margin-left: 1%;
+  }

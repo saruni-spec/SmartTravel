@@ -1,12 +1,11 @@
 .sidebar {
   margin: 1%;
     padding: 1%;
-    width: 23%;
+    width: 20%;
   background-color: var(--primary-form-color);
   position: fixed;
-  height: 70vh;
   left: 0;
-  margin-top: 4%;
+  margin-top: 1%;
   overflow: auto;
   display: flex;
   flex-direction: column;
@@ -169,10 +168,16 @@ margin-left: 2%;
   margin-top: 0.3%;
   }
   .earnings{
-    position: fixed;
-  margin-left: 45%;
-  width: 15%;
+  
+  
+    display: flex;
+    flex-direction: row;
   z-index: 10;
   margin-top: 0.3%;
     
   }
+  select[name="table"  border="1"] th,
+  select[name="table"  border="1"] td {
+    border: 1px solid var(--primary-border-color);
+padding: 1%;
+}

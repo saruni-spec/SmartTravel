@@ -26,110 +26,137 @@
   <input type="text" name="entity" id="entity">
   <button name="button_name" value="search">Search</button>
 
-  <button name="button_name" value="all">All Details</button>
-    <button name="button_name" value="latitude">Latitude</button>
-    <button name="button_name" value="longitude">Longitude</button>
-    <button name="button_name" value="stage_name">Stage Name</button>
+  <label for="">Summary Options</label>
+  <select name="button_name" >
+    <option value="all">All Details</option>
+    <option value="latitude">Latitude</option>
+    <option value="longitude">Longitude</option>
+    <option value="stage_name">Stage Name</option>
+  </select>
+   
+    
+    <button type="submit">Summary</button>  
     
    
     
                                                        
           
 </form>
+
+<form action="">
+  <label for="">SmartTravel/Stages</label>
 {% if data is none %}
 <p>No stages are registered</p>
 {% elif data is iterable and data|length >0 %}
 {% if query=='all' %}
 
-{% for entry in data %}
+<table name="table"  border="1" class="table">
+  <tr>
+    <th>Stage No</th>
+    <th>Latitude</th>
+    <th>Longitude</th>
+    <th>Stage Name</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.stage_no }}</td>
+    <td>{{ entry.latitude }}</td>
+    <td>{{ entry.longitude }}</td>
+    <td>{{ entry.stage_name }}</td>
+  </tr>
+  {% endfor %}
+</table>
 
-<form action="/admin/stages" method="post" class='data'>
-    <label for="">Stage No</label>
-    <p class="output">{{entry.stage_no}}</p>
-    <label for="">Latitude</label>
-    <p class="output">{{entry.latitude}}</p>
-    <label for="">Longitude</label>
-    <p class="output">{{entry.longitude}}</p>
-    <label for="">Stage Name</label>
-    
-    <p class="output">{{entry.stage_name}}</p>
-    
-    
-    
-    </form>
-    
-  
-{% endfor %}
 {% elif query=='search' %}
 
 
 
-<form action="/admin/stages" method="post" class='data'>
-    <label for="">Stage No</label>
-    <p class="output">{{entry.stage_no}}</p>
-    <label for="">Latitude</label>
-    <p class="output">{{entry.latitude}}</p>
-    <label for="">Longitude</label>
-    <p class="output">{{entry.longitude}}</p>
-    <label for="">Stage Name</label>
-    
-    <p class="output">{{entry.stage_name}}</p>
-    
-    
-    
-    </form>
+<table name="table"  border="1">
+  <tr>
+    <th>Stage No</th>
+    <th>Latitude</th>
+    <th>Longitude</th>
+    <th>Stage Name</th>
+  </tr>
+  
+  <tr>
+    <td>{{ entry.stage_no }}</td>
+    <td>{{ entry.latitude }}</td>
+    <td>{{ entry.longitude }}</td>
+    <td>{{ entry.stage_name }}</td>
+  </tr>
+  
+</table>
+
 
 {% elif query=='stage_name' %}
-{% for entry in data %}
-<form action="/admin/stages"method="post" class='data'>
-    <label for="stage_no"></label>
-    <p class="output">{{entry.stage_no}}</p>
-    <label for="">Stage Name</label>
-    <p class="output">{{entry.stage_name}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Stage No</th>
+    <th>Stage Name</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.stage_no }}</td>
+    <td>{{ entry.stage_name }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='latitude' %}
-{% for entry in data %}
-<form action="/admin/stages" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{entry.stage_no}}</p>
-    <label for="latitude">Latitude</label>
-    <p class="output">{{entry.latitude}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Stage No</th>
+    <th>Latitude</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.stage_no }}</td>
+    <td>{{ entry.latitude }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='longitude' %}
-{% for entry in data %}
-<form action="/admin/stages" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{entry.stage_no}}</p>
-    <label for="stage_name">Longitude</label>
-    
-    <p class="output">{{entry.longitude}}</p>
-    
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Stage No</th>
+    <th>Longitude</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.stage_no }}</td>
+    <td>{{ entry.longitude }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 
 
 {% else %}
-{% for entry in data %}
-<form action="/admin/stages" method="post" class='data'>
-    <label for="">Stage No</label>
-    <p class="output">{{entry.stage_no}}</p>
-    <label for="">Latitude</label>
-    <p class="output">{{entry.latitude}}</p>
-    <label for="">Longitude</label>
-    <p class="output">{{entry.longitude}}</p>
-    <label for="">Stage Name</label>
-    
-    <p class="output">{{entry.stage_name}}</p>
-    
- 
-    </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Stage No</th>
+    <th>Latitude</th>
+    <th>Longitude</th>
+    <th>Stage Name</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.stage_no }}</td>
+    <td>{{ entry.latitude }}</td>
+    <td>{{ entry.longitude }}</td>
+    <td>{{ entry.stage_name }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% endif %}
 {% else %}
 <p>no stages registered</p>
 {% endif %}
+
+</form>
 
 <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/sidebar.css')}}">
 {% endblock %}

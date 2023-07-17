@@ -58,6 +58,7 @@
     <a href="{{url_for('map.location')}}">Map</a>
     
     <a href="{{url_for('report.report')}}">History</a>
+    <a href="mailto:oddsthingshere@gmail.com" data-toggle="tooltip" data-placement="bottom" title="contact us">Contact Us</a>
     
     <a href="{{url_for('login.logout')}}">Log Out</a>
   {% endif %}
@@ -70,15 +71,7 @@
       <header>
         
         {% block title %}
-        {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <ul>
-        {% for message in messages %}
-          <li><p class="alert">{{ message }}</p></li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
+        
         {% endblock %}
            </header>
            <main>

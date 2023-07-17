@@ -23,6 +23,7 @@ bp=Blueprint('hire',__name__)
 @bp.route('/hire' ,methods=['GET','POST'])
 @login_required
 def hire():
+    
     return render_template('hire.html')
 
 @bp.route('/hire/car' ,methods=['GET','POST'])
@@ -44,24 +45,20 @@ def hire_car():
     phone_number=current_user.phone
     date=datetime.now().strftime("%Y-%m-%d")
     time=datetime.now().strftime("%H:%M:%S")
-    pickup_point='waiting'
-    destination=session.get('destination')
+    
+
 
     
     session['vehicle_type']='hire_car'
     if request.method=="POST":
-        token=request.form.get('token')
-        try:
-            validate_csrf(token)
-        except ValidationError :
-            error="Invalid CSRF token"
-            return error,404
+        pickup_point='Contact to determine'
+        destination='Contact to determine'
         vehicle_no=request.form.get('no_plate')
         vehicle=Vehicle.query.filter_by(no_plate=vehicle_no).first()
-        payment=vehicle.payment
+        
         booking=Booking(user_name, phone_number, date, time, pickup_point, destination, vehicle_no, booking_type='hire_car')
         booking.save()
-        booking_notification={'vehicle':vehicle_no,'destination':destination,'rider':user_name,'timestamp':time,'booking_id':booking.id,'seen':False,'booking_type':'hire'}
+        booking_notification={'vehicle':vehicle_no,'destination':destination,'rider':user_name,'timestamp':time,'booking_id':booking.id,'seen':False,'booking_type':'hire','pickup_point':pickup_point}
         session['booking']=booking_notification
         notifications.append(booking_notification)
         message = json.dumps(booking_notification)
@@ -131,9 +128,14 @@ def hire_bus():
 @login_required
 @is_driver
 def confirm_booking():
-        vehicle_no=session.get('vehicle')
-        print(vehicle_no,'vehicle in confirm booking')
-        vehicle=Vehicle.query.filter_by(no_plate=vehicle_no).first()
+        user_name=current_user.user_name
+        
+        vehicle=Vehicle.query.filter_by(driver_username=user_name).first()
+        if vehicle is None:
+             vehicle=Vehicle.query.filter_by(owner_username=user_name).first()
+             if vehicle is None:
+                 
+                 return render_template('hire_notifications.html',status=False,details=None)
         if vehicle.for_hire :
             status=True
         

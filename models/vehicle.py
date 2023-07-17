@@ -26,11 +26,15 @@ class Vehicle(db.Model):
     build_type=db.Column(db.String(50))
     date_registered=db.Column(db.String(50))
 
+    balance=db.Column(db.Float,nullable=True)
+
+    rating=db.Column(db.Float,nullable=True)
+
     hiring_cost=db.Column(db.Float,nullable=True)
     fare=db.Column(db.Float,nullable=True)
 
     booking_details = relationship("Booking", backref="bookings" )
-    ratings=relationship("Transaction",backref="transactions")
+    transactions=relationship("Transaction",backref="transactions")
    
     
     def __init__(self,no_plate):
@@ -51,7 +55,7 @@ class Vehicle(db.Model):
         self.owner_username=owner
         self.capacity=capacity
         self.color=color
-        
+        self.balance=0
         self.build_type=build_type
         self.date_registered=datetime.now().strftime("%Y-%m-%d")
         
@@ -106,6 +110,27 @@ class Vehicle(db.Model):
         self.verification_code=code
         db.session.commit()
 
-    def chang_type(self,type):
+    def change_type(self,type):
         self.vehicle_type=type
         db.session.commit()
+
+    def add_payment(self,amount):
+        self.balance+=amount
+        db.session.commit()
+
+    def payout(self,amount):
+        self.balance-=amount
+        db.session.commit()
+
+    def make_rating(self):
+        total_rating=0
+        if len(self.transactions)==0:
+            self.rating=0
+        else:
+            for rating in self.transactions:
+                total_rating+=rating.rating
+            average_rating=total_rating/len(self.transactions)
+            self.rating=average_rating
+
+    
+        

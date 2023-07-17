@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}
+<h2>Payment</h2>
+{% endblock %}
+{% block content %}
+<label for="">Balance</label>
+<p class="output">{{balance}}</p>
+<form action="/payment/payout" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="">User</label>
+    <p class="output">{{user_name}}</p>
+    <label for="">Vehicle</label>
+    <p class="output">{{vehicle}}</p>
+    <label for="">PayOut Amount</label>
+    <input type="number" name="amount" id="">
+    <label for="">Pay To</label>
+    <select name="pay_to" id="month">
+        <option value="M-PESA">M-PESA</option>
+        <option value="February">Bank</option>
+<button type="submit">Confirm</button>
+
+</form>
+    
+
+
+{% endblock %}

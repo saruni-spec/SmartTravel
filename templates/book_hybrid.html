@@ -64,30 +64,17 @@ Select your destination
 </script>
 <script>
 // Get the two forms with the class 'vehicle'
-const vehicleForms = document.querySelectorAll('.vehicle');
+var hybrid_message='{{closest_hybrid}}';
 
-// Check if the 'formSubmitted' cookie is set to 'true'
-if (document.cookie.includes('formSubmitted=true')) {
-  // Show the two forms
-  vehicleForms.forEach(form => {
-    form.style.display = 'block';
-  });
-} else {
-  // Hide the forms initially
-  vehicleForms.forEach(form => {
-    form.style.display = 'none';
-  });
+var hybrid=document.getElementById('hybrid-form');
+
+
+if (hybrid_message=='None' ){
+hybrid.style.display='none';
 }
-
-// Get the 'Confirm' button
-const confirmButton = document.querySelector('button[type="submit"]');
-
-// Add an event listener to the 'Confirm' button
-confirmButton.addEventListener('click', () => {
-  // Set the 'formSubmitted' cookie to 'true'
-  document.cookie = 'formSubmitted=true';
-});
-
+else{
+  hybrid.style.display='flex';
+}
 </script>
 <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/booking.css')}}">
 

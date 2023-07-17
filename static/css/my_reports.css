@@ -1,0 +1,185 @@
+
+.sidebar {
+    margin: 1%;
+      padding: 1%;
+      width: 10%;
+    background-color: var(--primary-form-color);
+    position: fixed;
+    left: 0;
+    margin-top: 1%;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    border: 2px solid var(--primary-border-color);
+    overflow: visible;
+    z-index: 10;
+  }
+  #hide {
+  position: fixed;
+  margin-top: 0.3%;
+  left: 0%;
+  width: 20%;
+  z-index: 10;
+  margin-left: 2%;
+  }
+  .hidden_bar{
+    position: fixed;
+   width: 1vw;
+   height: 70vh;
+   overflow: auto;
+   z-index: 1;
+   padding: 1%;
+   margin: 1%;
+  
+  }
+  .hidden_bar button{
+    display: none;
+  }
+  
+  
+  /* Sidebar links */
+  .sidebar button {
+    display: block;
+    color: var(--link-color);
+    padding: 1%;
+    text-decoration: none;
+  }
+  
+  /* Active/current link */
+  .sidebar button.active {
+    background-color: var(--link-active-color);
+    color: var(--primary-text-color);
+  }
+  
+  /* Links on mouse-over */
+  .sidebar button:hover:not(.active) {
+    background-color: var(--link-hover-color);
+    color: var(--alert-color);
+  }
+  
+  
+  
+  /* On screens that are less than 700px wide, make the sidebar into a topbar */
+  @media screen and (max-width: 700px) {
+    .sidebar {
+      width: 100%;
+      height: auto;
+      position: relative;
+    }
+    .sidebar button {float: left;}
+    div.content {margin-left: 0;}
+  }
+  
+  /* On screens that are less than 400px, display the bar vertically, instead of horizontally */
+  @media screen and (max-width: 400px) {
+    .sidebar button {
+      text-align: center;
+      float: none;
+    }
+  }
+  
+  
+  .date_filter{
+    margin: 1%;
+      padding: 1%;
+      width: 23%;
+    background-color: var(--primary-form-color);
+    position: fixed;
+    height: 70vh;
+    right: 0;
+    margin-top: 4%;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    border: 2px solid var(--primary-border-color);
+    z-index: 10;
+    
+  }
+  
+  .date_hide{
+    position: fixed;
+    right: 0;
+    width: 1vw;
+    height: 70vh;
+    overflow: auto;
+    z-index: 1;
+    padding: 1%;
+    margin: 1%;
+  }
+  .date_hide button{
+  
+    display: none;
+  }
+  .date_hide input{
+    display: none;
+  }
+  .date_hide select{
+    display: none;
+  }
+  .date_hide label{
+    display: none;
+  }
+  
+  #date_hide {
+    position: fixed;
+    margin-top: 0.3%;
+    right: 0%;
+    margin-right: 2%;
+    width: 20%;
+    z-index: 10;
+    }
+  .date_filter button{
+    width: 100%;
+    margin-top: 1%;
+    
+  }
+  @media screen and (max-width: 700px) {
+    .date_filter {
+      width: 100%;
+      height: auto;
+      position: relative;
+    }
+    .date_filter button {float: right;}
+    div.content {margin-right: 0;}
+  }
+  
+  /* On screens that are less than 400px, display the bar vertically, instead of horizontally */
+  @media screen and (max-width: 400px) {
+    .date_filter button {
+      text-align: center;
+      float: none;
+    }
+  }
+  
+  
+  #download{
+    position: fixed;
+    margin-left: 34%;
+    width: 20%;
+    z-index: 10;
+    margin-top: 0.3%;
+    }
+    #switch{
+    position: fixed;
+    margin-left: -35%;
+    width: 20%;
+    z-index: 10;
+    margin-top: 0.3%;
+    }
+    .earnings{
+    z-index: 10;
+    margin-top: 2%;
+    display: flex;
+    flex-direction: row;
+      
+    }
+
+
+
+    select[name="table"  border="1"] th,
+    select[name="table"  border="1"] td {
+      border: 1px solid var(--primary-border-color);
+  padding: 1%;
+}

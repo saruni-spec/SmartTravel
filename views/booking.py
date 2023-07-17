@@ -73,6 +73,8 @@ def closest_stage(user_location):
                 destination_lng = float(closest_stage['longitude'])
                 distance = get_distance(latitude, longitude, destination_lat, destination_lng)
 
+                print(distance,'in closes stage')
+
                 return[closest_stage,distance]
 
 def closest_taxi(user_location,taxi_data):
@@ -133,144 +135,8 @@ def select_destination():
                 print(form_name,'form name')
                 if form_name == 'destination-form':
                         bus_data=create_kafka_objects(consumer_bus)
-                        old_bus_data=data = [
-    {
-        "vehicle": "EFG901",
-        "latitude": -1.28639,
-        "longitude": 36.8172,
-        "timestamp": "2023-06-30 21:30:00",
-        "bus_destination": "Nairobi CBD",
-        "docked": True,
-        "docking_stage": "Nairobi CBD"
-    },
-    {
-        "vehicle": "HIJ234",
-        "latitude": -1.28639,
-        "longitude": 36.8172,
-        "timestamp": "2023-06-30 22:45:00",
-        "bus_destination": "Ruiru",
-        "docked": True,
-        "docking_stage": "Nairobi CBD"
-    },
-    {
-        "vehicle": "KLM567",
-        "latitude": -1.28639,
-        "longitude": 36.8172,
-        "timestamp": "2023-06-30 23:59:00",
-        "bus_destination": "Ruiru",
-        "docked": True,
-        "docking_stage": "Nairobi CBD"
-    },
-    {
-        "vehicle": "NOP890",
-        "latitude": -1.28639,
-        "longitude": 36.8172,
-        "timestamp": "2023-07-01 01:15:00",
-        "bus_destination": "Juja ",
-        "docked": True,
-        "docking_stage": "Nairobi CBD"
-    },
-    {
-        "vehicle": "QRS123",
-        "latitude": -1.28639,
-        "longitude": 36.8172,
-        "timestamp": "2023-07-01 02:30:00",
-        "bus_destination": "Thika",
-        "docked": True,
-        "docking_stage": "Nairobi CBD"
-    },
-    {
-        "vehicle": "ABC123",
-        "latitude": -1.28639,
-        "longitude": 36.8172,
-        "timestamp": "2023-06-30 09:00:00",
-        "bus_destination": "Juja",
-        "docked": True,
-        "docking_stage": "Nairobi CBD"
-    },
-    {
-        "vehicle": "DEF456",
-        "latitude": -1.23488,
-        "longitude": 36.8892,
-        "timestamp": "2023-06-30 10:15:00",
-        "bus_destination": "Juja",
-        "docked": True,
-        "docking_stage": "Ruaraka (Getrude's Children's Hospital)"
-    },
-    {
-        "vehicle": "GHI789",
-        "latitude": -1.18699,
-        "longitude": 36.9199,
-        "timestamp": "2023-06-30 11:30:00",
-        "bus_destination": "Nairobi",
-        "docked": True,
-        "docking_stage": "Kahawa West"
-    },
-    {
-        "vehicle": "JKL012",
-        "latitude": -1.21418,
-        "longitude": 36.8907,
-        "timestamp": "2023-06-30 12:45:00",
-        "bus_destination": "Nairobi",
-        "docked": True,
-        "docking_stage": "Roysambu"
-    },
-    {
-        "vehicle": "MNO345",
-        "latitude": -1.09793,
-        "longitude": 37.0166,
-        "timestamp": "2023-06-30 14:00:00",
-        "docked": False,
-        
-    },
-    {
-        "vehicle": "PQR678",
-        "latitude": -1.17554,
-        "longitude": 36.9411,
-        "timestamp": "2023-06-30 15:15:00",
-        "bus_destination": "Nairobi",
-        "docked": True,
-        "docking_stage": "Kahawa Sukari"
-    },
-    {
-        "vehicle": "STU901",
-        "latitude": -1.22054,
-        "longitude": 36.9029,
-        "timestamp": "2023-06-30 16:30:00",
-        "bus_destination": "Nairobi",
-        "docked": True,
-        "docking_stage": "Kasarani Sports Complex"
-    },
-    {
-        "vehicle": "VWX234",
-        "latitude": -1.14406,
-        "longitude": 36.9608,
-        "timestamp": "2023-06-30 17:45:00",
-        "bus_destination": "Nairobi",
-        "docked": True,
-        "docking_stage": "Kenyatta University"
-    },
-    {
-        "vehicle": "YZA567",
-        "latitude": -1.18345,
-        "longitude": 36.9272,
-        "timestamp": "2023-06-30 19:00:00",
-        "bus_destination": "Nairobi",
-        "docked": True,
-        "docking_stage": "Kahawa Wendani"
-    },
-    {
-        "vehicle": "BCD890",
-        "latitude": -1.03867,
-        "longitude": 37.0768,
-        "timestamp": "2023-06-30 20:15:00",
-        "docked": False,
-        
-    }
-]
-
-                        print(old_bus_data,'bus data fro kafka')
-                        bus_data = [bus for bus in old_bus_data if bus['docked']]
+                        
+                      
                         taxi_data=create_kafka_objects(consumer_taxi)
                         print(taxi_data,'taxi data from kafka')
                         hybrid_data=create_kafka_objects(consumer_hybrid)
@@ -295,19 +161,25 @@ def select_destination():
                                 print('no stage nearby')
                         else:
                                 print(nearest_stage[0]['stage_name'])
+                                print(nearest_stage[1],'nearest stage distance')
                         
                         if user_location is None or user_location=='':
                                 error='Please select your location'
                                 return render_template('booking_select_destination.html',error=error)
                         nearest_taxi=closest_taxi(user_location,taxi_data)
                         print(nearest_taxi,'nearest taxi in post')
+                        
+                        
                         if nearest_taxi is None:
                                 my_taxi=None
                                 taxi_message='No taxi nearby'
                         else:
+                                print(nearest_taxi[1],'nearest taxi distance')
                                 coordinates=session.get('tracking_coordinates')
                                 session['location_to_destination']=get_distance(coordinates['latitude'],coordinates['longitude'],destination['latitude'],destination['longitude'])
                                 print('we have a nearest taxi')
+                                
+                                
                                 taxi_location_name=reverse_geocode(nearest_taxi[0]['latitude'], nearest_taxi[0]['longitude'])
                                 session['taxi_location']={'latitude':nearest_taxi[0]['latitude'],'longitude':nearest_taxi[0]['longitude']}
                                 session['taxi_location_name']=taxi_location_name
@@ -473,6 +345,8 @@ def select_taxi():
         print(vehicle_no,'vehicle no in select vehicle')
         
         vehicle=Vehicle.query.filter_by(no_plate=vehicle_no).first()
+        if vehicle.fare is None:
+                vehicle.set_fare(10)
         fare=vehicle.fare*float(session.get('location_to_destination'))
         session['fare']=fare
         
@@ -803,6 +677,7 @@ def book_taxi():
                                 coordinates=session.get('tracking_coordinates')
                                 session['location_to_destination']=get_distance(coordinates['latitude'],coordinates['longitude'],destination['latitude'],destination['longitude'])
                                 print('we have a nearest taxi')
+                                print(session.get('location_to_destination'),'distance to destination')
                                 session['taxi_location']={'latitude':nearest_taxi[0]['latitude'],'longitude':nearest_taxi[0]['longitude']}
                                 taxi_location_name=reverse_geocode(nearest_taxi[0]['latitude'], nearest_taxi[0]['longitude'])
                                 session['taxi_location_name']=taxi_location_name
@@ -821,14 +696,14 @@ def book_taxi():
                         
                         session['pickup_point']=user_location_name
                 
-                        return render_template('book_taxi.html',closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name)
+                        return render_template('book_taxi.html',closest_taxi=taxi_message,user_location=user_location,user_location_name=user_location_name,destination=destination_name)
                 else :
                         
                         session['vehicle_type']='taxi'
                         
                         return redirect(url_for('booking.select_taxi'))
                 
-        return render_template('book_taxi.html',user_location=user_location,user_location_name=user_location_name,closest_taxi=taxi_message)
+        return render_template('book_taxi.html',user_location=user_location,user_location_name=user_location_name,closest_taxi=taxi_message,destination=destination_name)
 
 
 
@@ -836,7 +711,7 @@ def book_taxi():
 @login_required
 def book_bus():
         user_location=session.get('current_location')
-        
+        destination_name=session.get('destination',None)
         user_location_name=session.get('location_name',None)
         bus_message=session.get('bus_message',None)
         if request.method=='POST':
@@ -847,144 +722,7 @@ def book_bus():
                 print(form_name,'form name')
                 if form_name == 'destination-form':
                         bus_data=create_kafka_objects(consumer_bus)
-                        old_bus_data=data = [
-    {
-        "vehicle": "EFG901",
-        "latitude": -1.28639,
-        "longitude": 36.8172,
-        "timestamp": "2023-06-30 21:30:00",
-        "bus_destination": "Nairobi CBD",
-        "docked": True,
-        "docking_stage": "Nairobi CBD"
-    },
-    {
-        "vehicle": "HIJ234",
-        "latitude": -1.28639,
-        "longitude": 36.8172,
-        "timestamp": "2023-06-30 22:45:00",
-        "bus_destination": "Ruiru",
-        "docked": True,
-        "docking_stage": "Nairobi CBD"
-    },
-    {
-        "vehicle": "KLM567",
-        "latitude": -1.28639,
-        "longitude": 36.8172,
-        "timestamp": "2023-06-30 23:59:00",
-        "bus_destination": "Ruiru",
-        "docked": True,
-        "docking_stage": "Nairobi CBD"
-    },
-    {
-        "vehicle": "NOP890",
-        "latitude": -1.28639,
-        "longitude": 36.8172,
-        "timestamp": "2023-07-01 01:15:00",
-        "bus_destination": "Juja ",
-        "docked": True,
-        "docking_stage": "Nairobi CBD"
-    },
-    {
-        "vehicle": "QRS123",
-        "latitude": -1.28639,
-        "longitude": 36.8172,
-        "timestamp": "2023-07-01 02:30:00",
-        "bus_destination": "Thika",
-        "docked": True,
-        "docking_stage": "Nairobi CBD"
-    },
-    {
-        "vehicle": "ABC123",
-        "latitude": -1.28639,
-        "longitude": 36.8172,
-        "timestamp": "2023-06-30 09:00:00",
-        "bus_destination": "Juja",
-        "docked": True,
-        "docking_stage": "Nairobi CBD"
-    },
-    {
-        "vehicle": "DEF456",
-        "latitude": -1.23488,
-        "longitude": 36.8892,
-        "timestamp": "2023-06-30 10:15:00",
-        "bus_destination": "Juja",
-        "docked": True,
-        "docking_stage": "Ruaraka (Getrude's Children's Hospital)"
-    },
-    {
-        "vehicle": "GHI789",
-        "latitude": -1.18699,
-        "longitude": 36.9199,
-        "timestamp": "2023-06-30 11:30:00",
-        "bus_destination": "Nairobi",
-        "docked": True,
-        "docking_stage": "Kahawa West"
-    },
-    {
-        "vehicle": "JKL012",
-        "latitude": -1.21418,
-        "longitude": 36.8907,
-        "timestamp": "2023-06-30 12:45:00",
-        "bus_destination": "Nairobi",
-        "docked": True,
-        "docking_stage": "Roysambu"
-    },
-    {
-        "vehicle": "MNO345",
-        "latitude": -1.09793,
-        "longitude": 37.0166,
-        "timestamp": "2023-06-30 14:00:00",
-        "docked": False,
-        
-    },
-    {
-        "vehicle": "PQR678",
-        "latitude": -1.17554,
-        "longitude": 36.9411,
-        "timestamp": "2023-06-30 15:15:00",
-        "bus_destination": "Nairobi",
-        "docked": True,
-        "docking_stage": "Kahawa Sukari"
-    },
-    {
-        "vehicle": "STU901",
-        "latitude": -1.22054,
-        "longitude": 36.9029,
-        "timestamp": "2023-06-30 16:30:00",
-        "bus_destination": "Nairobi",
-        "docked": True,
-        "docking_stage": "Kasarani Sports Complex"
-    },
-    {
-        "vehicle": "VWX234",
-        "latitude": -1.14406,
-        "longitude": 36.9608,
-        "timestamp": "2023-06-30 17:45:00",
-        "bus_destination": "Nairobi",
-        "docked": True,
-        "docking_stage": "Kenyatta University"
-    },
-    {
-        "vehicle": "YZA567",
-        "latitude": -1.18345,
-        "longitude": 36.9272,
-        "timestamp": "2023-06-30 19:00:00",
-        "bus_destination": "Nairobi",
-        "docked": True,
-        "docking_stage": "Kahawa Wendani"
-    },
-    {
-        "vehicle": "BCD890",
-        "latitude": -1.03867,
-        "longitude": 37.0768,
-        "timestamp": "2023-06-30 20:15:00",
-        "docked": False,
-        
-    }
-]
-
-                        print(old_bus_data,'bus data fro kafka')
-                        bus_data = [bus for bus in old_bus_data if bus['docked']]
+                        
                         
                         destination_name=request.form.get('destination')
                         print(destination_name,'destination selected in form')
@@ -1038,7 +776,7 @@ def book_bus():
                         session['closest_stage']=nearest_stage[0]['stage_name']
                         session['pickup_point']=nearest_stage[0]['stage_name']
                 
-                        return render_template('book_bus.html',closest_bus=bus_message,user_location=user_location,user_location_name=user_location_name)
+                        return render_template('book_bus.html',closest_bus=bus_message,user_location=user_location,user_location_name=user_location_name,destination=destination_name)
                 
         
                 else:
@@ -1047,7 +785,7 @@ def book_bus():
                         
                         return redirect(url_for('booking.bus_options'))
                
-        return render_template('book_bus.html',user_location=user_location,user_location_name=user_location_name,closest_bus=bus_message)
+        return render_template('book_bus.html',user_location=user_location,user_location_name=user_location_name,closest_bus=bus_message,destination=destination_name)
 
 
 @bp.route('/booking/book_hybrid', methods=('GET', 'POST'))
@@ -1055,7 +793,7 @@ def book_bus():
 def book_hybrid():      
         user_location=session.get('current_location')
         print(user_location,'user location in select destination')
-        
+        destination_name=session.get('destination',None)
         user_location_name=session.get('location_name',None)
         hybrid_message=session.get('hybrid_message',None)
         
@@ -1139,9 +877,9 @@ def book_hybrid():
                         session['closest_hybrid']=my_hybrid_now
                         session['closest_stage']=nearest_stage[0]['stage_name']
                 
-                        return render_template('book_hybrid.html',user_location=user_location,user_location_name=user_location_name,hybrid_message=hybrid_message)
+                        return render_template('book_hybrid.html',user_location=user_location,user_location_name=user_location_name,hybrid_message=hybrid_message,destination=destination_name)
                 
                 else:
                         session['vehicle_type']='hybrid'
                         return redirect(url_for('booking.select_taxi'))
-        return render_template('book_hybrid.html',user_location=user_location,user_location_name=user_location_name,hybrid_message=hybrid_message)
+        return render_template('book_hybrid.html',user_location=user_location,user_location_name=user_location_name,hybrid_message=hybrid_message,destination=destination_name)

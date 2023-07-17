@@ -10,16 +10,22 @@ def get_distance(origin_lat, origin_lng, destination_lat, destination_lng):
         'destination': f'{destination_lat},{destination_lng}',
         'key': api_key
     }
-
+    
     try:
         response = requests.get(url, params=params)
         response.raise_for_status()  # Raise an exception if the response is not successful
         data = response.json()
+        
+        
 
         if data['status'] == 'OK':
-            distance = data['routes'][0]['legs'][0]['distance']['text']
+            print('ok***********************')
+            distance_str = data['routes'][0]['legs'][0]['distance']['text']
+            distance = float(distance_str.split()[0])
             return distance
         else:
+            print('not ok***********************')
+            
             return None
 
     except (requests.exceptions.RequestException, requests.exceptions.ConnectionError) as e:
@@ -38,6 +44,7 @@ def calculate_route_distance(route):
         print(stage1.latitude, stage1.longitude, 'for stage 1')
         print(stage2.latitude, stage2.longitude, 'for stage 2')
         distance_str = get_distance(stage1.latitude, stage1.longitude, stage2.latitude, stage2.longitude)
+       
         distance = float(distance_str.split()[0])  # Extract the numeric part and convert to float
         print(distance, 'distance')
         if distance > longest_distance:

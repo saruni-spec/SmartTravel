@@ -1,20 +1,20 @@
 {% extends 'base.html' %}
 {% block title %}
-
+<h2>Registration</h2>
 {% endblock %}
 {% block content %}
 <div class="home">
-<h2>Registration</h2>
+
 <form action="/registration/rider" method="post" onsubmit="return validateForm()">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="user_name">user_name</label>
-    <input type="text" name="user_name">
+    <input type="text" name="user_name" value="{{user_name}}">
     <label for="first_name">First Name</label>
-    <input type="text" name="first_name" id="">
+    <input type="text" name="first_name" id="" value="{{first_name}}">
     <label for="other_name">Other Name</label>
-    <input type="text" name="other_name" id="">
+    <input type="text" name="other_name" id="" value="{{other_name}}">
     <label for="email">Email</label>
-    <input type="email" name="email">
+    <input type="email" name="email" value="{{email}}">
 
 
     <label for="password">Password</label>

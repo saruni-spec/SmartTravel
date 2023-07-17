@@ -20,7 +20,7 @@ def reg_stages():
     destination_lat = closest_stage.latitude
     destination_lng = closest_stage.longitude
     distance = get_distance(origin_lat, origin_lng, destination_lat, destination_lng)
-    print('Distance:', distance,":",closest_stage.stage_name)
+    
     return render_template('reg_stages.html')
 
 

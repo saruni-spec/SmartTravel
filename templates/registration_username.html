@@ -8,13 +8,13 @@
 <form action="registration/username" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="username">Enter username</label>
-    <input type="text" name="user_name">
+    <input type="text" name="user_name" value="{{user_name}}">
     <label for="first_name">First Name</label>
-    <input type="text" name="first_name" id="">
+    <input type="text" name="first_name" id="" value="{{first_name}}">
     <label for="other_name">Other Name</label>
-    <input type="text" name="other_name" id="">
+    <input type="text" name="other_name" id="" value="{{other_name}}">
     <label for="email">Email</label>
-    <input type="email" name="email">
+    <input type="email" name="email" value="{{email}}">
    
     <button type="submit">submit</button>
 </form>

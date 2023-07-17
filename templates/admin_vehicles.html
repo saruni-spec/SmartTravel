@@ -54,256 +54,342 @@
   <input type="text" name="entity" id="entity">
   <button name="button_name" value="search">Search</button>
 
-  <button name="button_name" value="all">All Details</button>
-    <button name="button_name" value="no_plate">Number Plate</button>
-    <button name="button_name" value="capacity">Capacity</button>
-    <button name="button_name" value="owner_username">Owner</button>
-    <button name="button_name" value="driver_username">Driver</button>
-    <button name="button_name" value="color">Color</button>
-    <button name="button_name" value="is_active">Active Vehicles</button>
-    <button name="button_name" value="for_hire">Vehicles For hire</button>
-    <button name="button_name" value="build_type">Build Type</button>
-    <button name="button_name" value="date_registered">Date registered</button>
-    <button name="button_name" value="ratings">Ratings</button>
+  <label for="">Summary Options</label>
+  <select name="button_name" >
+    <option value="all">All Details</option>
+    <option value="no_plate">Number Plate</option>
+    <option value="capacity">Capacity</option>
+    <option value="owner_username">Owner</option>
+    <option value="driver_username">Driver</option>
+    <option value="color">Color</option>
+    <option value="is_active">Active Vehicles</option>
+    <option value="for_hire">Vehicles For Hire</option>
+    <option value="build_type">Build Type</option>
+    <option value="date_registered">Date registered</option>
+    <option value="ratings">Ratings</option>
+  </select>
+   
+    
+    <button type="submit">Summary</button>  
                                                        
           
 </form>
+<form action="" class="table">
+  <label for="">SmartTravel/Vehicles</label>
 {% if vehicles is none %}
 <p>No vehicles are registered</p>
 {% elif vehicles is iterable and vehicles|length >0 %}
 {% if query=='all' %}
 
-{% for vehicle in vehicles %}
+<table name="table"  border="1">
+  <tr>
+      <th>No Plate</th>
+      <th>Driver</th>
+      <th>Owner</th>
+      <th>Capacity</th>
+      <th>Color</th>
+      <th>Type</th>
+      <th>Date Registered</th>
+  </tr>
+  {% for vehicle in vehicles %}
+  <tr>
+      <td>{{ vehicle.no_plate }}</td>
+      <td>{{ vehicle.driver_username }}</td>
+      <td>{{ vehicle.owner_username }}</td>
+      <td>{{ vehicle.capacity }}</td>
+      <td>{{ vehicle.color }}</td>
+      <td>{{ vehicle.vehicle_type }}</td>
+      <td>{{ vehicle.date_registered }}</td>
+  </tr>
+  {% endfor %}
+</table>
 
-<form action="/admin/vehicles" method="post" class='data'>
-    <label for="no_plate">No Plate</label>
-    <p class="output">{{vehicle.no_plate}}</p>
-    <label for="driver">Driver</label>
-    <p class="output">{{vehicle.driver_username}}</p>
-    <label for="owner">Owner</label>
-    <p class="output">{{vehicle.owner_username}}</p>
-    <label for="capacity">Capacity</label>
-    <p class="output">{{vehicle.capacity}}</p>
-    <label for="color">Color</label>
-    <p class="output">{{vehicle.color}}</p>
-    <label for="vehicle_type">Type</label>
-    <p class="output">{{vehicle.vehicle_type}}</p>
-    <label for="date_registered">Date Registered</label>
-  <p class="output"> {{vehicle.date_registered}}</p>
-    </form>
-    
-  
-{% endfor %}
 {% elif query=='search' %}
 
 
-<form action="/admin/vehicles" method="post" class='data'>
-    <label for="no_plate">No Plate</label>
-    <p class="output">{{vehicle.no_plate}}</p>
-    <label for="driver">Driver</label>
-    <p class="output">{{vehicle.driver_username}}</p>
-    <label for="owner">Owner</label>
-    <p class="output">{{vehicle.owner_username}}</p>
-    <label for="capacity">Capacity</label>
-    <p class="output">{{vehicle.capacity}}</p>
-    <label for="color">Color</label>
-    <p class="output">{{vehicle.color}}</p>
-    <label for="vehicle_type">Type</label>
-    <p class="output">{{vehicle.vehicle_type}}</p>
-    <label for="date_registered">Date Registered</label>
-  <p class="output"> {{vehicle.date_registered}}</p>
-    </form>
-
+<table name="table"  border="1">
+  <tr>
+      <th>No Plate</th>
+      <th>Driver</th>
+      <th>Owner</th>
+      <th>Capacity</th>
+      <th>Color</th>
+      <th>Type</th>
+      <th>Date Registered</th>
+  </tr>
+  
+  <tr>
+      <td>{{ vehicle.no_plate }}</td>
+      <td>{{ vehicle.driver_username }}</td>
+      <td>{{ vehicle.owner_username }}</td>
+      <td>{{ vehicle.capacity }}</td>
+      <td>{{ vehicle.color }}</td>
+      <td>{{ vehicle.vehicle_type }}</td>
+      <td>{{ vehicle.date_registered }}</td>
+  </tr>
+  
+</table>
 {% elif query=='no_plate' %}
-{% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post" class='data'>
-  <label for="no_plate">No Plate</label>
-  <p class="output">{{vehicle.no_plate}}</p>
-  <label for="type">Vehicle Type</label>
- <p class="output"> {{vehicle.vehicle_type}}</p>
-  </form>
-{% endfor %}
-{% elif query=='capacity' %}
-{% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post" class='data'>
-  <label for="no_plate">No Plate</label>
-  <p class="output">{{vehicle.no_plate}}</p>
-  <label for="capacity">Capacity</label>
-  <p class="output"> {{vehicle.capacity}}</p>
-  </form>
-{% endfor %}
-{% elif query=='owner_username' %}
-{% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post" class='data'>
-  <label for="no_plate">No Plate</label>
+<table name="table"  border="1">
+  <tr>
+    <th>No Plate</th>
+    <th>Vehicle Type</th>
+  </tr>
+  {% for vehicle in vehicles %}
+  <tr>
+    <td>{{ vehicle.no_plate }}</td>
+    <td>{{ vehicle.vehicle_type }}</td>
+  </tr>
+  {% endfor %}
+</table>
 
-  <p class="output">{{vehicle.no_plate}}</p>
-  <label for="owner_username">Owner</label>
-  <p class="output"> {{vehicle.owner_username}}</p>
-  </form>
-{% endfor %}
+{% elif query=='capacity' %}
+<table name="table"  border="1">
+  <tr>
+    <th>No Plate</th>
+    <th>Capacity</th>
+  </tr>
+  {% for vehicle in vehicles %}
+  <tr>
+    <td>{{ vehicle.no_plate }}</td>
+    <td>{{ vehicle.capacity }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% elif query=='owner_username' %}
+<table name="table"  border="1">
+  <tr>
+    <th>No Plate</th>
+    <th>Owner</th>
+  </tr>
+  {% for vehicle in vehicles %}
+  <tr>
+    <td>{{ vehicle.no_plate }}</td>
+    <td>{{ vehicle.owner_username }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='driver_username' %}
-{% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post" class='data'>
-  <label for="no_plate">No Plate</label>
-  <p class="output">{{vehicle.no_plate}}</p>
-  <label for="driver_username">Driver</label>
-   {{vehicle.driver_username}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>No Plate</th>
+    <th>Driver</th>
+  </tr>
+  {% for vehicle in vehicles %}
+  <tr>
+    <td>{{ vehicle.no_plate }}</td>
+    <td>{{ vehicle.driver_username }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='color' %}
-{% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post" class='data'>
-  <label for="no_plate">No Plate</label>
-  <p class="output">{{vehicle.no_plate}}</p>
-  <label for="color">Color</label>
-  <p class="output"> {{vehicle.color}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>No Plate</th>
+    <th>Color</th>
+  </tr>
+  {% for vehicle in vehicles %}
+  <tr>
+    <td>{{ vehicle.no_plate }}</td>
+    <td>{{ vehicle.color }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='is_active' %}
-{% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post" class='data'>
-  <label for="no_plate">No Plate</label>
-  <p class="output">{{vehicle.no_plate}}</p>
-  <label for="is_active"></label>
-  <p class="output"> {{vehicle.is_active}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>No Plate</th>
+    <th>Is Active</th>
+  </tr>
+  {% for vehicle in vehicles %}
+  <tr>
+    <td>{{ vehicle.no_plate }}</td>
+    <td>{{ vehicle.is_active }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='for_hire' %}
-{% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post" class='data'>
-  <label for="no_plate">No Plate</label>
-  <p class="output"></p>{{vehicle.no_plate}}</p>
-  <label for="for_hire"></label>
-  <p class="output"> {{vehicle.for_hire}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>No Plate</th>
+    <th>For Hire</th>
+  </tr>
+  {% for vehicle in vehicles %}
+  <tr>
+    <td>{{ vehicle.no_plate }}</td>
+    <td>{{ vehicle.for_hire }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='build_type' %}
-{% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post" class='data'>
-  <label for="no_plate">No Plate</label>
-  <p class="output">{{vehicle.no_plate}}</p>
-  <label for="build_type"></label>
-  <p class="output"> {{vehicle.build_type}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>No Plate</th>
+    <th>Build Type</th>
+  </tr>
+  {% for vehicle in vehicles %}
+  <tr>
+    <td>{{ vehicle.no_plate }}</td>
+    <td>{{ vehicle.build_type }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='date_registered' %}
-{% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post" class='data'>
-  <label for="no_plate">No Plate</label>
-  <p class="output">{{vehicle.no_plate}}</p>
-  <label for="date_registered">Date Registered</label>
-  <p class="output"> {{vehicle.date_registered}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>No Plate</th>
+    <th>Date Registered</th>
+  </tr>
+  {% for vehicle in vehicles %}
+  <tr>
+    <td>{{ vehicle.no_plate }}</td>
+    <td>{{ vehicle.date_registered }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='ratings' %}
-{% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post" class='data'>
-  <label for="no_plate">No Plate</label>
-  <p class="output">{{vehicle.no_plate}}</p>
-  <label for="ratings"></label>
-  <p class="output"> {{vehicle.ratings}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>No Plate</th>
+    <th>Ratings</th>
+  </tr>
+  {% for vehicle in vehicles %}
+  <tr>
+    <td>{{ vehicle.no_plate }}</td>
+    <td>{{ vehicle.rating }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='date_filter' %}
-{% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post" class='data'>
-  <label for="no_plate">No Plate</label>
-    <p class="output">{{vehicle.no_plate}}</p>
-    <label for="driver">Driver</label>
-    <p class="output">{{vehicle.driver_username}}</p>
-    <label for="owner">Owner</label>
-    <p class="output">{{vehicle.owner_username}}</p>
-    <label for="capacity">Capacity</label>
-    <p class="output">{{vehicle.capacity}}</p>
-    <label for="color">Color</label>
-    <p class="output">{{vehicle.color}}</p>
-    <label for="vehicle_type">Type</label>
-    <p class="output">{{vehicle.vehicle_type}}</p>
-    <label for="date_registered">Date Registered</label>
-  <p class="output"> {{vehicle.date_registered}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+      <th>No Plate</th>
+      <th>Driver</th>
+      <th>Owner</th>
+      <th>Capacity</th>
+      <th>Color</th>
+      <th>Type</th>
+      <th>Date Registered</th>
+  </tr>
+  {% for vehicle in vehicles %}
+  <tr>
+      <td>{{ vehicle.no_plate }}</td>
+      <td>{{ vehicle.driver_username }}</td>
+      <td>{{ vehicle.owner_username }}</td>
+      <td>{{ vehicle.capacity }}</td>
+      <td>{{ vehicle.color }}</td>
+      <td>{{ vehicle.vehicle_type }}</td>
+      <td>{{ vehicle.date_registered }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% elif query=='week_filter' %}
-{% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post" class='data'>
-  <label for="no_plate">No Plate</label>
-    <p class="output">{{vehicle.no_plate}}</p>
-    <label for="driver">Driver</label>
-    <p class="output">{{vehicle.driver_username}}</p>
-    <label for="owner">Owner</label>
-    <p class="output">{{vehicle.owner_username}}</p>
-    <label for="capacity">Capacity</label>
-    <p class="output">{{vehicle.capacity}}</p>
-    <label for="color">Color</label>
-    <p class="output">{{vehicle.color}}</p>
-    <label for="vehicle_type">Type</label>
-    <p class="output">{{vehicle.vehicle_type}}</p>
-    <label for="date_registered">Date Registered</label>
-  <p class="output"> {{vehicle.date_registered}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+      <th>No Plate</th>
+      <th>Driver</th>
+      <th>Owner</th>
+      <th>Capacity</th>
+      <th>Color</th>
+      <th>Type</th>
+      <th>Date Registered</th>
+  </tr>
+  {% for vehicle in vehicles %}
+  <tr>
+      <td>{{ vehicle.no_plate }}</td>
+      <td>{{ vehicle.driver_username }}</td>
+      <td>{{ vehicle.owner_username }}</td>
+      <td>{{ vehicle.capacity }}</td>
+      <td>{{ vehicle.color }}</td>
+      <td>{{ vehicle.vehicle_type }}</td>
+      <td>{{ vehicle.date_registered }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% elif query=='month_filter' %}
-{% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post" class='data'>
-  <label for="no_plate">No Plate</label>
-    <p class="output">{{vehicle.no_plate}}</p>
-    <label for="driver">Driver</label>
-    <p class="output">{{vehicle.driver_username}}</p>
-    <label for="owner">Owner</label>
-    <p class="output">{{vehicle.owner_username}}</p>
-    <label for="capacity">Capacity</label>
-    <p class="output">{{vehicle.capacity}}</p>
-    <label for="color">Color</label>
-    <p class="output">{{vehicle.color}}</p>
-    <label for="vehicle_type">Type</label>
-    <p class="output">{{vehicle.vehicle_type}}</p>
-    <label for="date_registered">Date Registered</label>
-  <p class="output"> {{vehicle.date_registered}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+      <th>No Plate</th>
+      <th>Driver</th>
+      <th>Owner</th>
+      <th>Capacity</th>
+      <th>Color</th>
+      <th>Type</th>
+      <th>Date Registered</th>
+  </tr>
+  {% for vehicle in vehicles %}
+  <tr>
+      <td>{{ vehicle.no_plate }}</td>
+      <td>{{ vehicle.driver_username }}</td>
+      <td>{{ vehicle.owner_username }}</td>
+      <td>{{ vehicle.capacity }}</td>
+      <td>{{ vehicle.color }}</td>
+      <td>{{ vehicle.vehicle_type }}</td>
+      <td>{{ vehicle.date_registered }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% elif query=='year_filter' %}
-{% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post" class='data'>
-  <label for="no_plate">No Plate</label>
-    <p class="output">{{vehicle.no_plate}}</p>
-    <label for="driver">Driver</label>
-    <p class="output">{{vehicle.driver_username}}</p>
-    <label for="owner">Owner</label>
-    <p class="output">{{vehicle.owner_username}}</p>
-    <label for="capacity">Capacity</label>
-    <p class="output">{{vehicle.capacity}}</p>
-    <label for="color">Color</label>
-    <p class="output">{{vehicle.color}}</p>
-    <label for="vehicle_type">Type</label>
-    <p class="output">{{vehicle.vehicle_type}}</p>
-    <label for="date_registered">Date Registered</label>
-  <p class="output"> {{vehicle.date_registered}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+      <th>No Plate</th>
+      <th>Driver</th>
+      <th>Owner</th>
+      <th>Capacity</th>
+      <th>Color</th>
+      <th>Type</th>
+      <th>Date Registered</th>
+  </tr>
+  {% for vehicle in vehicles %}
+  <tr>
+      <td>{{ vehicle.no_plate }}</td>
+      <td>{{ vehicle.driver_username }}</td>
+      <td>{{ vehicle.owner_username }}</td>
+      <td>{{ vehicle.capacity }}</td>
+      <td>{{ vehicle.color }}</td>
+      <td>{{ vehicle.vehicle_type }}</td>
+      <td>{{ vehicle.date_registered }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% else %}
-{% for vehicle in vehicles %}
-<form action="/admin/vehicles" method="post" class='data'>
-  <label for="no_plate">No Plate</label>
-    <p class="output">{{vehicle.no_plate}}</p>
-    <label for="driver">Driver</label>
-    <p class="output">{{vehicle.driver_username}}</p>
-    <label for="owner">Owner</label>
-    <p class="output">{{vehicle.owner_username}}</p>
-    <label for="capacity">Capacity</label>
-    <p class="output">{{vehicle.capacity}}</p>
-    <label for="color">Color</label>
-    <p class="output">{{vehicle.color}}</p>
-    <label for="vehicle_type">Type</label>
-    <p class="output">{{vehicle.vehicle_type}}</p>
-    <label for="date_registered">Date Registered</label>
-  <p class="output"> {{vehicle.date_registered}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+      <th>No Plate</th>
+      <th>Driver</th>
+      <th>Owner</th>
+      <th>Capacity</th>
+      <th>Color</th>
+      <th>Type</th>
+      <th>Date Registered</th>
+  </tr>
+  {% for vehicle in vehicles %}
+  <tr>
+      <td>{{ vehicle.no_plate }}</td>
+      <td>{{ vehicle.driver_username }}</td>
+      <td>{{ vehicle.owner_username }}</td>
+      <td>{{ vehicle.capacity }}</td>
+      <td>{{ vehicle.color }}</td>
+      <td>{{ vehicle.vehicle_type }}</td>
+      <td>{{ vehicle.date_registered }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% endif %}
 {% else %}
 <p>no vehicles registered</p>
 {% endif %}
+
+</form>
 
 <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/sidebar.css')}}">
 {% endblock %}

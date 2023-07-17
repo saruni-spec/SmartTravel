@@ -267,6 +267,8 @@ def find_closest_hybrid_to_stage(stage_lat, stage_lon,hybrids):
         hybrid_lon = hybrid['longitude']
         
         distance = get_distance(stage_lat, stage_lon, hybrid_lat, hybrid_lon)
+
+        
         
         if distance < closest_distance:
             closest_distance = distance

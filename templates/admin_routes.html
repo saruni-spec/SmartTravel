@@ -30,107 +30,142 @@
   <input type="text" name="entity" id="entity">
   <button name="button_name" value="search">Search</button>
 
-  <button name="button_name" value="all">All Details</button>
-    <button name="button_name" value="id">Route No</button>
-    <button name="button_name" value="route_distane">Route Distance</button>
-    <button name="button_name" value="stages">Stages</button>
-    
+  <label for="">Summary Options</label>
+  <select name="button_name" >
+  <option value="all">All Details</option>
+    <option value="id">Route No</option>
+    <option value="route_distance">Route Distance</option>
+    <option value="stages">Stages</option>
+  </select>
    
     
-                                                       
+    <button type="submit">Summary</button>                  
           
 </form>
+
+<form action="" class="table">
+  <label for="">SmartTravel/Routes</label>
 {% if data is none %}
 <p>No routes are registered</p>
 {% elif data is iterable and data|length >0 %}
 
 {% if query=='all' %}
 
-{% for entry in data %}
+<table name="table"  border="1">
+  <tr>
+      <th>Route No</th>
+      <th>Route Distance</th>
+      <th>Stages</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+      <td>{{ entry.id }}</td>
+      <td>{{ entry.route_distance }}</td>
+      <td>
+          {% for stage in entry.stages %}
+          <p>{{ stage.stage_name }}, {{ stage.latitude }}:{{ stage.longitude }}</p>
+          {% endfor %}
+      </td>
+  </tr>
+  {% endfor %}
+</table>
 
-<form action="/admin/routes" method="post" class='data'>
-    <label for="">Route No</label>
-    <p class="output">{{entry.id}}</p>
-    <label for="">Route Distance</label>
-    <p class="output">{{entry.route_distane}}</p>
-    <label for="">Stages</label>
-    {% for stage in entry.stages %}
-    <p class="output">{{stage.stage_name}},{{stage.latitude}}:{{stage.longitude}}</p>
-    {% endfor %}
-    
-    
-    </form>
-    
-  
-{% endfor %}
 {% elif query=='search' %}
 
 
 
-<form action="/admin/routes" method="post" class='data'>
-    <label for="">Route No</label>
-    <p class="output">{{data.id}}</p>
-    <label for="">Route Distance</label>
-    <p class="output">{{data.route_distane}}</p>
-    <label for="">Stages</label>
-    {% for stage in data.stages %}
-    <p class="output">{{stage.stage_name}},{{stage.latitude}}:{{stage.longitude}}</p>
-    {% endfor %}
-    
-    
-    </form>
+<table name="table"  border="1">
+  <tr>
+      <th>Route No</th>
+      <th>Route Distance</th>
+      <th>Stages</th>
+  </tr>
+ 
+  <tr>
+      <td>{{ entry.id }}</td>
+      <td>{{ entry.route_distance }}</td>
+      <td>
+          {% for stage in entry.stages %}
+          <p>{{ stage.stage_name }}, {{ stage.latitude }}:{{ stage.longitude }}</p>
+          {% endfor %}
+      </td>
+  </tr>
+  
+</table>
 
 {% elif query=='id' %}
-{% for entry in data %}
-<form action="/admin/routes"method="post" class='data'>
-    <label for="id"></label>
-    <p class="output">{{entry.id}}</p>
-    <label for=""></label>
-    <p class="output">{{entry.route_distane}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Route No</th>
+    <th>Route Distance</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.route_distane }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='route_distane' %}
-{% for entry in data %}
-<form action="/admin/routes" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{entry.id}}</p>
-    <label for="route_distane">Route Distance</label>
-    <p class="output">{{entry.route_distane}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Route No</th>
+    <th>Route Distance</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.route_distane }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='stages' %}
-{% for entry in data %}
-<form action="/admin/routes" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{entry.id}}</p>
-    <label for="stages">Stages</label>
-    {% for stage in entry.stages %}
-    <p class="output">{{stage.stage_name}},{{stage.latitude}}:{{stage.longitude}}</p>
-    {% endfor %}
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Route No</th>
+    <th>Stages</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>
+      {% for stage in entry.stages %}
+      {{ stage.stage_name }},{{ stage.latitude }}:{{ stage.longitude }}<br>
+      {% endfor %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
 
 
 {% else %}
-{% for entry in data %}
-<form action="/admin/routes" method="post" class='data'>
-    <label for="">Route No</label>
-    <p class="output">{{entry.id}}</p>
-    <label for="">Route Distance</label>
-    <p class="output">{{entry.route_distane}}</p>
-    <label for="">Stages</label>
-    {% for stage in entry.stages %}
-    <p class="output">{{stage.stage_name}},{{stage.latitude}}:{{stage.longitude}}</p>
-    {% endfor %}
-   
-    
- 
-    </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+      <th>Route No</th>
+      <th>Route Distance</th>
+      <th>Stages</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+      <td>{{ entry.id }}</td>
+      <td>{{ entry.route_distance }}</td>
+      <td>
+          {% for stage in entry.stages %}
+          <p>{{ stage.stage_name }}, {{ stage.latitude }}:{{ stage.longitude }}</p>
+          {% endfor %}
+      </td>
+  </tr>
+  {% endfor %}
+</table>
 {% endif %}
 {% else %}
 <p>no routes registered</p>
 {% endif %}
+
+</form>
 
 <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/sidebar.css')}}">
 

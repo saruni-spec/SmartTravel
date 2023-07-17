@@ -1,6 +1,6 @@
 {% extends 'admin.html' %}
 {% block title %}
-<h2>User Details</h2>
+<h2>Driver Details</h2>
 {% endblock %}
 {% block content %}
 <form class="date_filter" action="/admin/users" method="post" id="date_options">
@@ -55,244 +55,297 @@
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <input type="text" name="entity" id="entity">
   <button name="button_name" value="search">Search</button>
-  <button name="button_name" value="all">All Details</button>
-    <button name="button_name" value="user_name">User Name</button>
-    <button name="button_name" value="email">Email</button>
-    <button name="button_name" value="phone">Phone Number</button>
-    <button name="button_name" value="address">Adress </button>
-    <button name="button_name" value="date_registered">Date registered </button>
-    <button name="button_name" value="licence_no">Licence No </button>
-    <button name="button_name" value="vehicle_no">Vehicle No Plate </button>
+  
+  <label for="">Summary Options</label>
+  <select name="button_name" >
+    <option value="all">All Details</option>
+    <option value="user_name">User Name</option>
+    <option value="email">Email</option>
+    <option value="phone">Phone Number</option>
+    <option value="address">Address</option>
+    <option value="date_registered">Date registered</option>
+    <option value="licence_no">License No</option>
+    <option value="vehicle_no">Vehicle No Plate</option>
+  </select>
+
+    <button type="submit">Summary</button>
    
     
                                                        
           
 </form>
+
+<form action="" class="table">
+  <label for="">SmartTravel/Drivers</label>
 {% if users is none %}
 <p>No riders are registered</p>
 {% elif users is iterable and users|length >0 %}
 {% if query=='all' %}
 
-{% for user in users %}
+<table name="table"  border="1">
+  <tr>
+      <th>User Name</th>
+      <th>Email</th>
+      <th>Phone Number</th>
+      <th>Address</th>
+      <th>Date Registered</th>
+      <th>Licence No</th>
+      <th>Vehicle No Plate</th>
+  </tr>
+  {% for user in users %}
+  <tr>
+      <td>{{ user.user_name }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.phone }}</td>
+      <td>{{ user.address }}</td>
+      <td>{{ user.date_registered }}</td>
+      <td>{{ user.driver_details.licence_no }}</td>
+      <td>{{ user.driver_details.drives.no_plate }}</td>
+  </tr>
+  {% endfor %}
+</table>
 
-<form action="/admin/drivers" method="post" class='data'>
-    <label for="">User Name</label>
-    <p class="output">{{user.user_name}}</p>
-    <label for="">Email</label>
-    <p class="output">{{user.email}}</p>
-    <label for="">Phone Number</label>
-    <p class="output">{{user.phone}}</p>
-    <label for="">Address</label>
-    <p class="output">{{user.address}}</p>
-    <label for="">Date registered</label>
-    <p class="output">{{user.date_registered}}</p>
-    <label for="">Licence No</label>
-    <p class="output">{{user.licence_no}}</p>
-    <label for="">Vehicle No Plate </label>
-    <p class="output">{{user.vehicle_no}}</p>
-    
-    </form>
-    
-  
-{% endfor %}
 
 {% elif query=='role' %}
-{% for user in users %}
-<form action="/admin/drivers"method="post" class='data'>
-    <label for="user_name"></label>
-    <p class="output">{{user.user_name}}</p>
-    <label for=""></label>
-    <p class="output">{{user.role}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+      <th>User Name</th>
+      <th>Role</th>
+  </tr>
+  {% for user in users %}
+  <tr>
+      <td>{{ user.user_name }}</td>
+      <td>{{ user.role }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% elif query=='email' %}
-{% for user in users %}
-<form action="/admin/drivers" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{user.user_name}}</p>
-    <label for="email">Email</label>
-    <p class="output">{{user.email}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+      <th>User Name</th>
+      <th>Email</th>
+  </tr>
+  {% for user in users %}
+  <tr>
+      <td>{{ user.user_name }}</td>
+      <td>{{ user.email }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='phone' %}
-{% for user in users %}
-<form action="/admin/drivers" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{user.user_name}}</p>
-    <label for="phone">Phone Number</label>
-    <p class="output">{{user.phone}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+      <th>User Name</th>
+      <th>Phone Number</th>
+  </tr>
+  {% for user in users %}
+  <tr>
+      <td>{{ user.user_name }}</td>
+      <td>{{ user.phone }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% elif query=='address' %}
-{% for user in users %}
-<form action="/admin/drivers" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{user.user_name}}</p>
-    <label for=""></label>
-    <p class="output">{{user.address}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+      <th>User Name</th>
+      <th>Address</th>
+  </tr>
+  {% for user in users %}
+  <tr>
+      <td>{{ user.user_name }}</td>
+      <td>{{ user.address }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% elif query=='date_registered' %}
-{% for user in users %}
-<form action="/admin/drivers" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{user.user_name}}</p>
-    <label for="">Date registered</label>
-    <p class="output">{{user.date_registered}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+      <th>User Name</th>
+      <th>Date Registered</th>
+  </tr>
+  {% for user in users %}
+  <tr>
+      <td>{{ user.user_name }}</td>
+      <td>{{ user.date_registered }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% elif query=='licence_no' %}
-{% for user in users %}
-<form action="/admin/drivers" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{user.user_name}}</p>
-    <label for="">Licence No</label>
-    <p class="output">{{user.licence_no}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+      <th>User Name</th>
+      <th>Licence No</th>
+  </tr>
+  {% for user in users %}
+  <tr>
+      <td>{{ user.user_name }}</td>
+      <td>{{ user.driver_details.licence_no }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% elif query=='vehicle_no' %}
-{% for user in users %}
-<form action="/admin/drivers" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{user.user_name}}</p>
-    <label for="">Vehicle No Plate </label>
-    <p class="output">{{user.vehicle_no}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+      <th>User Name</th>
+      <th>Vehicle</th>
+  </tr>
+  {% for user in users %}
+  <tr>
+      <td>{{ user.user_name }}</td>
+      <td>{{ user.driver_details.drives.no_plate }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='month_filter' %}
-{% for user in users %}
-
-<form action="/admin/drivers" method="post" class='data'>
-    <label for="">User Name</label>
-    <p class="output">{{user.user_name}}</p>
-    <label for="">Email</label>
-    <p class="output">{{user.email}}</p>
-    <label for="">Phone Number</label>
-    <p class="output">{{user.phone}}</p>
-    <label for="">Address</label>
-    <p class="output">{{user.address}}</p>
-    <label for="">Date registered</label>
-    <p class="output">{{user.date_registered}}</p>
-    <label for="">Licence No</label>
-    <p class="output">{{user.licence_no}}</p>
-    <label for="">Vehicle No Plate </label>
-    <p class="output">{{user.vehicle_no}}</p>
-    
-    </form>
-    
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+      <th>User Name</th>
+      <th>Email</th>
+      <th>Phone Number</th>
+      <th>Address</th>
+      <th>Date Registered</th>
+      <th>Licence No</th>
+      <th>Vehicle No Plate</th>
+  </tr>
+  {% for user in users %}
+  <tr>
+      <td>{{ user.user_name }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.phone }}</td>
+      <td>{{ user.address }}</td>
+      <td>{{ user.date_registered }}</td>
+      <td>{{ user.driver_details.licence_no }}</td>
+      <td>{{ user.driver_details.drives.no_plate }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% elif query=='date_filter' %}
-{% for user in users %}
-
-<form action="/admin/drivers" method="post" class='data'>
-    <label for="">User Name</label>
-    <p class="output">{{user.user_name}}</p>
-    <label for="">Email</label>
-    <p class="output">{{user.email}}</p>
-    <label for="">Phone Number</label>
-    <p class="output">{{user.phone}}</p>
-    <label for="">Address</label>
-    <p class="output">{{user.address}}</p>
-    <label for="">Date registered</label>
-    <p class="output">{{user.date_registered}}</p>
-    <label for="">Licence No</label>
-    <p class="output">{{user.licence_no}}</p>
-    <label for="">Vehicle No Plate </label>
-    <p class="output">{{user.vehicle_no}}</p>
-    
-    </form>
-    
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+      <th>User Name</th>
+      <th>Email</th>
+      <th>Phone Number</th>
+      <th>Address</th>
+      <th>Date Registered</th>
+      <th>Licence No</th>
+      <th>Vehicle No Plate</th>
+  </tr>
+  {% for user in users %}
+  <tr>
+      <td>{{ user.user_name }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.phone }}</td>
+      <td>{{ user.address }}</td>
+      <td>{{ user.date_registered }}</td>
+      <td>{{ user.driver_details.licence_no }}</td>
+      <td>{{ user.driver_details.drives.no_plate }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% elif query=='search' %}
 
 
-<form action="/admin/drivers" method="post" class='data'>
-    <label for="">User Name</label>
-    <p class="output">{{user.user_name}}</p>
-    <label for="">Email</label>
-    <p class="output">{{user.email}}</p>
-    <label for="">Phone Number</label>
-    <p class="output">{{user.phone}}</p>
-    <label for="">Address</label>
-    <p class="output">{{user.address}}</p>
-    <label for="">Date registered</label>
-    <p class="output">{{user.date_registered}}</p>
-    <label for="">Licence No</label>
-    <p class="output">{{user.licence_no}}</p>
-    <label for="">Vehicle No Plate </label>
-    <p class="output">{{user.vehicle_no}}</p>
-    
-    </form>
+<table name="table"  border="1">
+  <tr>
+      <th>User Name</th>
+      <th>Email</th>
+      <th>Phone Number</th>
+      <th>Address</th>
+      <th>Date Registered</th>
+      <th>Licence No</th>
+      <th>Vehicle No Plate</th>
+  </tr>
+  
+  <tr>
+      <td>{{ user.user_name }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.phone }}</td>
+      <td>{{ user.address }}</td>
+      <td>{{ user.date_registered }}</td>
+      <td>{{ user.driver_details.licence_no }}</td>
+      <td>{{ user.driver_details.drives.no_plate }}</td>
+  </tr>
+  
+</table>
 {% elif query=='year_filter' %}
-{% for user in users %}
-
-<form action="/admin/drivers" method="post" class='data'>
-    <label for="">User Name</label>
-    <p class="output">{{user.user_name}}</p>
-    <label for="">Email</label>
-    <p class="output">{{user.email}}</p>
-    <label for="">Phone Number</label>
-    <p class="output">{{user.phone}}</p>
-    <label for="">Address</label>
-    <p class="output">{{user.address}}</p>
-    <label for="">Date registered</label>
-    <p class="output">{{user.date_registered}}</p>
-    <label for="">Licence No</label>
-    <p class="output">{{user.licence_no}}</p>
-    <label for="">Vehicle No Plate </label>
-    <p class="output">{{user.vehicle_no}}</p>
-    
-    </form>
-    
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+      <th>User Name</th>
+      <th>Email</th>
+      <th>Phone Number</th>
+      <th>Address</th>
+      <th>Date Registered</th>
+      <th>Licence No</th>
+      <th>Vehicle No Plate</th>
+  </tr>
+  {% for user in users %}
+  <tr>
+      <td>{{ user.user_name }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.phone }}</td>
+      <td>{{ user.address }}</td>
+      <td>{{ user.date_registered }}</td>
+      <td>{{ user.driver_details.licence_no }}</td>
+      <td>{{ user.driver_details.drives.no_plate }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% elif query=='week_filter' %}
-{% for user in users %}
-
-<form action="/admin/drivers" method="post" class='data'>
-    <label for="">User Name</label>
-    <p class="output">{{user.user_name}}</p>
-    <label for="">Email</label>
-    <p class="output">{{user.email}}</p>
-    <label for="">Phone Number</label>
-    <p class="output">{{user.phone}}</p>
-    <label for="">Address</label>
-    <p class="output">{{user.address}}</p>
-    <label for="">Date registered</label>
-    <p class="output">{{user.date_registered}}</p>
-    <label for="">Licence No</label>
-    <p class="output">{{user.licence_no}}</p>
-    <label for="">Vehicle No Plate </label>
-    <p class="output">{{user.vehicle_no}}</p>
-    
-    </form>
-    
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+      <th>User Name</th>
+      <th>Email</th>
+      <th>Phone Number</th>
+      <th>Address</th>
+      <th>Date Registered</th>
+      <th>Licence No</th>
+      <th>Vehicle No Plate</th>
+  </tr>
+  {% for user in users %}
+  <tr>
+      <td>{{ user.user_name }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.phone }}</td>
+      <td>{{ user.address }}</td>
+      <td>{{ user.date_registered }}</td>
+      <td>{{ user.driver_details.licence_no }}</td>
+      <td>{{ user.driver_details.drives.no_plate }}</td>
+  </tr>
+  {% endfor %}
+</table>
 
 {% else %}
-{% for user in users %}
-<form action="/admin/drivers" method="post" class='data'>
-    <label for="">User Name</label>
-    <p class="output">{{user.user_name}}</p>
-    <label for="">Email</label>
-    <p class="output">{{user.email}}</p>
-    <label for="">Phone Number</label>
-    <p class="output">{{user.phone}}</p>
-    <label for="">Address</label>
-    <p class="output">{{user.address}}</p>
-    <label for="">Date registered</label>
-    <p class="output">{{user.date_registered}}</p>
-    <label for="">Licence No</label>
-    <p class="output">{{user.licence_no}}</p>
-    <label for="">Vehicle No Plate </label>
-    <p class="output">{{user.vehicle_no}}</p>
-    
- 
-    </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+      <th>User Name</th>
+      <th>Email</th>
+      <th>Phone Number</th>
+      <th>Address</th>
+      <th>Date Registered</th>
+      <th>Licence No</th>
+      <th>Vehicle No Plate</th>
+  </tr>
+  {% for user in users %}
+  <tr>
+      <td>{{ user.user_name }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.phone }}</td>
+      <td>{{ user.address }}</td>
+      <td>{{ user.date_registered }}</td>
+      <td>{{ user.driver_details.licence_no }}</td>
+      <td>{{ user.driver_details.drives.no_plate }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% endif %}
 {% else %}
 <p>no riders registered</p>
 {% endif %}
+
+</form>
 
 <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/sidebar.css')}}">
 {% endblock %}

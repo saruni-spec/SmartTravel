@@ -62,9 +62,9 @@
            </header>
            <main>
             <button onclick="hideDates()" id="date_hide">Date Options</button>
-            <button class="view" onclick="switchView()"  id="switch">Switch View</button>
+            
             <button onclick="downloadPDF()" id="download">Download</button>
-            <button onclick="hideThis()" id="hide">Filter Options</button>
+            
             {% block content %}
             
             {% endblock %}
@@ -88,77 +88,30 @@
       
       <script>
         function downloadPDF() {
-    var data = document.getElementsByClassName('data'); // get all elements with class='data'
-    var doc = new jsPDF();
-    for (var i = 0; i < data.length; i++) { // loop through each element
-      if (i > 0) {
-        doc.addPage(); // add a new page for each element after the first one
-      }
-      doc.fromHTML(data[i].innerHTML, 15, 15); // add the element's content to the PDF
-    }
-    var currentURL = window.location.href; // get the current URL
-  var title = currentURL.split('/').pop(); // extract the last part of the URL as the title
-  var otherTitle='SmartTravel'
-  doc.save(otherTitle +'-'+ title + '.pdf');
-}
+          var data = document.getElementsByClassName('table'); // get all elements with class='data'
+          var doc = new jsPDF();
+          
+          var options = {
+            fontSize: 5 // Set the font size to 10
+          };
+          
+          for (var i = 0; i < data.length; i++) { // loop through each element
+            if (i > 0) {
+              doc.addPage(); // add a new page for each element after the first one
+            }
+            doc.fromHTML(data[i].innerHTML, 15, 15, { ...options }); // add the element's content to the PDF with specified options
+          }
+          
+          var currentURL = window.location.href; // get the current URL
+          var title = currentURL.split('/').pop(); // extract the last part of the URL as the title
+          var otherTitle = 'SmartTravel';
+          doc.save(otherTitle + '-' + title + '.pdf');
+        }
+      </script>
+      
+        
 
-        </script>
-        <script>
-
-function switchView() {
-  var form_data = document.getElementsByClassName('data');
-  console.log('here');
-
-  for (var i = 0; i < form_data.length; i++) {
-    if (form_data[i].style.flexDirection == 'column') {
-      form_data[i].style.flexDirection = 'row';
-      form_data[i].style.width = '90vw';
-      form_data[i].style.padding = '0.5%';
-      form_data[i].style.position = 'relative';
-      form_data[i].style.marginLeft = '1%';
-      form_data[i].style.left = '2%';
-      form_data[i].style.margin = '0.5%';
-      form_data[i].style.zIndex = '2';
-      form_data[i].style.fontSize = '0.6rem';
-
-      if (i === 0) {
-        form_data[i].style.marginTop = '5%'; // Set marginTop to 10% for the first element (index 0)
-      } else {
-        form_data[i].style.marginTop = '0.5%';
-      }
-    } else {
-      form_data[i].style.flexDirection = 'column';
-      form_data[i].style.position = 'relative';
-      form_data[i].style.display = 'flex';
-      form_data[i].style.flexDirection = 'column';
-      form_data[i].style.left = '35%';
-      form_data[i].style.width = '50vh';
-      form_data[i].style.padding = '5%';
-      form_data[i].style.marginTop = '5%';
-      form_data[i].style.fontSize = '0.9rem';
-    }
-  }
-}
-
-console.log('failed');
-
-
-        </script>
-
-        <script>
-
-function hideThis() {
-  var elem = document.getElementById("filter_options");
-  if (elem.classList.contains("sidebar")) {
-    elem.classList.remove("sidebar");
-    elem.classList.add("hidden_bar");
-  } else {
-    elem.classList.remove("hidden_bar");
-    elem.classList.add("sidebar");
-  }
-}
-
-        </script>
+        
         <script>
 
           function hideDates() {

@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% block title %}
-
+<h2>Verification</h2>
 {% endblock %}
 {% block content %}
 <div class="home">
 <h2>Enter confirmation code</h2>
 <form action="verification" method="post">
     <label for="verification_code">Enter verification code</label>
-    <input type="text">
+    <input type="text" value="{{verification_code}}">
     <button type="submit">submit</button>
 </div>
 {% endblock %}

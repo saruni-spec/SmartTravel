@@ -3,10 +3,7 @@
 <h2>Transaction Details</h2>
 {% endblock %}
 {% block content %}
-<div class="earnings">
-<p class="output">Total earning :{{total}}</p>
-<p class="output">Pending earning : {{pending}}</p>
-</div>
+
 
 <form class="date_filter" action="/admin/transactions" method="post" id="date_options">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -58,324 +55,396 @@
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <input type="text" name="entity" id="entity">
   <button name="button_name" value="search">Search</button>
-  <button name="button_name" value="all">All Details</button>
-    <button name="button_name" value="id">Transaction ID</button>
-    <button name="button_name" value="user_name">User Name</button>
-    <button name="button_name" value="amount">Amount </button>
-    <button name="button_name" value="rating">Rating </button>
-    <button name="button_name" value="date">Date </button>
-    <button name="button_name" value="paid_at">Time </button>
-    <button name="button_name" value="payment_type">Paid With </button>
-    <button name="button_name" value="vehicle_id">Vehicle No Plate </button>
-    <button name="button_name" value="status">Transaction Status </button>
-    <button name="button_name" value="card_number">Card/Phone Number </button>
+  
+  <label for="">Summary Options</label>
+  <select name="button_name" >
+    <option value="all">All Details</option>
+    <option value="id">Transaction ID</option>
+    <option value="user_name">User Name</option>
+    <option value="amount">Amount</option>
+    <option value="rating">Rating</option>
+    <option value="date">Date</option>
+    <option value="paid_at">Time</option>
+    <option value="payment_type">Paid With</option>
+    <option value="vehicle_id">Vehicle No Plate</option>
+    <option value="status">Transaction Status</option>
+    <option value="card_number">Card/Phone Number</option>
+  </select>
+   
+    
+    <button type="submit">Summary</button> 
   
     
                                                        
           
 </form>
+
+<form action="" class="table">
+  <label for="">SmartTravel/Transactions</label>
+
+  <div class="earnings">
+    <p class="output">Total earning :{{total}}</p>
+    <p class="output">Pending earning : {{pending}}</p>
+    
+    </div>
+
 {% if data is none %}
 <p>No transactions have been made</p>
 {% elif data is iterable and data|length >0 %}
 {% if query=='all' %}
 
-{% for entry in data %}
 
-<form action="/admin/transactions" method="post" class='data'>
-    <label for="">Booking ID</label>
-    <p class="output">{{entry.id}}</p>
-    <label for="">User Name</label>
-    <p class="output">{{entry.user_name}}</p>
-    <label for="">Amount </label>
-    <p class="output">{{entry.amount}}</p>
-    <label for="">Address</label>
-    <p class="output">{{entry.rating}}</p>
-    <label for="">Date</label>
-    <p class="output">{{entry.paid_at}}</p>
-    <label for="">Time</label>
-    <p class="output">{{entry.time}}</p>
-    <label for="">Paid With</label>
-    <p class="output">{{entry.payment_type}}</p>
-    <label for="">Vehicle No Plate </label>
-    <p class="output">{{entry.vehicle_id}}</p>
-    <label for="">Transaction Status </label>
-    <p class="output">{{entry.status}}</p>
-    <label for="">Booking Type </label>
-    <p class="output">{{entry.card_number}}</p>
-    
-
-    
-    </form>
-    
-  
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Booking ID</th>
+    <th>User Name</th>
+    <th>Amount</th>
+    <th>Address</th>
+    <th>Date</th>
+    <th>Time</th>
+    <th>Paid With</th>
+    <th>Vehicle No Plate</th>
+    <th>Transaction Status</th>
+    <th>Booking Type</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.user_name }}</td>
+    <td>{{ entry.amount }}</td>
+    <td>{{ entry.rating }}</td>
+    <td>{{ entry.paid_at }}</td>
+    <td>{{ entry.time }}</td>
+    <td>{{ entry.payment_type }}</td>
+    <td>{{ entry.vehicle_id }}</td>
+    <td>{{ entry.status }}</td>
+    <td>{{ entry.card_number }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% elif query=='search' %}
 
+<table name="table"  border="1">
+  <tr>
+    <th>Booking ID</th>
+    <th>User Name</th>
+    <th>Amount</th>
+    <th>Address</th>
+    <th>Date</th>
+    <th>Time</th>
+    <th>Paid With</th>
+    <th>Vehicle No Plate</th>
+    <th>Transaction Status</th>
+    <th>Booking Type</th>
+  </tr>
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.user_name }}</td>
+    <td>{{ entry.amount }}</td>
+    <td>{{ entry.rating }}</td>
+    <td>{{ entry.paid_at }}</td>
+    <td>{{ entry.time }}</td>
+    <td>{{ entry.payment_type }}</td>
+    <td>{{ entry.vehicle_id }}</td>
+    <td>{{ entry.status }}</td>
+    <td>{{ entry.card_number }}</td>
+  </tr>
 
-<form action="/admin/transactions" method="post" class='data'>
-    <label for="">Booking ID</label>
-    <p class="output">{{entry.id}}</p>
-    <label for="">User Name</label>
-    <p class="output">{{entry.user_name}}</p>
-    <label for="">Amount </label>
-    <p class="output">{{entry.amount}}</p>
-    <label for="">Address</label>
-    <p class="output">{{entry.rating}}</p>
-    <label for="">Date</label>
-    <p class="output">{{entry.paid_at}}</p>
-    <label for="">Time</label>
-    <p class="output">{{entry.time}}</p>
-    <label for="">Paid With</label>
-    <p class="output">{{entry.payment_type}}</p>
-    <label for="">Vehicle No Plate </label>
-    <p class="output">{{entry.vehicle_id}}</p>
-    <label for="">Transaction Status </label>
-    <p class="output">{{entry.status}}</p>
-    <label for="">Booking Type </label>
-    <p class="output">{{entry.card_number}}</p>
-    
-
-    
-    </form>
-    
-  
+</table>
 
 
 {% elif query=='id' %}
-{% for entry in data %}
-<form action="/admin/transactions"method="post" class='data'>
-    <label for="id"></label>
-    <p class="output">{{entry.id}}</p>
-    <label for=""></label>
-    <p class="output">{{entry.status}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Booking ID</th>
+    <th>Transaction Status</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.status }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='user_name' %}
-{% for entry in data %}
-<form action="/admin/transactions" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{entry.id}}</p>
-    <label for="user_name">User Name</label>
-    <p class="output">{{entry.user_name}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Booking ID</th>
+    <th>User Name</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.user_name }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='amount' %}
-{% for entry in data %}
-<form action="/admin/transactions" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{entry.id}}</p>
-    <label for="amount">Amount </label>
-    <p class="output">{{entry.amount}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Booking ID</th>
+    <th>Amount</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.amount }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='rating' %}
-{% for entry in data %}
-<form action="/admin/transactions" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{entry.id}}</p>
-    <label for=""></label>
-    <p class="output">{{entry.rating}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Booking ID</th>
+    <th>Rating</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.rating }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='date' %}
-{% for entry in data %}
-<form action="/admin/transactions" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{entry.id}}</p>
-    <label for="">Date</label>
-    <p class="output">{{entry.paid_at}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Booking ID</th>
+    <th>Date</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.paid_at }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='paid_at' %}
-{% for entry in data %}
-<form action="/admin/transactions" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{entry.id}}</p>
-    <label for="">Time</label>
-    <p class="output">{{entry.time}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Booking ID</th>
+    <th>Time</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.time }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='payment_type' %}
-{% for entry in data %}
-<form action="/admin/transactions" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{entry.id}}</p>
-    <label for="">Paid With</label>
-    <p class="output">{{entry.payment_type}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Booking ID</th>
+    <th>Paid With</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.payment_type }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='vehicle_id' %}
-{% for entry in data %}
-<form action="/admin/transactions" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{entry.id}}</p>
-    <label for="">Vehicle No Plate </label>
-    <p class="output">{{entry.vehicle_id}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Booking ID</th>
+    <th>Vehicle No Plate</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.vehicle_id }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='status' %}
-{% for entry in data %}
-<form action="/admin/transactions" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{entry.id}}</p>
-    <label for="">Transaction Status </label>
-    <p class="output">{{entry.status}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Booking ID</th>
+    <th>Transaction Status</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.status }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='card_number' %}
-{% for entry in data %}
-<form action="/admin/transactions" method="post" class='data'>
-    <label for=""></label>
-    <p class="output">{{entry.id}}</p>
-    <label for="">Booking Type </label>
-    <p class="output">{{entry.card_number}}</p>
-  </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Booking ID</th>
+    <th>Booking Type</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.card_number }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% elif query=='month_filter' %}
-{% for entry in data %}
-<form action="/admin/transactions" method="post" class='data'>
-    <label for="">Booking ID</label>
-    <p class="output">{{entry.id}}</p>
-    <label for="">User Name</label>
-    <p class="output">{{entry.user_name}}</p>
-    <label for="">Amount </label>
-    <p class="output">{{entry.amount}}</p>
-    <label for="">Address</label>
-    <p class="output">{{entry.rating}}</p>
-    <label for="">Date</label>
-    <p class="output">{{entry.paid_at}}</p>
-    <label for="">Time</label>
-    <p class="output">{{entry.time}}</p>
-    <label for="">Paid With</label>
-    <p class="output">{{entry.payment_type}}</p>
-    <label for="">Vehicle No Plate </label>
-    <p class="output">{{entry.vehicle_id}}</p>
-    <label for="">Transaction Status </label>
-    <p class="output">{{entry.status}}</p>
-    <label for="">Booking Type </label>
-    <p class="output">{{entry.card_number}}</p>
-    
-
-    
-    </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Booking ID</th>
+    <th>User Name</th>
+    <th>Amount</th>
+    <th>Address</th>
+    <th>Date</th>
+    <th>Time</th>
+    <th>Paid With</th>
+    <th>Vehicle No Plate</th>
+    <th>Transaction Status</th>
+    <th>Booking Type</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.user_name }}</td>
+    <td>{{ entry.amount }}</td>
+    <td>{{ entry.rating }}</td>
+    <td>{{ entry.paid_at }}</td>
+    <td>{{ entry.time }}</td>
+    <td>{{ entry.payment_type }}</td>
+    <td>{{ entry.vehicle_id }}</td>
+    <td>{{ entry.status }}</td>
+    <td>{{ entry.card_number }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% elif query=='year_filter' %}
-{% for entry in data %}
-<form action="/admin/transactions" method="post" class='data'>
-    <label for="">Booking ID</label>
-    <p class="output">{{entry.id}}</p>
-    <label for="">User Name</label>
-    <p class="output">{{entry.user_name}}</p>
-    <label for="">Amount </label>
-    <p class="output">{{entry.amount}}</p>
-    <label for="">Address</label>
-    <p class="output">{{entry.rating}}</p>
-    <label for="">Date</label>
-    <p class="output">{{entry.paid_at}}</p>
-    <label for="">Time</label>
-    <p class="output">{{entry.time}}</p>
-    <label for="">Paid With</label>
-    <p class="output">{{entry.payment_type}}</p>
-    <label for="">Vehicle No Plate </label>
-    <p class="output">{{entry.vehicle_id}}</p>
-    <label for="">Transaction Status </label>
-    <p class="output">{{entry.status}}</p>
-    <label for="">Booking Type </label>
-    <p class="output">{{entry.card_number}}</p>
-    
-
-    
-    </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Booking ID</th>
+    <th>User Name</th>
+    <th>Amount</th>
+    <th>Address</th>
+    <th>Date</th>
+    <th>Time</th>
+    <th>Paid With</th>
+    <th>Vehicle No Plate</th>
+    <th>Transaction Status</th>
+    <th>Booking Type</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.user_name }}</td>
+    <td>{{ entry.amount }}</td>
+    <td>{{ entry.rating }}</td>
+    <td>{{ entry.paid_at }}</td>
+    <td>{{ entry.time }}</td>
+    <td>{{ entry.payment_type }}</td>
+    <td>{{ entry.vehicle_id }}</td>
+    <td>{{ entry.status }}</td>
+    <td>{{ entry.card_number }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% elif query=='date_filter' %}
-{% for entry in data %}
-<form action="/admin/transactions" method="post" class='data'>
-    <label for="">Booking ID</label>
-    <p class="output">{{entry.id}}</p>
-    <label for="">User Name</label>
-    <p class="output">{{entry.user_name}}</p>
-    <label for="">Amount </label>
-    <p class="output">{{entry.amount}}</p>
-    <label for="">Address</label>
-    <p class="output">{{entry.rating}}</p>
-    <label for="">Date</label>
-    <p class="output">{{entry.paid_at}}</p>
-    <label for="">Time</label>
-    <p class="output">{{entry.time}}</p>
-    <label for="">Paid With</label>
-    <p class="output">{{entry.payment_type}}</p>
-    <label for="">Vehicle No Plate </label>
-    <p class="output">{{entry.vehicle_id}}</p>
-    <label for="">Transaction Status </label>
-    <p class="output">{{entry.status}}</p>
-    <label for="">Booking Type </label>
-    <p class="output">{{entry.card_number}}</p>
-    
-
-    
-    </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Booking ID</th>
+    <th>User Name</th>
+    <th>Amount</th>
+    <th>Address</th>
+    <th>Date</th>
+    <th>Time</th>
+    <th>Paid With</th>
+    <th>Vehicle No Plate</th>
+    <th>Transaction Status</th>
+    <th>Booking Type</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.user_name }}</td>
+    <td>{{ entry.amount }}</td>
+    <td>{{ entry.rating }}</td>
+    <td>{{ entry.paid_at }}</td>
+    <td>{{ entry.time }}</td>
+    <td>{{ entry.payment_type }}</td>
+    <td>{{ entry.vehicle_id }}</td>
+    <td>{{ entry.status }}</td>
+    <td>{{ entry.card_number }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% elif query=='week_filter' %}
-{% for entry in data %}
-<form action="/admin/transactions" method="post" class='data'>
-    <label for="">Booking ID</label>
-    <p class="output">{{entry.id}}</p>
-    <label for="">User Name</label>
-    <p class="output">{{entry.user_name}}</p>
-    <label for="">Amount </label>
-    <p class="output">{{entry.amount}}</p>
-    <label for="">Address</label>
-    <p class="output">{{entry.rating}}</p>
-    <label for="">Date</label>
-    <p class="output">{{entry.paid_at}}</p>
-    <label for="">Time</label>
-    <p class="output">{{entry.time}}</p>
-    <label for="">Paid With</label>
-    <p class="output">{{entry.payment_type}}</p>
-    <label for="">Vehicle No Plate </label>
-    <p class="output">{{entry.vehicle_id}}</p>
-    <label for="">Transaction Status </label>
-    <p class="output">{{entry.status}}</p>
-    <label for="">Booking Type </label>
-    <p class="output">{{entry.card_number}}</p>
-    
-
-    
-    </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Booking ID</th>
+    <th>User Name</th>
+    <th>Amount</th>
+    <th>Address</th>
+    <th>Date</th>
+    <th>Time</th>
+    <th>Paid With</th>
+    <th>Vehicle No Plate</th>
+    <th>Transaction Status</th>
+    <th>Booking Type</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.user_name }}</td>
+    <td>{{ entry.amount }}</td>
+    <td>{{ entry.rating }}</td>
+    <td>{{ entry.paid_at }}</td>
+    <td>{{ entry.time }}</td>
+    <td>{{ entry.payment_type }}</td>
+    <td>{{ entry.vehicle_id }}</td>
+    <td>{{ entry.status }}</td>
+    <td>{{ entry.card_number }}</td>
+  </tr>
+  {% endfor %}
+</table>
 
 {% else %}
-{% for entry in data %}
-<form action="/admin/transactions" method="post" class='data'>
-    <label for="">Booking ID</label>
-    <p class="output">{{entry.id}}</p>
-    <label for="">User Name</label>
-    <p class="output">{{entry.user_name}}</p>
-    <label for="">Amount </label>
-    <p class="output">{{entry.amount}}</p>
-    <label for="">Address</label>
-    <p class="output">{{entry.rating}}</p>
-    <label for="">Date</label>
-    <p class="output">{{entry.paid_at}}</p>
-    <label for="">Time</label>
-    <p class="output">{{entry.time}}</p>
-    <label for="">Paid With</label>
-    <p class="output">{{entry.payment_type}}</p>
-    <label for="">Vehicle No Plate </label>
-    <p class="output">{{entry.vehicle_id}}</p>
-    <label for="">Transaction Status </label>
-    <p class="output">{{entry.status}}</p>
-    <label for="">Booking Type </label>
-    <p class="output">{{entry.card_number}}</p>
-   
-    
- 
-    </form>
-{% endfor %}
+<table name="table"  border="1">
+  <tr>
+    <th>Booking ID</th>
+    <th>User Name</th>
+    <th>Amount</th>
+    <th>Address</th>
+    <th>Date</th>
+    <th>Time</th>
+    <th>Paid With</th>
+    <th>Vehicle No Plate</th>
+    <th>Transaction Status</th>
+    <th>Booking Type</th>
+  </tr>
+  {% for entry in data %}
+  <tr>
+    <td>{{ entry.id }}</td>
+    <td>{{ entry.user_name }}</td>
+    <td>{{ entry.amount }}</td>
+    <td>{{ entry.rating }}</td>
+    <td>{{ entry.paid_at }}</td>
+    <td>{{ entry.time }}</td>
+    <td>{{ entry.payment_type }}</td>
+    <td>{{ entry.vehicle_id }}</td>
+    <td>{{ entry.status }}</td>
+    <td>{{ entry.card_number }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% endif %}
 {% else %}
 <p>No transactions have been made</p>
 {% endif %}
+
+</form>
 
 <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/sidebar.css')}}">
 {% endblock %}

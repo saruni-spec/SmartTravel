@@ -3,6 +3,8 @@
 <h2>Notifications</h2>
 {% endblock %}
 {% block content %}
+
+
 {% if cars is none %}
 
 <p>no vehicles for hire</p>
@@ -12,17 +14,17 @@
 <form action="/hire/car" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 <label for="no_plate">NO PLATE</label>
-<input type="hidden" name="no_plate" id="no_pate" value="car.no_plate">
+<input type="hidden" name="no_plate" id="no_pate" value="{{car.no_plate}}">
 <p class="output">{{car.no_plate}}</p>
 <label for="capacity">Capacity</label>
 
 <p class="output">{{car.capacity}}</p>
-<label for="type">VEhicle Type</label>
-<p class="output">{{car.type}}</p>
+<label for="type">Vehicle Type</label>
+<p class="output">{{car.build_type}}</p>
 <label for="color">Color</label>
 <p class="output">{{car.color}}</p>
 <label for="price">Pricing</label>
-<p class="output">{{car.price}}</p>
+<p class="output">{{car.hiring_cost}}</p>
 
 <button type="submit"> Hire </button>
 </form>

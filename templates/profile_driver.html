@@ -5,11 +5,12 @@
 {% endblock %}
 {% block content %}
 
-    <form action="/profile/driver" method="post">
+    <form action="/profile/driver" method="post" style="  position: fixed; margin-left: -75%; margin-top: 1%; width: 10vw; height: 40vh; padding: 2%;">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <label for="destination" id="destination_name" >Destination</label>
         <input type="text" name="destination" id="destination" >
+        <label for="">Docking </label>
         <label class="switch">
             {% if docked %}
             <input type="checkbox" id="dockedCheckbox" name="docked" checked>
@@ -36,14 +37,12 @@
     <p class="output">{{email}}</p>
     <label for="phone_number">Phone Number</label>
     <p class="output">{{phone_number}}</p>
-    <label for="address"><Address></Address></label>
+    <label for="address">Address</label>
     <p class="output">{{address}}</p>
     <label for="vehicle">Vehicle</label>
     <p class="output">{{vehicle_no}}</p>
     
-    
-        
-        <a href="riders"><button type="button" class="a-form">Current passengers</button></a>
+
         <a href="{{url_for('profile.edit_profile')}}" class="a-form"> edit profile</a>
     </form>
 

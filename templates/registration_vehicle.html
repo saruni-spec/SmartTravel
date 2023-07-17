@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}
-
+<h2>Vehicle Registration</h2>
 {% endblock %}
 {% block content %}
 <div class="home">
@@ -8,30 +8,28 @@
 <form action="/registration/vehicle" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="id_no">License or Id No</label>
-    <input type="text" name="id_no" id="id_no" >
+    <input type="text" name="id_no" id="id_no" value="{{id_no}}" >
     <label for="No_plate">Number Plate</label>
-    <input type="text" name="no_plate" id="no_plate">
+    <input type="text" name="no_plate" id="no_plate" value="{{no_plate}}">
     <label for="type">Type</label>
-    <select name="vehicle_type" id="vehicle_type">
+    <select name="vehicle_type" id="vehicle_type" value="{{vehicle_type}}" >
         <option value="taxi">Taxi</option>
         <option value="bus">Bus</option>
-        <option value="bike">Bike</option>
         <option value="hybrid">Hybrid</option>
 
     </select>
     <label for="type">Build_Type</label>
-    <select name="build_type" id="build_type">
+    <select name="build_type" id="build_type" value="{{build_type}}">
         <option value="saloon">Saloon</option>
         <option value="SUV">SUV</option>
         <option value="Truck">Truck</option>
         <option value="Bus">Bus</option>
-        <option value="Bike">Bike</option>
     </select>
 
     <label for="capacity">Capacity</label>
-    <input type="number" name="capacity" id="capacity">
+    <input type="number" name="capacity" id="capacity" value="{{capacity}}">
     <label for="color">Color</label>
-    <input type="text" name="color" id="color">
+    <input type="text" name="color" id="color" value="{{color}}">
     <button type="submit">Submit</button>
     
 

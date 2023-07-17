@@ -66,29 +66,21 @@ Select your destination
 </script>
 <script>
 // Get the two forms with the class 'vehicle'
-const vehicleForms = document.querySelectorAll('.vehicle');
 
-// Check if the 'formSubmitted' cookie is set to 'true'
-if (document.cookie.includes('formSubmitted=true')) {
-  // Show the two forms
-  vehicleForms.forEach(form => {
-    form.style.display = 'block';
-  });
-} else {
-  // Hide the forms initially
-  vehicleForms.forEach(form => {
-    form.style.display = 'none';
-  });
+
+var bus_message='{{closest_bus}}';
+
+var bus=document.getElementById('bus-form');
+
+
+if (bus_message=='None' ){
+bus.style.display='none';
+}
+else{
+  bus.style.display='flex';
 }
 
-// Get the 'Confirm' button
-const confirmButton = document.querySelector('button[type="submit"]');
 
-// Add an event listener to the 'Confirm' button
-confirmButton.addEventListener('click', () => {
-  // Set the 'formSubmitted' cookie to 'true'
-  document.cookie = 'formSubmitted=true';
-});
 
 </script>
 <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/booking.css')}}">

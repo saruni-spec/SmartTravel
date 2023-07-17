@@ -241,6 +241,7 @@ def edit_profile():
 @login_required
 def vehicle():
     user_name=current_user.user_name
+    user=User.query.filter_by(user_name=user_name).first()
     vehicle=Vehicle.query.filter_by(driver_username=user_name).first()
     if vehicle is None:
         vehicle=Vehicle.query.filter_by(owner_username=user_name).first()
@@ -252,7 +253,9 @@ def vehicle():
     for_hire=vehicle.for_hire
     fare=vehicle.fare
     hire_cost=vehicle.hiring_cost
-    return render_template('profile_vehicle.html',hire_cost=hire_cost,fare=fare,color=color,no_plate=no_plate,capacity=capacity,model=model,service_type=service_type,for_hire=for_hire)
+    driver_name=vehicle.driver_username
+    owner_name=vehicle.owner_username
+    return render_template('profile_vehicle.html',driver_name=driver_name,owner_name=owner_name,hire_cost=hire_cost,fare=fare,color=color,no_plate=no_plate,capacity=capacity,model=model,service_type=service_type,for_hire=for_hire)
 
 
 @bp.route('/profile/vehicle/edit',methods=['GET','POST'])

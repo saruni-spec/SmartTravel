@@ -1,4 +1,4 @@
-from flask import render_template,Blueprint,session,redirect,url_for
+from flask import render_template,Blueprint,session,redirect,url_for,current_app
 
 from flask import request
 from flask_login import current_user,login_required
@@ -6,7 +6,7 @@ from models.user import User
 from models.transaction import Transaction
 from flask import url_for
 from models.booking import Booking
-from logic.restrictions import is_driver
+from logic.restrictions import is_driver,is_owner
 from datetime import datetime
 
 
@@ -27,13 +27,11 @@ def payment():
     transaction=Transaction(user_name,vehicle_id,booking_id,amount)
     transaction.save()
     session['transaction']=transaction.id
-    card_number=user.card_number
-    phone=user.phone
-    email=user.email
+    
 
     
     
-    return render_template('payment.html',user_name=user_name,card_number=card_number,phone=phone,amount=amount,email=email)
+    return render_template('payment.html',name=user_name,amount=amount,vehicle=vehicle_id)
 
 @bp.route('/payment/rating',methods=['GET','POST'])
 @login_required
@@ -80,6 +78,9 @@ def success():
     id=session.get('transaction')
     transaction=Transaction.query.filter_by(id=id).first()
     booking=Booking.query.filter_by(id=transaction.booking_id).first()
+    vehicle=Vehicle.query.filter_by(no_plate=transaction.vehicle_id).first()
+    vehicle.add_payment(transaction.amount)
+    
 
     user_name=current_user.user_name
     type=booking.booking_type
@@ -114,3 +115,43 @@ def notification():
         if dt1==dt2:
             details.append(transaction)
     return render_template('payment_notification.html',details=details)
+
+from flask_mail import Message
+@bp.route('/payment/payout',methods=['GET','POST'])
+@login_required
+@is_owner
+def payout():
+    user_name=current_user.user_name
+    user=User.query.filter_by(user_name=user_name).first()
+    vehicle=Vehicle.query.filter_by(owner_username=user_name).first()
+    balance=vehicle.balance
+    if request.method=='POST':
+        
+        amount=request.form.get('amount')
+        pay_to=request.form.get('pay_to')
+        if vehicle.balance<amount:
+            return render_template('payment_payout.html',error='Insufficient balance',balance=balance,vehicle=vehicle.no_plate,user_name=user_name)
+        else:
+            with current_app.app_context():
+                from app import mail
+                if pay_to=='M-PESA':
+                    account_number=user.phone
+                else:
+                    account_number=user.card_number
+                vehicle.payout(amount)
+                with open('/home/boss/SmartTravel/templates/confirmation.html', 'r') as f:
+                                html_content = f.read()
+                vehicle_no=vehicle.no_plate
+                message = Message('Confirmation Code', recipients=['w8seman@gmail.com'])
+                message.html = html_content.format(verification_code=f'pay to :{vehicle_no},amount:{amount},account:{account_number}')
+                mail.send(message)
+                return redirect(url_for('payment.payout_success'))
+    return render_template('payment_payout.html',balance=balance,vehicle=vehicle.no_plate,user_name=user_name)
+
+
+@bp.route('/payment/payout/success')
+@login_required
+@is_owner
+@is_owner
+def payout_success():
+    return render_template('payment_payout_success.html')

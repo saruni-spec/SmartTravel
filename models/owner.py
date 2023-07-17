@@ -11,7 +11,7 @@ class Owner(db.Model):
     user_name=db.Column(db.String(100),ForeignKey('user.user_name'),nullable=False)
     licence_no=db.Column(db.String(100),primary_key=True)
 
-    vehicle_details = relationship("Vehicle", backref="owns" )
+    vehicle_details = relationship("Vehicle", backref="owns",uselist=False )
     
 
     

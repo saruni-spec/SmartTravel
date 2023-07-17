@@ -37,6 +37,7 @@ def track_user():
             vehicle=Vehicle.query.filter_by(driver_username=user_name).first()
             
             current_vehicle=vehicle.no_plate
+            session['vehicle']=current_vehicle
             tracking_details = {"vehicle": current_vehicle, "latitude": latitude, "longitude": longitude,'timestamp':time}
             print(tracking_details,'tracking_details driver')
             if vehicle.vehicle_type=='bus':

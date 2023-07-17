@@ -29,24 +29,25 @@ def registration():
                 return 'invalid csrf',404
 
             user_name=request.form.get('user_name')
-            user=User.query.filter_by(user_name=user_name).first()
-            if user:
-                error="user_name already exists"
-                return render_template('registration_rider.html',error=error) 
-            
             password=request.form.get('password')
             first_name=request.form.get('first_name')
             other_name=request.form.get('other_name')
             email=request.form.get('email')
+            user=User.query.filter_by(user_name=user_name).first()
+            if user:
+                error="user_name already exists"
+                return render_template('registration_rider.html',error=error,user_name=user_name,first_name=first_name,other_name=other_name,email=email) 
+            
+            
 
             error=validate_email(email)
             if error:
-                return render_template('registration_rider.html',error=error)
+                return render_template('registration_rider.html',error=error,user_name=user_name,first_name=first_name,other_name=other_name,email=email)
             
             user=User.query.filter_by(email=email).first()
             if user:
                 error="email already exists"
-                return render_template('registration_rider.html',error=error)
+                return render_template('registration_rider.html',error=error,user_name=user_name,first_name=first_name,other_name=other_name,email=email)
             
             error=validate_password(password)
             if error is None:
@@ -61,7 +62,7 @@ def registration():
                 else:
                     return redirect(url_for('login.login'))
             else:
-                return render_template('registration_rider.html',error=error)
+                return render_template('registration_rider.html',error=error,user_name=user_name,first_name=first_name,other_name=other_name,email=email)
         return render_template('registration_rider.html')
     
 
@@ -79,6 +80,7 @@ def register_vehicle():
                 error="Invalid CSRF token"
 
             id_no = request.form.get('id_no')
+            session['id_no']=id_no
             no_plate = request.form.get('no_plate')
             vehicle_type = request.form.get('vehicle_type')
             capacity = request.form.get('capacity')
@@ -88,7 +90,7 @@ def register_vehicle():
             vehicle=Vehicle.query.filter_by(no_plate=no_plate).first()
             if vehicle:
                 error="vehicle already exists"
-                return render_template('registration_vehicle.html',error=error)
+                return render_template('registration_vehicle.html',error=error,id_no=id_no,no_plate=no_plate,vehicle_type=vehicle_type,capacity=capacity,color=color,build_type=build_type)
             else:
                 vehicle=Vehicle(no_plate)
                 owner=Owner.query.filter_by(user_name=current_user.user_name).first()
@@ -98,7 +100,7 @@ def register_vehicle():
                     user=User.query.filter_by(user_name=current_user.user_name).first()
                     user.make_owner()
                 vehicle.save(vehicle_type,current_user.user_name,capacity,color,build_type)
-
+                
            
             
 
@@ -148,7 +150,8 @@ def register_vehicle_driver():
                 
             elif 'skip':
                 user.make_driver()
-                
+                driver=Driver(current_user.user_name,session.get('id_no'))
+                driver.save()
                 
                 return redirect(url_for('registration.success'))
         return render_template('registration_add_driver.html')
@@ -164,11 +167,12 @@ def register_driver():
         if request.method=='POST':
             
             license=request.form.get('license_no')
-            if license is None or license=='':
-                return render_template('registration_driver.html',error="Enter License Number")
             phone=request.form.get('phone_no')
+            if license is None or license=='':
+                return render_template('registration_driver.html',error="Enter License Number",phone_no=phone)
+            
             if phone is None or phone=='':
-                return render_template('registration_driver.html',error="Enter Phone Number")
+                return render_template('registration_driver.html',error="Enter Phone Number",licence_no=license)
             user.add_phone(phone)
             driver=Driver(current_user.user_name,license)
             driver.save()
@@ -197,9 +201,9 @@ def verify_vehicle():
                 return redirect(url_for('registration.success'))
             else:
                 error="Invalid Verification Code"
-                return render_template('verify_vehicle.html',error=error)
+                return render_template('verify_vehicle.html',error=error,no_plate=no_plate,verification_code=verification_code)
         else:
-            return render_template('verify_vehicle.html',error="Invalid Verification Code")
+            return render_template('verify_vehicle.html',error="Invalid Verification Code",no_plate=no_plate,verification_code=verification_code)
     return render_template('verify_vehicle.html')
 
 
@@ -223,7 +227,7 @@ def login():
                 user=User.query.filter_by(email=username).first()
                 if not user:
                     error='Invalid User'
-                    return render_template('registration_driver_login.html',error=error)
+                    return render_template('registration_driver_login.html',error=error,username=username)
             
             
             if user and user.verify_password(password):
@@ -235,10 +239,10 @@ def login():
                 return response
             elif  user and not user.verify_password(password):
                 error='Invaid Password'
-                return render_template('registration_driver_login.html',error=error)
+                return render_template('registration_driver_login.html',error=error,username=username)
             else:
                 error='Invalid User'
-                return render_template('registration_driver_login.html',error=error)
+                return render_template('registration_driver_login.html',error=error,username=username)
     return render_template('registration_driver_login.html')
 
 @bp.route('/registration/success',methods=['GET','POST'])
