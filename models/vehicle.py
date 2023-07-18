@@ -119,7 +119,7 @@ class Vehicle(db.Model):
         db.session.commit()
 
     def payout(self,amount):
-        self.balance-=amount
+        self.balance-=float(amount)
         db.session.commit()
 
     def make_rating(self):

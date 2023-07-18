@@ -201,12 +201,13 @@ def find_route(bus_data):
         
         from models.routes import Route
         routes=Route.query.all()
+        viable_routes=[]
         for bus in bus_data:
             if bus['docked']:
                 
                 current_stage=bus['docking_stage']
                 destination=bus['bus_destination']
-                viable_routes=[]
+                
                 for route in routes:
                     for stage in route.stages:
                        

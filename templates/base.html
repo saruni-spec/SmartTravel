@@ -33,34 +33,67 @@
     
 
     {% else %}
-    {% if current_user.check_if_owner() %}
+
+    {% if current_user.check_if_owner() and current_user.check_if_driver() %}
     <a href="{{url_for('profile.vehicle')}}">Vehicle</a>
-    {% if current_user.check_if_driver() %}
+    <a href="{{url_for('payment.payout')}}">Payout</a>
+    <a href="{{url_for('booking.confirm_booking')}}">Ride Requests</a>
+     <a href="{{url_for('hire.confirm_booking')}}">Hire Requests</a>
+     <a href="{{ url_for('booking.confirm_booking') }}">Booking Notifications</a>
+     <a href="{{ url_for('payment.notification') }}">Transaction Notifications</a>
+     <a href="{{url_for('profile.profile')}}">Profile</a>
+    <a href="{{url_for('map.location')}}">Map</a>
+    <a href="{{url_for('report.report')}}">History</a>
+    <a href="mailto:oddsthingshere@gmail.com" data-toggle="tooltip" data-placement="bottom" title="contact us">Contact Us</a>
+    
+    <a href="{{url_for('login.logout')}}">Log Out</a>
+
+    {% elif current_user.check_if_driver() and not current_user.check_if_owner() %}
+
     
      <a href="{{url_for('booking.confirm_booking')}}">Ride Requests</a>
      <a href="{{url_for('hire.confirm_booking')}}">Hire Requests</a>
      <a href="{{ url_for('booking.confirm_booking') }}">Booking Notifications</a>
      <a href="{{ url_for('payment.notification') }}">Transaction Notifications</a>
-{% else %}
-<a href="{{url_for('registration.register_vehicle')}}" >Register Vehicle</a>
-<a href="{{ url_for('report.vehicle_bookings') }}">Bookings report</a>
-<a href="{{url_for('report.vehicle_transactions')}}">Transactions Report</a>
-{% endif %}
-      
-      {% else %}
-      <a href="{{url_for('booking.select_destination')}}">Get a ride</a>
-      <a href="{{url_for('hire.hire')}}">Hire Vehicle</a>
-      <a href="{{url_for('booking.wait')}}">Booking Status</a>
-
-    {% endif %}
-    
-    <a href="{{url_for('profile.profile')}}">Profile</a>
+     <a href="{{url_for('profile.profile')}}">Profile</a>
     <a href="{{url_for('map.location')}}">Map</a>
-    
     <a href="{{url_for('report.report')}}">History</a>
     <a href="mailto:oddsthingshere@gmail.com" data-toggle="tooltip" data-placement="bottom" title="contact us">Contact Us</a>
     
     <a href="{{url_for('login.logout')}}">Log Out</a>
+
+{% elif not current_user.check_if_driver() and current_user.check_if_owner() %}
+
+<a href="{{url_for('profile.vehicle')}}">Vehicle</a>
+    <a href="{{url_for('payment.payout')}}">Payout</a>
+<a href="{{ url_for('report.vehicle_bookings') }}">Bookings report</a>
+<a href="{{url_for('report.vehicle_transactions')}}">Transactions Report</a>
+<a href="{{url_for('profile.profile')}}">Profile</a>
+    <a href="{{url_for('map.location')}}">Map</a>
+    <a href="{{url_for('report.report')}}">History</a>
+    <a href="mailto:oddsthingshere@gmail.com" data-toggle="tooltip" data-placement="bottom" title="contact us">Contact Us</a>
+    
+    <a href="{{url_for('login.logout')}}">Log Out</a>
+
+{% else %}
+
+      
+      
+      <a href="{{url_for('booking.select_destination')}}">Get a ride</a>
+      <a href="{{url_for('hire.hire')}}">Hire Vehicle</a>
+      <a href="{{url_for('booking.wait')}}">Booking Status</a>
+      <a href="{{url_for('profile.profile')}}">Profile</a>
+    <a href="{{url_for('map.location')}}">Map</a>
+    <a href="{{url_for('report.report')}}">History</a>
+    <a href="mailto:oddsthingshere@gmail.com" data-toggle="tooltip" data-placement="bottom" title="contact us">Contact Us</a>
+    
+    <a href="{{url_for('login.logout')}}">Log Out</a>
+
+    {% endif %}
+    
+    
+    
+    
   {% endif %}
     <a href="javascript:void(0);" class="icon" onclick="myFunction()">
       <i class="fa fa-bars"></i>

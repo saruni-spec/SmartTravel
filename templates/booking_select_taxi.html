@@ -6,18 +6,18 @@
 <form action="/booking/select_taxi" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="vehicle">Vehicle</label>
-    <p>{{ vehicle_no }}:{{ vehicle_type }}</p>
+    <p class="output">{{ vehicle_no }}:{{ vehicle_type }}</p>
     <label for="time">Estimated arrival time</label>
-    <p>{{ arrival_time }}</p>
+    <p class="output">{{ arrival_time }}</p>
     
     <label for="pickup_point">Pickup Point</label>
-    <p>{{pickup_point}}</p>
+    <p class="output">{{pickup_point}}</p>
     <label for="destination">Destination</label>
     {{ destination }}
     <label for="duration">Travel Time</label>
-    <p>{{ travel_time }}</p>
+    <p class="output">{{ travel_time }}</p>
     <label for="Fare">Fare</label>
-    <p>{{ fare }}</p>
+    <p class="output">{{ fare }}</p>
     <button type="submit">Confirm Booking</button>
 </form>
 

@@ -10,7 +10,7 @@ from models.user import User
 
 from extensions.extensions import db
 from logic.restrictions import *
-
+from logic.validation import valid_number,valid_licence
 
 
 
@@ -209,9 +209,12 @@ def edit_profile():
                 print(phone_number)
                 if user.phone != phone_number:
                     print('changing phone')
-                        
-                    user.add_phone(phone_number)
-            
+
+                    valid=valid_number(phone_number)
+                    if valid:    
+                        user.add_phone(phone_number)
+                    else:
+                        error='Invalid phone number'
 
             
             address=request.form.get('address')
@@ -226,13 +229,17 @@ def edit_profile():
                 print('card_number here')
                 if user.card_number!=card_number:
                     print('changing card')
-                    user.add_card_number(card_number)
+                    valid=valid_licence(card_number)
+                    if valid:
+                        user.add_card_number(card_number)
+                    else:
+                        error='Invalid card number(10 digits)'
 
             if error is None:
                 db.session.commit()
                 return redirect(url_for('profile.profile'))
             else:
-                return render_template('profile_edit.html',error=error)
+                return render_template('profile_edit.html',error=error,user_name=user_name,email=email,phone=phone_number,address=address,card=card_number)
     return render_template('profile_edit.html',user_name=current_user.user_name,email=user.email,phone=user.phone,address=user.address,card=user.card_number)
 
 
@@ -297,12 +304,22 @@ def delete_profile():
     user_name=current_user.user_name
     user=User.query.filter_by(user_name=user_name).first()
     if user.check_if_owner() and not user.check_if_driver():
+        vehicle=Vehicle.query.filter_by(owner_username=user_name).first()
+        other_driver=vehicle.driver_username
+        other_driver_user=Driver.query.filter_by(user_name=other_driver).first()
+        driver_user=User.query.filter_by(user_name=other_driver).first()
+        
+        owner=Owner.query.filter_by(user_name=user_name).first()
         status='level4'
         message='As an owner. Deleting this profile will delete your vehicle,suspend its driver and change your status to rider'
     elif user.check_if_driver() and user.check_if_owner():
+        vehicle=Vehicle.query.filter_by(driver_username=user_name).first()
+        driver=Driver.query.filter_by(user_name=user_name).first()
+        owner=Owner.query.filter_by(user_name=user_name).first()
         status='level3'
         message=' Deleting this profile will delete your vehicle and change your status to rider'
     elif user.check_if_driver() and not user.check_if_owner():
+        driver=Driver.query.filter_by(user_name=user_name).first()
         status='level2'
         message=' Deleting this profile will change your status to rider'
     else:
@@ -317,32 +334,34 @@ def delete_profile():
             user.delete()
             logout_user()
         elif status=='level2':
-            driver=Driver.query.filter_by(user_name=user_name).first()
+            
             
             driver.delete()
-            user.role='user'
+            user.make_user()
+            logout_user()
         elif status=='level3':
             
-            vehicle=Vehicle.query.filter_by(driver_username=user_name).first()
-            vehicle.delete()
-            driver=Driver.query.filter_by(user_name=user_name).first()
-            driver.delete()
-            owner=Owner.query.filter_by(user_name=user_name).first()
-            owner.delete()
-            user.role='user'
-        elif status=='level4':
             
-            vehicle=Vehicle.query.filter_by(driver_username=user_name).first()
-            other_driver=vehicle.driver_username
-            other_driver_user=Driver.query.filter_by(user_name=other_driver).first()
-            other_driver_user.delete()
-            other_driver_user.role='user'
             vehicle.delete()
-            driver=Driver.query.filter_by(user_name=user_name).first()
+            
             driver.delete()
-            owner=Owner.query.filter_by(user_name=user_name).first()
+            
             owner.delete()
-            user.role='user'
+            user.make_user()
+            logout_user()
+        elif status=='level4':
+            vehicle.delete()
+            
+            other_driver_user.delete()
+            
+            driver_user.role='user'
+            
+            
+            
+            
+            owner.delete()
+            user.make_user()
+            logout_user()
         return redirect(url_for('login.logout'))
         
             

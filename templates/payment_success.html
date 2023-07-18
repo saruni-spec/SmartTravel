@@ -3,8 +3,9 @@
 <h2>Receipt</h2>
 {% endblock %}
 {% block content %}
+<button onclick="downloadPDF()">Download</button>
 
-<form class="data">
+<form class="data" style="margin-right: 70%;">
 <label for="">Thank you :</label>
 <p class="output">{{user_name}}</p>
 <label for="">For:</label>
@@ -23,24 +24,27 @@
 <p class="output">{{amount}}</p>
 
 </form>
-<button onclick="downloadPDF()">Download</button>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
-<script>
-    function downloadPDF() {
-var data = document.getElementsByClassName('data'); // get all elements with class='data'
-var doc = new jsPDF();
-for (var i = 0; i < data.length; i++) { // loop through each element
-  if (i > 0) {
-    doc.addPage(); // add a new page for each element after the first one
-  }
-  doc.fromHTML(data[i].innerHTML, 15, 15); // add the element's content to the PDF
-}
-var currentURL = window.location.href; // get the current URL
-  var title = currentURL.split('/').pop(); // extract the last part of the URL as the title
-  var otherTitle='SmartTravel'
-  doc.save(otherTitle +'-' +'-receipt' + '.pdf');// save the PDF file
-}
+<script type="text/javascript">
 
-    </script>
+        
+  function downloadPDF() {
+    var tabText = document.querySelector('.data').outerHTML;
+    var filename = 'SmartTravel/receipt.html';
+    
+    var downloadLink = document.createElement("a");
+    var blob = new Blob([tabText], {type: "text/html"});
+    var url = URL.createObjectURL(blob);
+    
+    downloadLink.href = url;
+    downloadLink.download = filename;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  }
+  
+        </script>
+  
 {% endblock %}h

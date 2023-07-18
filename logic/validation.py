@@ -43,3 +43,60 @@ def is_float(string):
         return True
     except ValueError:
         return False
+    
+
+def valid_number(phone_number):
+    if not isinstance(phone_number, str):
+        return False
+
+    # Check if all characters are digits
+    if not phone_number.isdigit():
+        return False
+
+    # Check if the length is exactly 10
+    if len(phone_number) != 10:
+        return False
+
+    # Check if the first character is '0'
+    if phone_number[0] != '0':
+        return False
+
+    return True
+
+def valid_plate(s):
+    if not isinstance(s, str):
+        return False
+
+    # Check if the length is exactly 7
+    if len(s) != 7:
+        return False
+
+    # Check if the first 3 characters are letters
+    if not s[:3].isalpha():
+        return False
+
+    # Check if the middle 3 characters are numbers
+    if not s[3:6].isdigit():
+        return False
+
+    # Check if the last character is a letter
+    if not s[-1].isalpha():
+        return False
+
+    return True
+def valid_licence(phone_number):
+    if not isinstance(phone_number, str):
+        return False
+
+    # Check if all characters are digits
+    if not phone_number.isdigit():
+        return False
+
+    # Check if the length is exactly 10
+    if len(phone_number) != 10:
+        return False
+
+    # Check if the first character is '0'
+    
+
+    return True

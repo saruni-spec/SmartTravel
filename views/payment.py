@@ -20,10 +20,12 @@ bp=Blueprint('payment',__name__)
 def payment():
     user_name=current_user.user_name
     user=User.query.filter_by(user_name=user_name).first()
-
     vehicle_id=session.get('booking')['vehicle']
     booking_id=session.get('booking')['booking_id']
+    vehicle=Vehicle.query.filter_by(no_plate=vehicle_id).first()
     amount=session.get('fare',None)
+    if amount is None:
+         amount=vehicle.hiring_cost
     transaction=Transaction(user_name,vehicle_id,booking_id,amount)
     transaction.save()
     session['transaction']=transaction.id
@@ -129,15 +131,18 @@ def payout():
         
         amount=request.form.get('amount')
         pay_to=request.form.get('pay_to')
-        if vehicle.balance<amount:
+        if vehicle.balance<float(amount):
             return render_template('payment_payout.html',error='Insufficient balance',balance=balance,vehicle=vehicle.no_plate,user_name=user_name)
         else:
             with current_app.app_context():
                 from app import mail
                 if pay_to=='M-PESA':
                     account_number=user.phone
+                    
                 else:
                     account_number=user.card_number
+                if account_number=='' or account_number==None:
+                        return render_template('payment_payout.html',error='Please add a phone or card number to your profile',balance=balance,vehicle=vehicle.no_plate,user_name=user_name)
                 vehicle.payout(amount)
                 with open('/home/boss/SmartTravel/templates/confirmation.html', 'r') as f:
                                 html_content = f.read()

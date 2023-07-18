@@ -137,3 +137,7 @@ class User(db.Model):
     def make_owner(self):
         self.role="owner"
         db.session.commit()
+
+    def make_user(self):
+        self.role="user"
+        db.session.commit()

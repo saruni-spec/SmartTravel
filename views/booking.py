@@ -352,7 +352,7 @@ def select_taxi():
         
         
         if request.method=='POST':
-                booking=Booking(user_name, phone_number, date, time, pickup_point, destination, vehicle_no, booking_type='taxi_ride')
+                booking=Booking(user_name, phone_number, date, time, pickup_point, destination, vehicle_no, booking_type='taxi')
                 booking.save()
                 booking_notification={'vehicle':vehicle_no,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'booking_id':booking.id,'seen':False}
                 session['booking']=booking_notification
@@ -419,8 +419,11 @@ def bus_options():
                         
                 print(vehicle,'vehicle bus in bus options')
                 
-                
-                booking=Booking(user_name, phone_number, date, time, pickup_point, destination, no_plate, booking_type='bus_ride')
+                if vehicle.fare is None:
+                        vehicle.set_fare(3)
+                fare=vehicle.fare*float(session.get('location_to_destination'))*booked_seats
+                session['fare']=fare
+                booking=Booking(user_name, phone_number, date, time, pickup_point, destination, no_plate, booking_type='bus')
                 booking.save()
                 booking_notification={'vehicle':no_plate,'destination':destination,'pickup_point':pickup_point,'rider':user_name,'timestamp':time,'date':date,'booking_id':booking.id,'no_of_seats':booked_seats,'seen':False}
                 session['booking']=booking_notification
@@ -467,7 +470,9 @@ def confirm_booking():
                 except ValidationError :
                         error="Invalid CSRF token"
 
-                id=int(request.form.get('id'))
+                form_id=(request.form.get('id'))
+                    
+                id=int(form_id)
                 
                 
                 print(id,'id in confirm booking')
@@ -478,9 +483,15 @@ def confirm_booking():
                 if confirmation=='yes':
                         
                         booking.confirm()
-                        session['passenger_location']=geocode(api_key,booking.pickup_point,booking)
-                        session['passenger_destination']=geocode(api_key,booking.destination,booking)
-                        
+                        if booking.booking_type=='hire_car' or booking.booking_type=='hire_bus':
+                                session['passenger_location']=None
+                                session['passenger_destination']=None
+                        else:
+                                
+
+                                session['passenger_location']=geocode(api_key,booking.pickup_point,booking)
+                                session['passenger_destination']=geocode(api_key,booking.destination,booking)
+                                
 
                 else:
                         
@@ -513,18 +524,7 @@ def wait_confirmation():
                         return redirect(url_for('booking.wait_for_vehicle')) 
         elif booking.Status=='Cancelled':
                         
-                        vehicle_type=session.get('vehicle_type')
-                        if vehicle_type=='hire_car':
-                                return redirect(url_for('hire.hire_car'))
-                        elif vehicle_type=='hire_bus':
-                                return redirect(url_for('hire.hire_bus'))
-                        elif vehicle_type=='bus':
-                                return redirect(url_for('booking.bus_options'))
-                        elif vehicle_type=='taxi':
-                                return redirect(url_for('booking.book_taxi'))
-                        else:
-                                return redirect(url_for('booking.book_hybrid'))
-       
+                        return redirect(url_for('booking.cancel_booking'))
         if request.method=='POST':
                 token = request.form.get('csrf_token')
                 try:
@@ -544,17 +544,7 @@ def wait_confirmation():
                                                 return redirect(url_for('booking.wait_for_vehicle')) 
                                 elif booking.Status=='Cancelled':
                                                 
-                                                vehicle_type=session.get('vehicle_type')
-                                                if vehicle_type=='hire_car':
-                                                        return redirect(url_for('hire.hire_car'))
-                                                elif vehicle_type=='hire_bus':
-                                                        return redirect(url_for('hire.hire_bus'))
-                                                elif vehicle_type=='bus':
-                                                        return redirect(url_for('booking.bus_options'))
-                                                elif vehicle_type=='taxi':
-                                                        return redirect(url_for('booking.book_taxi'))
-                                                else:
-                                                        return redirect(url_for('booking.book_hybrid'))
+                                                return redirect(url_for('booking.cancel_booking'))
                                 else:
                                         waiting_message='Your booking is in process. Please wait for confirmation.'
                                         

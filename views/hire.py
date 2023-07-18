@@ -140,8 +140,16 @@ def confirm_booking():
             status=True
         
             details=[]
-            details=receive_notification(notifications,session.get('vehicle'))
-            session['notifications']=details
+            detail=receive_notification(notifications,session.get('vehicle'))
+            session['notifications']=detail
+            bookings=Booking.query.filter_by(vehicle_plate=vehicle.no_plate).all()
+            for booking in bookings:
+                 if booking.booking_type=="hire_car" or booking.booking_type=="hire_bus":
+                      
+                      details.append(booking)
+            if details is None or len(details)==0:
+                 details=None
+                 
         else:
              status=False
              details=None
@@ -167,7 +175,8 @@ def confirm_booking():
                         vehicle.allow_hiring()
                         return redirect(url_for('hire.confirm_booking'))
                 else:
-                    form_id=(request.form.get('id'))
+                    form_id=request.form.get('id')
+                    print(form_id,'id in confirm booking')
                     
                     id=int(form_id)
                     print(id,'id in confirm booking')
@@ -178,24 +187,18 @@ def confirm_booking():
                     if confirmation=='yes':
                             print(booking.Status,'booking in confirmed')
                             booking.confirm()
-                            confirmed_message='Booking confirmed'
+                           
                             print(booking.Status,'check booking in confirmed')
                             
 
                     else:
                             print('booking in cancelled')
                             booking.cancel()
-                            confirmed_message='Booking cancelled'
-                    for notification in details:
-                            print('ni notifications')
-                            if notification['booking_id']==id:
-                                    print (notification,'before seen')
-                                    notification['seen']=True 
-                                    print (notification,'after seen')
-                                    
+                            
+                    
                                         
                             
-                    return render_template('hire_notifications.html',status=status,details=details,confirmed_message=confirmed_message)
+                    return render_template('hire_notifications.html',status=status,details=details)
                
 
         return render_template('hire_notifications.html',details=details,status=status)

@@ -11,34 +11,68 @@
 </form>
 {% if details is none %}
 
-<p>no booking requests</p>
+<p>no new notifications</p>
 
 {% elif details is iterable and details|length >0 %}
 {% for detail in details %} 
-{% if not detail.seen %}
-<form action="/booking/confirm" method="post">
+
+{% if detail.Status=='Pending' %}
+<form action="/hire/confirm" method="post">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <p>Destination:{{detail.destination}}  <br></p>  
-  <p>Pickup_point:{{detail.pickup_point}}</p>
-  <input type="hidden" name="id" id="id" value="{{detail.booking_id}}">
+  <p class="output">Destination:{{detail.destination}}  <br></p>  
+  <p class="output">Pickup_point:{{detail.pickup_point}}</p>
+  <p class="output">Booked at: {{detail.time}}</p>
+  <p class="output">Booked on : {{detail.date}}</p>
+  <p class="output">Contact : {{detail.booking.phone}}</p>
+  <input type="hidden" name="id" id="id" value="{{detail.id}}">
   <button type="submit" name="confirmation" value="yes">Accept</button>
   <button type="submit" name="confirmation" value="no">Reject</button>    
   
   </form>
-  {% else  %}
+  
 
-  <form action="/booking/confirm" method="post">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <p>Destination:{{detail.destination}}  <br></p>  
-    <p>Pickup_point:{{detail.pickup_point}}</p>
-    <input type="hidden" name="id" id="id" value="{{detail.booking_id}}">
-      
-    <p>{{confirmed_message}}</p>
+  
 {% endif %}
 
 {% endfor %}
+{% for detail in details %} 
+
+{% if detail.Status=="confirmed" %}
+<form action="/hire/confirm" >
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="id" id="id" value="{{detail.id}}">
+  <p class="output">Destination:{{detail.destination}}  <br></p>  
+  <p class="output">Pickup_point:{{detail.pickup_point}}</p>
+  <p class="output">Booked at: {{detail.time}}</p>
+  <p class="output">Booked on : {{detail.date}}</p>
+  <p class="output">Contact : {{detail.booking.phone}}</p>
+  <input type="hidden" name="id" id="id" value="{{detail.booking_id}}">
+    
+  <p class="success">Conirmed Booking</p>
+  </form>
+  {% endif %}
+
+{% endfor %}
+{% for detail in details %} 
+
+{% if detail.Status=="Cancelled" %}
+<form action="/hire/confirm" >
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="id" id="id" value="{{detail.id}}">
+  <p class="output">Destination:{{detail.destination}}  <br></p>  
+  <p class="output">Pickup_point:{{detail.pickup_point}}</p>
+  <p class="output">Booked at: {{detail.time}}</p>
+  <p class="output">Booked on : {{detail.date}}</p>
+  <p class="output">Contact : {{detail.booking.phone}}</p>
+  <input type="hidden" name="id" id="id" value="{{detail.booking_id}}">
+    
+  <p>Cancelled Booking</p>
+  </form>
+  {% endif %}
+
+{% endfor %}
 {% else %}
-<p>no booking requests</p>
+<p>no notifications</p>
 {% endif %}
 {% else %}
 

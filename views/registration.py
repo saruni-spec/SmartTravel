@@ -11,6 +11,7 @@ from models.user import User
 from flask import url_for
 from models.driver import Driver
 from datetime import timedelta
+from models.owner import Owner
 
 
 
@@ -69,7 +70,7 @@ def registration():
 @bp.route('/registration/vehicle',methods=['GET','POST'])
 @login_required
 def register_vehicle():
-    from models.owner import Owner
+    
     with current_app.app_context():
         error=None
         if request.method=='POST':
@@ -79,23 +80,25 @@ def register_vehicle():
             except ValidationError:
                 error="Invalid CSRF token"
 
-            id_no = request.form.get('id_no')
-            session['id_no']=id_no
+            
             no_plate = request.form.get('no_plate')
             vehicle_type = request.form.get('vehicle_type')
             capacity = request.form.get('capacity')
             color=request.form.get('color')
             build_type=request.form.get('build_type')
-
+            valid_plate=valid_plate(no_plate)
+            if not valid_plate:
+                error="invalid no_plate"
+                return render_template('registration_vehicle.html',error=error,no_plate=no_plate,vehicle_type=vehicle_type,capacity=capacity,color=color,build_type=build_type)
             vehicle=Vehicle.query.filter_by(no_plate=no_plate).first()
             if vehicle:
                 error="vehicle already exists"
-                return render_template('registration_vehicle.html',error=error,id_no=id_no,no_plate=no_plate,vehicle_type=vehicle_type,capacity=capacity,color=color,build_type=build_type)
+                return render_template('registration_vehicle.html',error=error,no_plate=no_plate,vehicle_type=vehicle_type,capacity=capacity,color=color,build_type=build_type)
             else:
                 vehicle=Vehicle(no_plate)
                 owner=Owner.query.filter_by(user_name=current_user.user_name).first()
                 if owner is None:
-                    owner=Owner(current_user.user_name,id_no)
+                    owner=Owner(current_user.user_name,session.get('id_no'))
                     owner.save()
                     user=User.query.filter_by(user_name=current_user.user_name).first()
                     user.make_owner()
@@ -137,11 +140,15 @@ def register_vehicle_driver():
                     with open('/home/boss/SmartTravel/templates/confirmation.html', 'r') as f:
                             html_content = f.read()
                     verification_code=generate_verification_code()
+                    print(verification_code)
                     message = Message('Confirmation Code', recipients=[contact])
                     message.html = html_content.format(verification_code=verification_code)
                     mail.send(message)
 
+                    session['verification_code']=verification_code
                     vehicle.add_verification_code(verification_code)
+                    driver=Driver.query.filter_by(user_name=current_user.user_name).first()
+                    driver.delete()
                     
                     
                     return redirect(url_for('registration.success'))
@@ -150,8 +157,15 @@ def register_vehicle_driver():
                 
             elif 'skip':
                 user.make_driver()
-                driver=Driver(current_user.user_name,session.get('id_no'))
-                driver.save()
+                driver=Driver.query.filter_by(user_name=current_user.user_name).first()
+                owner=Owner.query.filter_by(user_name=current_user.user_name).first()
+                
+                if driver is None:
+                    
+                    driver=Driver(current_user.user_name,owner.licence_no)
+                    driver.save()
+                vehicle=Vehicle.query.filter_by(owner_username=current_user.user_name).first()
+                vehicle.change_driver(current_user.user_name)
                 
                 return redirect(url_for('registration.success'))
         return render_template('registration_add_driver.html')
@@ -167,12 +181,15 @@ def register_driver():
         if request.method=='POST':
             
             license=request.form.get('license_no')
+            valid_licence=valid_number(license)
+            session['id_no']=license
             phone=request.form.get('phone_no')
-            if license is None or license=='':
-                return render_template('registration_driver.html',error="Enter License Number",phone_no=phone)
+            valid_phone=valid_number(phone)
+            if license is None or license=='' or not valid_licence:
+                return render_template('registration_driver.html',error="Enter License Number(10 digits)",phone_no=phone)
             
-            if phone is None or phone=='':
-                return render_template('registration_driver.html',error="Enter Phone Number",licence_no=license)
+            if phone is None or phone=='' or not valid_phone:
+                return render_template('registration_driver.html',error="Enter Phone Number(10 Digits starting with 0)",licence_no=license)
             user.add_phone(phone)
             driver=Driver(current_user.user_name,license)
             driver.save()
@@ -194,6 +211,9 @@ def verify_vehicle():
     if request.method=='POST':
         verification_code=request.form.get('verification_code')
         no_plate=request.form.get('no_plate')
+        valid_no_plate=valid_plate(no_plate)
+        if not valid_no_plate:
+            return render_template('verify_vehicle.html',error="Invalid Vehicle Plate",no_plate=no_plate,verification_code=verification_code)
         vehicle=Vehicle.query.filter_by(no_plate=no_plate).first()
         if vehicle:
             if vehicle.verification_code==verification_code:
@@ -248,6 +268,8 @@ def login():
 @bp.route('/registration/success',methods=['GET','POST'])
 def success():
     if request.method=='POST':
+        vehicle=Vehicle.query.filter_by(owner_username=current_user.user_name).first()
+        vehicle.add_verification_code(session.get('verification_code'))
        
         return redirect(url_for('login.logout'))
     return render_template('registration_success.html')

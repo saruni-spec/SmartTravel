@@ -7,8 +7,7 @@
 <h2>Vehicle Registration</h2>
 <form action="/registration/vehicle" method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <label for="id_no">License or Id No</label>
-    <input type="text" name="id_no" id="id_no" value="{{id_no}}" >
+
     <label for="No_plate">Number Plate</label>
     <input type="text" name="no_plate" id="no_plate" value="{{no_plate}}">
     <label for="type">Type</label>

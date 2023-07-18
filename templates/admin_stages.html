@@ -43,14 +43,15 @@
           
 </form>
 
-<form action="">
+<form action="" class="table" >
   <label for="">SmartTravel/Stages</label>
+
 {% if data is none %}
 <p>No stages are registered</p>
 {% elif data is iterable and data|length >0 %}
 {% if query=='all' %}
 
-<table name="table"  border="1" class="table">
+<table name="table"  border="1" >
   <tr>
     <th>Stage No</th>
     <th>Latitude</th>

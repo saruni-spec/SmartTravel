@@ -10,7 +10,7 @@
             
 
 
-<form class="date_filter" action="/report/transaction" method="post">
+<form class="date_filter" action="/report/transaction" method="post" id="date_options">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <div>
   <label for="date">Date</label>
@@ -407,53 +407,43 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
 
 
-<script>
+<script type="text/javascript">
+
+        
   function downloadPDF() {
-    var data = document.getElementsByClassName('table'); // get all elements with class='table'
-    var doc = new jsPDF();
+    var tabText = document.querySelector('.table').outerHTML;
+    var filename = 'SmartTravel.html';
     
-    for (var i = 0; i < data.length; i++) { // loop through each element
-      if (i > 0) {
-        doc.addPage(); // add a new page for each element after the first one
-      }
-      
-      // Apply CSS style to the table for smaller size
-      var table = data[i];
-      table.style.fontSize = '8px'; // Adjust the font size as needed
-      
-      // Loop through each cell in the table and modify its size
-      var cells = table.getElementsByTagName('td');
-      for (var j = 0; j < cells.length; j++) {
-        // Adjust cell size as needed
-        cells[j].style.width = '50px'; // Example: set the cell width to 50px
-        cells[j].style.height = '20px'; // Example: set the cell height to 20px
-      }
-      
-      doc.fromHTML(table.innerHTML, 15, 15); // add the element's content to the PDF
-    }
+    var downloadLink = document.createElement("a");
+    var blob = new Blob([tabText], {type: "text/html"});
+    var url = URL.createObjectURL(blob);
     
-    var currentURL = window.location.href; // get the current URL
-    var title = currentURL.split('/').pop(); // extract the last part of the URL as the title
-    var otherTitle = 'SmartTravel';
-    doc.save(otherTitle + '-' + title + '.pdf');
+    downloadLink.href = url;
+    downloadLink.download = filename;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
   }
-  </script>
+  
+        </script>
+  
   
 
 
          
-          <script>
+  <script>
   
-            function hideDates() {
-              var elem = document.getElementById("date_options");
-              if (elem.classList.contains("date_filter")) {
-                elem.classList.remove("date_filter");
-                elem.classList.add("date_hide");
-              } else {
-                elem.classList.remove("date_hide");
-                elem.classList.add("date_filter");
-              }
-            }
-            
-                    </script>
-{% endblock %}
+    function hideDates() {
+      var elem = document.getElementById("date_options");
+      if (elem.classList.contains("date_filter")) {
+        elem.classList.remove("date_filter");
+        elem.classList.add("date_hide");
+      } else {
+        elem.classList.remove("date_hide");
+        elem.classList.add("date_filter");
+      }
+    }
+    
+            </script> 
+
+            {% endblock %}

@@ -46,7 +46,7 @@ class Transaction(db.Model):
         db.session.commit()
     
     def make_rating(self,rating):
-        self.rating=rating
+        self.rating=int(rating)
         db.session.commit()
 
     def save(self):
